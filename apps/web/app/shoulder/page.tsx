@@ -115,49 +115,51 @@ export default function ShoulderRehabProgram() {
   ]
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Shoulder Program</h1>
-      
-      <div className="bg-destructive/10 border-l-4 border-destructive p-4 mb-6 rounded-sm">
-        <div className="flex items-center">
-          <AlertCircle className="h-5 w-5 text-destructive mr-2" />
-          <p className="text-sm text-destructive">
-            Keep pain under 3/10. Stop if sharp pain. Rest if it hurts more after 24h.
-          </p>
+    <main className="container py-6">
+      <div className="max-w-3xl">
+        <h1 className="text-2xl font-bold mb-6">Shoulder Program</h1>
+        
+        <div className="bg-destructive/10 border-l-4 border-destructive p-4 mb-6 rounded-sm">
+          <div className="flex items-center">
+            <AlertCircle className="h-5 w-5 text-destructive mr-2" />
+            <p className="text-sm text-destructive">
+              Keep pain under 3/10. Stop if sharp pain. Rest if it hurts more after 24h.
+            </p>
+          </div>
         </div>
+
+        <div className="bg-card border border-border rounded-lg p-4 mb-6">
+          <h3 className="font-medium mb-2">Form Tips:</h3>
+          <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+            <li>Smooth and controlled movements</li>
+            <li>Steady breathing</li>
+            <li>Squeeze shoulder blades</li>
+            <li>Shoulders down</li>
+            <li>Good posture</li>
+            <li>Quality {'>'} quantity</li>
+          </ul>
+        </div>
+
+        <Section title="Warm-Up">
+          <div className="space-y-4">
+            {warmUpExercises.map((exercise, index) => (
+              <Exercise key={index} {...exercise} />
+            ))}
+          </div>
+        </Section>
+
+        <Section title="Strength">
+          <div className="space-y-4">
+            {strengthExercises.map((exercise, index) => (
+              <Exercise key={index} {...exercise} />
+            ))}
+          </div>
+        </Section>
+
+        <p className="mt-8 text-sm text-muted-foreground italic">
+          Note: Do this shit under supervision until you're confident. Adjust as needed.
+        </p>
       </div>
-
-      <div className="bg-card border border-border rounded-lg p-4 mb-6">
-        <h3 className="font-medium mb-2">Form Tips:</h3>
-        <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
-          <li>Smooth and controlled movements</li>
-          <li>Steady breathing</li>
-          <li>Squeeze shoulder blades</li>
-          <li>Shoulders down</li>
-          <li>Good posture</li>
-          <li>Quality {'>'} quantity</li>
-        </ul>
-      </div>
-
-      <Section title="Warm-Up">
-        <div className="space-y-4">
-          {warmUpExercises.map((exercise, index) => (
-            <Exercise key={index} {...exercise} />
-          ))}
-        </div>
-      </Section>
-
-      <Section title="Strength">
-        <div className="space-y-4">
-          {strengthExercises.map((exercise, index) => (
-            <Exercise key={index} {...exercise} />
-          ))}
-        </div>
-      </Section>
-
-      <p className="mt-8 text-sm text-muted-foreground italic">
-        Note: Do this shit under supervision until you're confident. Adjust as needed.
-      </p>
-    </div>
+    </main>
   )
 } 
