@@ -1,0 +1,85 @@
+# JoelFit Monorepo Rules
+
+## Core Principles
+- Ship fast, refactor later when patterns emerge
+- Optimize for readability and maintainability over premature optimization
+- Follow existing patterns unless you have a damn good reason not to
+- When in doubt, make it a server component
+- Handle errors early, return happy path late
+
+## TypeScript Practices
+- Use `type` for composition, `interface` for extension
+- Zod for runtime validation, TypeScript for compile-time safety
+- No enums - use const objects with `as const`
+- Explicit return types on exported functions
+- Leverage inference for internal implementation
+- Keep types close to where they're used
+
+## React & Next.js
+- Server Components by default
+- `use client` only when you need interactivity
+- Prefer small, focused components
+- Use React Query for client-side data
+- `next-safe-action` for server actions
+- `nuqs` for URL state management
+- Shadcn/UI for common components
+
+## State & Data Flow
+- Server state > Client state
+- URL state > Local state
+- Minimize client-side state
+- Use React Query for async state
+- Leverage URL params for shareable state
+
+## API & Backend
+- Early validation with Zod
+- Strong typing with Prisma
+- Handle errors explicitly
+- Use transactions for multi-step operations
+- Cache aggressively but invalidate correctly
+
+## Testing
+- Unit test business logic
+- Integration test critical paths
+- E2E test user flows
+- Mock external dependencies
+
+## Styling
+- Tailwind first
+- Mobile first
+- Dark mode support
+- CSS variables for theming
+- Follow existing component patterns
+
+## File Structure
+- Kebab-case for files
+- Group by feature when possible
+- Keep related code close
+- One component per file
+- Colocate tests with code
+
+## Git & Deployment
+- Conventional commits
+- Feature branches
+- Clean, focused PRs
+- Automate everything possible
+- Monitor what you ship
+
+## Dependencies
+- Use pnpm
+- Keep deps updated
+- Minimize bundle size
+- Prefer established libraries
+- Document why deps are added
+
+## Monorepo Structure
+- Shared code goes in `packages/`
+- Apps go in `apps/`
+- Share types, not implementations
+- Version lock all workspace deps
+- Keep package boundaries clean
+- Use workspace protocols (`workspace:*`)
+- Hoist common dependencies
+- Build packages in dependency order
+- Test at package boundaries
+- No circular dependencies
