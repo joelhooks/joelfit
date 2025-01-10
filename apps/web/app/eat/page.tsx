@@ -3,32 +3,32 @@ import Link from 'next/link'
 import { ArrowRight, UtensilsCrossed, Container, Clock, BookOpen } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Meal Prep OS | JoelFit',
-  description: 'My systematic approach to meal preparation',
+  title: 'High-Protein Meal Prep OS | JoelFit',
+  description: 'My 5-day high-protein meal prep system with 1-2-3 rotation',
 }
 
 const features = [
   {
     title: "Core Framework",
-    description: "The 1-2-3 system for efficient meal rotation",
+    description: "The 1-2-3 rotation system for daily variety",
     icon: Clock,
     href: "/eat/framework"
   },
   {
     title: "Container System",
-    description: "Equipment and organization methods",
+    description: "Equipment and storage logistics",
     icon: Container,
     href: "/eat/equipment"
   },
   {
     title: "Prep Workflow",
-    description: "Step-by-step preparation process",
+    description: "2-3 hour Sunday prep process",
     icon: UtensilsCrossed,
     href: "/eat/preparation"
   },
   {
     title: "Base Recipes",
-    description: "Core recipes and variations",
+    description: "Proteins, starches, and sauce system",
     icon: BookOpen,
     href: "/eat/recipes"
   }
@@ -38,21 +38,45 @@ export default function EatPage() {
   return (
     <main className="container py-6">
       <div className="max-w-3xl">
-        <h1 className="text-4xl font-bold mb-4">Meal Prep OS</h1>
+        <h1 className="text-4xl font-bold mb-4">High-Protein Meal Prep OS</h1>
         <p className="text-lg text-muted-foreground mb-8">
-          My systematic approach to meal prep, focusing on efficiency and consistency.
+          A 5-day high-protein meal prep system that takes the thought out of eating while maintaining variety.
         </p>
+
+        <div className="bg-card border rounded-lg p-6 mb-8">
+          <h2 className="text-xl font-semibold mb-4">Daily Macro Targets</h2>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div>
+              <p className="font-medium">Protein</p>
+              <p className="text-muted-foreground">220-240g</p>
+            </div>
+            <div>
+              <p className="font-medium">Carbs</p>
+              <p className="text-muted-foreground">300-350g</p>
+            </div>
+            <div>
+              <p className="font-medium">Fat</p>
+              <p className="text-muted-foreground">65-80g</p>
+            </div>
+          </div>
+          <p className="text-sm text-muted-foreground mt-4">
+            ~2700-2900 calories daily, adjustable based on needs
+          </p>
+        </div>
 
         <div className="bg-card border rounded-lg p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">The 1-2-3 Framework</h2>
           <p className="text-muted-foreground mb-4">
-            A structured system for meal rotation that ensures variety while maintaining simplicity:
+            A rotation system using three components to create variety without complexity:
           </p>
           <ul className="space-y-2 text-muted-foreground mb-4">
-            <li>• 1 weekly prep session</li>
-            <li>• 2 main meal variations per week</li>
-            <li>• 3 component categories (protein, carbs, vegetables)</li>
+            <li>• 3 proteins (chicken, turkey, fish)</li>
+            <li>• 3 starches (rice, yams, quinoa)</li>
+            <li>• 3 vegetables (peas, broccoli, zucchini)</li>
           </ul>
+          <p className="text-sm text-muted-foreground">
+            Rotated across 15 meals per week (M-F, 3 meals per day)
+          </p>
         </div>
 
         <div className="grid gap-6">
