@@ -66,6 +66,9 @@
   body {
     @apply bg-background text-foreground font-sans;
   }
+  html {
+    overflow-y: scroll;
+  }
 }
 
 @layer base {
