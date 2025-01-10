@@ -1,3 +1,6 @@
+@import '@vercel/style-guide/font/geist-sans';
+@import '@vercel/style-guide/font/geist-mono';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -54,6 +57,6 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
   }
 }

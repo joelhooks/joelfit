@@ -1,5 +1,6 @@
 import { ImageResponse } from '@vercel/og'
 import { NextRequest } from 'next/server'
+import { GeistSans } from 'geist/font/sans'
  
 export const runtime = 'edge'
  
@@ -25,8 +26,21 @@ export async function GET(req: NextRequest) {
             justifyContent: 'center',
             backgroundColor: 'white',
             background: 'linear-gradient(to bottom right, #FFFFFF, #F3F4F6)',
+            fontFamily: 'Geist',
           }}
         >
+          {/* Color stripe at the top */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '8px',
+              background: 'linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)))',
+            }}
+          />
+          
           <div
             style={{
               display: 'flex',
@@ -68,6 +82,24 @@ export async function GET(req: NextRequest) {
       {
         width: 1200,
         height: 630,
+        fonts: [
+          {
+            name: 'Geist',
+            data: await fetch(
+              new URL('https://cdn.jsdelivr.net/npm/geist@1.2.0/dist/fonts/geist-sans/Geist-Regular.woff2')
+            ).then((res) => res.arrayBuffer()),
+            weight: 400,
+            style: 'normal',
+          },
+          {
+            name: 'Geist',
+            data: await fetch(
+              new URL('https://cdn.jsdelivr.net/npm/geist@1.2.0/dist/fonts/geist-sans/Geist-Bold.woff2')
+            ).then((res) => res.arrayBuffer()),
+            weight: 700,
+            style: 'normal',
+          },
+        ],
       },
     )
   } catch (e: any) {
