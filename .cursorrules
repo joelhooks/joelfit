@@ -1,5 +1,10 @@
 # JoelFit Monorepo Rules
 
+I'm Joel and JoelFit is build for me personally and isn't a marketing site 
+but rather a specific reference site that I can also link to etc to collaboration/sharing as i see fit
+
+Keep that in mind at all times.
+
 ## Core Principles
 - Ship fast, refactor later when patterns emerge
 - Optimize for readability and maintainability over premature optimization
@@ -22,7 +27,7 @@
 - Use React Query for client-side data
 - `next-safe-action` for server actions
 - `nuqs` for URL state management
-- Shadcn/UI for common components
+- Shadcn for common components
 
 ## State & Data Flow
 - Server state > Client state
