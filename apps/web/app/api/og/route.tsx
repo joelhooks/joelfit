@@ -1,11 +1,26 @@
 import { ImageResponse } from '@vercel/og'
 import { NextRequest } from 'next/server'
-import { GeistSans } from 'geist/font/sans'
+import { join } from 'path'
+import { readFileSync } from 'fs'
  
 export const runtime = 'edge'
+
+// Font files in public/fonts directory
+const geistRegular = fetch(
+  new URL('../../../public/fonts/Geist-Regular.ttf', import.meta.url)
+).then((res) => res.arrayBuffer())
+
+const geistBold = fetch(
+  new URL('../../../public/fonts/Geist-Bold.ttf', import.meta.url)
+).then((res) => res.arrayBuffer())
  
 export async function GET(req: NextRequest) {
   try {
+    const [geistRegularData, geistBoldData] = await Promise.all([
+      geistRegular,
+      geistBold,
+    ])
+
     const { searchParams } = new URL(req.url)
  
     // ?title=<title>
@@ -37,7 +52,7 @@ export async function GET(req: NextRequest) {
               left: 0,
               right: 0,
               height: '8px',
-              background: 'linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)))',
+              background: 'linear-gradient(to right, #000000, #404040)',
             }}
           />
           
@@ -85,17 +100,13 @@ export async function GET(req: NextRequest) {
         fonts: [
           {
             name: 'Geist',
-            data: await fetch(
-              new URL('https://cdn.jsdelivr.net/npm/geist@1.2.0/dist/fonts/geist-sans/Geist-Regular.woff2')
-            ).then((res) => res.arrayBuffer()),
+            data: geistRegularData,
             weight: 400,
             style: 'normal',
           },
           {
             name: 'Geist',
-            data: await fetch(
-              new URL('https://cdn.jsdelivr.net/npm/geist@1.2.0/dist/fonts/geist-sans/Geist-Bold.woff2')
-            ).then((res) => res.arrayBuffer()),
+            data: geistBoldData,
             weight: 700,
             style: 'normal',
           },
