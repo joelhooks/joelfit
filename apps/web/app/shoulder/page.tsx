@@ -4,8 +4,8 @@ import { Exercise, type ExerciseProps } from './exercise'
 import { Section } from './section'
 
 export const metadata: Metadata = {
-  title: 'Shoulder Rehabilitation Program | JoelFit',
-  description: 'A comprehensive shoulder rehabilitation program with warm-up and strength exercises',
+  title: 'Shoulder Program | JoelFit',
+  description: 'My shoulder rehab routine',
 }
 
 export default function ShoulderRehabProgram() {
@@ -116,30 +116,30 @@ export default function ShoulderRehabProgram() {
 
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Shoulder Rehabilitation Program</h1>
+      <h1 className="text-2xl font-bold mb-6">Shoulder Program</h1>
       
       <div className="bg-destructive/10 border-l-4 border-destructive p-4 mb-6 rounded-sm">
         <div className="flex items-center">
           <AlertCircle className="h-5 w-5 text-destructive mr-2" />
           <p className="text-sm text-destructive">
-            Keep pain below 3/10. Stop if you feel sharp pain. If pain increases after 24 hours, take a rest day.
+            Keep pain under 3/10. Stop if sharp pain. Rest if it hurts more after 24h.
           </p>
         </div>
       </div>
 
       <div className="bg-card border border-border rounded-lg p-4 mb-6">
-        <h3 className="font-medium mb-2">Form Tips for All Exercises:</h3>
+        <h3 className="font-medium mb-2">Form Tips:</h3>
         <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
-          <li>Keep movements smooth and controlled</li>
-          <li>Breathe steadily throughout</li>
-          <li>Focus on squeezing shoulder blades together</li>
-          <li>Keep shoulders down, away from ears</li>
-          <li>Maintain good posture throughout</li>
-          <li>Quality of movement over quantity</li>
+          <li>Smooth and controlled movements</li>
+          <li>Steady breathing</li>
+          <li>Squeeze shoulder blades</li>
+          <li>Shoulders down</li>
+          <li>Good posture</li>
+          <li>Quality {'>'} quantity</li>
         </ul>
       </div>
 
-      <Section title="Warm-Up Exercises">
+      <Section title="Warm-Up">
         <div className="space-y-4">
           {warmUpExercises.map((exercise, index) => (
             <Exercise key={index} {...exercise} />
@@ -147,7 +147,7 @@ export default function ShoulderRehabProgram() {
         </div>
       </Section>
 
-      <Section title="Strength Exercises">
+      <Section title="Strength">
         <div className="space-y-4">
           {strengthExercises.map((exercise, index) => (
             <Exercise key={index} {...exercise} />
@@ -156,8 +156,7 @@ export default function ShoulderRehabProgram() {
       </Section>
 
       <p className="mt-8 text-sm text-muted-foreground italic">
-        Remember: This program should be performed under appropriate medical supervision 
-        and modified based on individual needs and responses.
+        Note: Do this shit under supervision until you're confident. Adjust as needed.
       </p>
     </div>
   )
