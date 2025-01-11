@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { ProfileRepository } from './repository'
 import { Profile, ActivityLevel, ExerciseLevel } from './schema'
-import { NotFoundError, ValidationError } from '../base'
+import { NotFoundError, ValidationError, SlugGenerationError } from '../base'
 
 describe('ProfileRepository', () => {
   let repo: ProfileRepository
@@ -170,7 +170,7 @@ describe('ProfileRepository', () => {
       expect(created.slug).toBe('test-user-123')
     })
 
-    it('should throw error if name is missing', async () => {
+    it('should throw SlugGenerationError if name is missing', async () => {
       const profile = {
         metrics: {
           height: 70,
@@ -190,7 +190,7 @@ describe('ProfileRepository', () => {
       }
 
       // @ts-expect-error Testing invalid input
-      await expect(repo.create(profile)).rejects.toThrow('Name is required to generate slug')
+      await expect(repo.create(profile)).rejects.toThrow(SlugGenerationError)
     })
   })
 }) 

@@ -36,6 +36,12 @@ export class ValidationError extends RepositoryError {
   }
 }
 
+export class SlugGenerationError extends RepositoryError {
+  constructor(message: string) {
+    super(message, 'SLUG_GENERATION_ERROR')
+  }
+}
+
 // Base repository interface that all repositories must implement
 export interface Repository<T extends Entity> {
   findById(id: string): Promise<T>
@@ -47,7 +53,12 @@ export interface Repository<T extends Entity> {
 }
 
 // Base repository implementation with common functionality
-export abstract class BaseRepository<T extends Entity, TSchema extends z.ZodType<T>> implements Repository<T> {
+export abstract class BaseRepository<
+  T extends Entity,
+  TSchema extends z.ZodObject<any>
+> implements Repository<T> {
+  protected items: T[] = []
+
   constructor(
     protected readonly schema: TSchema,
     protected readonly entityName: string
@@ -75,28 +86,45 @@ export abstract class BaseRepository<T extends Entity, TSchema extends z.ZodType
   }
 
   async create(data: Omit<T, keyof Entity>): Promise<T> {
-    const items = await this.getData()
-    
-    const now = new Date()
-    const newItem = {
-      ...data,
-      id: crypto.randomUUID(),
-      slug: this.generateSlug(data),
-      createdAt: now,
-      updatedAt: now
-    } as T
-
     try {
-      this.schema.parse(newItem)
+      // Generate slug first
+      const slug = this.generateSlug(data)
+
+      // Then validate input data
+      const inputSchema = this.schema.omit({
+        id: true,
+        slug: true,
+        createdAt: true,
+        updatedAt: true
+      })
+      const result = inputSchema.safeParse(data)
+      if (!result.success) {
+        throw new ValidationError(`Invalid ${this.entityName.toLowerCase()}: ${result.error.message}`)
+      }
+
+      // Create the complete item
+      const now = new Date()
+      const tempItem = {
+        ...data,
+        id: crypto.randomUUID(),
+        slug,
+        createdAt: now,
+        updatedAt: now
+      } as T
+
+      // Save the item
+      const items = await this.getData()
+      await this.setData([...items, tempItem])
+      return tempItem
     } catch (error) {
+      if (error instanceof Error && error.name === 'SlugGenerationError') {
+        throw error
+      }
       if (error instanceof z.ZodError) {
-        throw new ValidationError(error.message)
+        throw new ValidationError(`Invalid ${this.entityName.toLowerCase()}: ${error.message}`)
       }
       throw error
     }
-
-    await this.setData([...items, newItem])
-    return newItem
   }
 
   async update(id: string, data: Partial<Omit<T, keyof Entity>>): Promise<T> {
@@ -110,13 +138,9 @@ export abstract class BaseRepository<T extends Entity, TSchema extends z.ZodType
       updatedAt: new Date()
     } as T
 
-    try {
-      this.schema.parse(updatedItem)
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new ValidationError(error.message)
-      }
-      throw error
+    const result = this.schema.safeParse(updatedItem)
+    if (!result.success) {
+      throw new ValidationError(`Invalid ${this.entityName.toLowerCase()}: ${result.error.message}`)
     }
 
     items[index] = updatedItem

@@ -1,16 +1,13 @@
-import { BaseRepository, Entity } from '../base'
+import { BaseRepository, Entity, SlugGenerationError } from '../base'
 import { Profile, profileSchema } from './schema'
 
 export class ProfileRepository extends BaseRepository<Profile, typeof profileSchema> {
   constructor() {
     super(profileSchema, 'Profile')
-  }
-
-  protected async getData(): Promise<Profile[]> {
-    // For now, return hardcoded data. Later we'll implement proper storage
-    return [
+    // Initialize with hardcoded data
+    this.items = [
       {
-        id: '1',
+        id: crypto.randomUUID(),
         slug: 'joel',
         name: 'Joel Hooks',
         metrics: {
@@ -34,13 +31,23 @@ export class ProfileRepository extends BaseRepository<Profile, typeof profileSch
     ]
   }
 
+  // Helper method for tests
+  getDefaultProfileId(): string {
+    return this.items[0]?.id ?? ''
+  }
+
+  protected async getData(): Promise<Profile[]> {
+    return this.items
+  }
+
   protected async setData(data: Profile[]): Promise<void> {
+    this.items = data
     // For now, just log the data. Later we'll implement proper storage
     console.log('Saving profiles:', data)
   }
 
   protected generateSlug(data: Partial<Profile>): string {
-    if (!data.name) throw new Error('Name is required to generate slug')
+    if (!data.name) throw new SlugGenerationError('Name is required to generate slug')
     
     // Generate a URL-friendly slug from the name
     return data.name
