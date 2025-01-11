@@ -1,5 +1,6 @@
 import { ImageResponse } from '@vercel/og'
 import { NextRequest } from 'next/server'
+import Balancer from 'react-wrap-balancer'
  
 export const runtime = 'edge'
 
@@ -1119,7 +1120,9 @@ export async function GET(req: NextRequest) {
             >
               <div
                 style={{
-                  display: 'flex',
+                  display: 'inline-block',
+                  width: 'auto',
+                  maxWidth: '100%',
                   fontSize: titleFontSize,
                   fontWeight: 700,
                   letterSpacing: '-0.03em',
@@ -1128,6 +1131,9 @@ export async function GET(req: NextRequest) {
                   color: '#FFFFFF',
                   textAlign: 'left',
                   textShadow: '0 0 20px rgba(255,0,128,0.5), -2px 0 #FF0080, 2px 0 #0070F3',
+                  wordWrap: 'break-word',
+                  overflowWrap: 'break-word',
+                  hyphens: 'auto',
                 }}
               >
                 {title}
@@ -1137,15 +1143,19 @@ export async function GET(req: NextRequest) {
               {description && (
                 <div
                   style={{
-                    display: 'flex',
+                    display: 'inline-block',
+                    width: 'auto',
+                    maxWidth: '700px',
                     fontSize: descFontSize,
                     fontWeight: 400,
                     color: '#E4E4E7',
                     marginTop: '8px',
                     lineHeight: 1.3,
-                    maxWidth: '700px',
                     textAlign: 'left',
                     textShadow: '-1px 0 #FF0080, 1px 0 #0070F3, 0 0 10px rgba(0,0,0,0.9)',
+                    wordWrap: 'break-word',
+                    overflowWrap: 'break-word',
+                    hyphens: 'auto',
                   }}
                 >
                   {description}
