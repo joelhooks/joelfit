@@ -22,7 +22,18 @@ JoelFit is a personal reference implementation for my health and fitness routine
 - **Package Manager**: pnpm
 - **Monorepo Tools**: Turborepo
 
-## Project Structure
+## What's Inside?
+
+### Apps and Packages
+
+- `web`: Main [Next.js](https://nextjs.org/) application
+- `@repo/ui`: Shared React component library
+- `@repo/eslint-config`: ESLint configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `@repo/typescript-config`: Shared `tsconfig.json`s used throughout the monorepo
+
+Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+
+### Project Structure
 
 ```
 joelfit/
@@ -39,6 +50,14 @@ joelfit/
 │   └── tsconfig/        # TypeScript configs
 └── tooling/             # Build and dev tools
 ```
+
+### Utilities
+
+This Turborepo has some additional tools already setup:
+
+- [TypeScript](https://www.typescriptlang.org/) for static type checking
+- [ESLint](https://eslint.org/) for code linting
+- [Prettier](https://prettier.io) for code formatting
 
 ## Development Principles
 
@@ -93,6 +112,17 @@ joelfit/
    ```bash
    pnpm build
    ```
+
+### Remote Caching
+
+Turborepo can use [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+
+To enable Remote Caching:
+
+```bash
+npx turbo login
+npx turbo link
+```
 
 ## Development Workflow
 
@@ -152,6 +182,17 @@ chore: maintain
 - Semantic HTML
 - Keyboard navigation
 - Screen reader testing
+
+## Useful Links
+
+Learn more about the power of Turborepo:
+
+- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
+- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
+- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
+- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
+- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
+- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
 
 ## Contributing
 
