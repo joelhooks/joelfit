@@ -52,13 +52,13 @@
 - [x] Document data flow changes
 - [x] Identify shared components needing updates
 
-### 2.2 Equipment Migration
-- [ ] Move equipment config to repository data
-- [ ] Update equipment routes
-- [ ] Update dependent components
-- [ ] Add tests for new implementations
+### 2.2 Equipment Migration ✅
+- [x] Move equipment config to repository data
+- [x] Update equipment routes
+- [x] Update dependent components
+- [x] Add tests for new implementations
 
-### 2.3 Profile Migration
+### 2.3 Profile Migration 🚧
 - [ ] Move profile config to repository data
 - [ ] Update profile routes
 - [ ] Update dependent components

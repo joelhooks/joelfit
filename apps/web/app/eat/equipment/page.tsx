@@ -1,15 +1,19 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { Package, LayoutGrid, Wrench } from 'lucide-react'
-import { equipmentRepo, type Equipment, storageGuide, maintenanceSchedule } from '@/config/equipment'
+import { EquipmentRepository } from '@/lib/repositories/equipment'
 
 export const metadata: Metadata = {
   title: 'Container System | High-Protein Meal Prep OS',
   description: 'The container system and equipment used for meal prep'
 }
 
-export default function EquipmentPage() {
-  const equipment = equipmentRepo.getAll()
+export default async function EquipmentPage() {
+  const equipmentRepo = new EquipmentRepository()
+  const equipment = await equipmentRepo.findAll()
+  const storageGuide = equipmentRepo.getStorageGuide()
+  const maintenanceSchedule = equipmentRepo.getMaintenanceSchedule()
+
   const storageItems = equipment.filter(item => item.category === 'storage')
   const otherItems = equipment.filter(item => item.category !== 'storage')
 
@@ -33,7 +37,7 @@ export default function EquipmentPage() {
             <div className="grid gap-4">
               {storageItems.map((item) => (
                 <Link
-                  key={item.title}
+                  key={item.id}
                   href={item.link}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -67,7 +71,7 @@ export default function EquipmentPage() {
             <div className="grid gap-4">
               {otherItems.map((item) => (
                 <Link
-                  key={item.title}
+                  key={item.id}
                   href={item.link}
                   target="_blank"
                   rel="noopener noreferrer"

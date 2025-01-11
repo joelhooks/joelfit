@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { PageHeader } from '@/components/page-header'
 import { Clock, Thermometer, Scale, AlertCircle, Package } from 'lucide-react'
-import { equipmentRepo } from '@/config/equipment'
+import { EquipmentRepository } from '@/lib/repositories/equipment'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
@@ -118,8 +118,6 @@ const framework = {
   },
   containers: {
     mainMeals: {
-      type: equipmentRepo.get('meal-containers').description,
-      link: equipmentRepo.get('meal-containers').link,
       sections: [
         { name: "Protein", capacity: "8oz" },
         { name: "Carb", capacity: "2 cups" },
@@ -127,14 +125,10 @@ const framework = {
       ]
     },
     breakfast: {
-      type: equipmentRepo.get('mason-jars').description,
-      link: equipmentRepo.get('mason-jars').link,
       quantity: "5 jars per person",
       note: "Use plastic mason jar lids"
     },
     smoothies: {
-      type: equipmentRepo.get('smoothie-bags').description,
-      link: equipmentRepo.get('smoothie-bags').link,
       features: [
         "Flat bottom design",
         "Freezer-safe construction"
@@ -220,7 +214,33 @@ const framework = {
   }
 }
 
-export default function FrameworkPage() {
+export default async function FrameworkPage() {
+  const equipmentRepo = new EquipmentRepository()
+  const mealContainers = await equipmentRepo.findBySlug('meal-containers')
+  const masonJars = await equipmentRepo.findBySlug('mason-jars')
+  const smoothieBags = await equipmentRepo.findBySlug('smoothie-bags')
+
+  // Update container info with equipment data
+  const containers = {
+    mainMeals: {
+      type: mealContainers.description,
+      link: mealContainers.link,
+      sections: framework.containers.mainMeals.sections
+    },
+    breakfast: {
+      type: masonJars.description,
+      link: masonJars.link,
+      quantity: framework.containers.breakfast.quantity,
+      note: framework.containers.breakfast.note
+    },
+    smoothies: {
+      type: smoothieBags.description,
+      link: smoothieBags.link,
+      features: framework.containers.smoothies.features
+    },
+    sauces: framework.containers.sauces
+  }
+
   return (
     <main className="container py-6">
       <div className="max-w-3xl">
@@ -234,8 +254,12 @@ export default function FrameworkPage() {
         />
 
         <div className="space-y-8">
+          {/* Weekly Schedule */}
           <section>
-            <h2 className="text-xl font-semibold mb-4">Weekly Schedule</h2>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Clock className="h-5 w-5 text-primary flex-shrink-0" />
+              Weekly Schedule
+            </h2>
             <div className="space-y-4">
               {/* Saturday */}
               <div className="bg-card border rounded-lg p-4 sm:p-6">
@@ -248,7 +272,7 @@ export default function FrameworkPage() {
                     <li key={index} className="flex items-start gap-2">
                       <span className="flex-shrink-0">•</span>
                       <span className="flex-1">{item.task}</span>
-                      <span className="text-xs bg-muted px-2 py-0.5 rounded">{item.time}</span>
+                      <span className="text-muted-foreground">{item.time}</span>
                     </li>
                   ))}
                 </ul>
@@ -256,18 +280,16 @@ export default function FrameworkPage() {
 
               {/* Sunday */}
               <div className="bg-card border rounded-lg p-4 sm:p-6">
-                <h3 className="font-medium mb-2 flex items-center gap-2">
+                <h3 className="font-medium mb-4 flex items-center gap-2">
                   <Clock className="h-5 w-5 text-primary flex-shrink-0" />
                   {framework.weeklySchedule.sunday.title}
                 </h3>
-                <p className="text-sm text-muted-foreground mb-4">Total time: {framework.weeklySchedule.sunday.totalTime}</p>
                 <div className="space-y-6">
                   {framework.weeklySchedule.sunday.waves.map((wave, index) => (
-                    <div key={index} className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-medium">{wave.title}</h4>
-                        <span className="text-xs bg-muted px-2 py-0.5 rounded">{wave.time}</span>
-                      </div>
+                    <div key={index}>
+                      <h4 className="font-medium mb-2">
+                        {wave.title} ({wave.time})
+                      </h4>
                       <ul className="space-y-2 text-sm text-muted-foreground">
                         {wave.tasks.map((task, taskIndex) => (
                           <li key={taskIndex} className="flex items-start gap-2">
@@ -306,40 +328,35 @@ export default function FrameworkPage() {
               Quality Control
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="bg-card border rounded-lg p-4 sm:p-6">
-                <h3 className="font-medium mb-4">Temperature Guidelines</h3>
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">Proteins</h4>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
-                      {framework.qualityControl.temperatures.protein.map((item, index) => (
-                        <li key={index} className="flex justify-between">
-                          <span>{item.item}</span>
-                          <span className="font-mono">{item.temp}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">Storage</h4>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
-                      {framework.qualityControl.temperatures.storage.map((item, index) => (
-                        <li key={index} className="flex justify-between">
-                          <span>{item.zone}</span>
-                          <span className="font-mono">{item.temp}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Protein Temperatures</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {framework.qualityControl.temperatures.protein.map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span className="flex-1">{item.item}</span>
+                      <span>{item.temp}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-
-              <div className="bg-card border rounded-lg p-4 sm:p-6">
-                <h3 className="font-medium mb-4">Cooling Requirements</h3>
-                <div className="text-sm text-muted-foreground">
-                  <p>{framework.qualityControl.cooling}</p>
-                </div>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Storage Temperatures</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {framework.qualityControl.temperatures.storage.map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span className="flex-1">{item.zone}</span>
+                      <span>{item.temp}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
+            </div>
+            <div className="mt-4 bg-card border rounded-lg p-4">
+              <p className="text-sm text-muted-foreground">
+                <span className="font-medium">Cooling Safety:</span> {framework.qualityControl.cooling}
+              </p>
             </div>
           </section>
 
@@ -349,78 +366,70 @@ export default function FrameworkPage() {
               <Package className="h-5 w-5 text-primary flex-shrink-0" />
               Container System
             </h2>
-            <div className="grid gap-4">
-              <div className="bg-card border rounded-lg p-4 sm:p-6">
-                <h3 className="font-medium mb-4">Main Meals</h3>
-                <div className="space-y-4">
-                  <Link 
-                    href={framework.containers.mainMeals.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block text-sm"
-                  >
-                    <span className="font-medium text-primary hover:text-primary/80 transition-colors">
-                      {equipmentRepo.get('meal-containers').title}
-                    </span>
-                    <p className="text-muted-foreground mt-1">
-                      {framework.containers.mainMeals.type}
-                    </p>
-                  </Link>
-                  <div className="grid gap-4 sm:grid-cols-3">
-                    {framework.containers.mainMeals.sections.map((section, index) => (
-                      <div key={index} className="bg-muted/50 rounded p-3">
-                        <h4 className="text-sm font-medium mb-1">{section.name}</h4>
-                        <p className="text-sm text-muted-foreground">{section.capacity}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Main Meals</h3>
+                <Link
+                  href={containers.mainMeals.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground hover:text-foreground mb-3 block"
+                >
+                  {containers.mainMeals.type}
+                </Link>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {containers.mainMeals.sections.map((section, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span className="flex-1">{section.name}</span>
+                      <span>{section.capacity}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="bg-card border rounded-lg p-4 sm:p-6">
-                  <h3 className="font-medium mb-4">Breakfast</h3>
-                  <Link 
-                    href={framework.containers.breakfast.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block text-sm"
-                  >
-                    <span className="font-medium text-primary hover:text-primary/80 transition-colors">
-                      {equipmentRepo.get('mason-jars').title}
-                    </span>
-                    <p className="text-muted-foreground mt-1">
-                      {framework.containers.breakfast.type}
-                    </p>
-                  </Link>
-                  <p className="text-sm text-muted-foreground mt-4">{framework.containers.breakfast.quantity}</p>
-                  <p className="text-xs text-muted-foreground mt-2">{framework.containers.breakfast.note}</p>
-                </div>
-
-                <div className="bg-card border rounded-lg p-4 sm:p-6">
-                  <h3 className="font-medium mb-4">Smoothies</h3>
-                  <Link 
-                    href={framework.containers.smoothies.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block text-sm"
-                  >
-                    <span className="font-medium text-primary hover:text-primary/80 transition-colors">
-                      {equipmentRepo.get('smoothie-bags').title}
-                    </span>
-                    <p className="text-muted-foreground mt-1">
-                      {framework.containers.smoothies.type}
-                    </p>
-                  </Link>
-                  <ul className="text-sm text-muted-foreground space-y-1 mt-4">
-                    {framework.containers.smoothies.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <span className="flex-shrink-0">•</span>
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Breakfast</h3>
+                <Link
+                  href={containers.breakfast.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground hover:text-foreground mb-3 block"
+                >
+                  {containers.breakfast.type}
+                </Link>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <span className="flex-shrink-0">•</span>
+                    <span>{containers.breakfast.quantity}</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="flex-shrink-0">•</span>
+                    <span>{containers.breakfast.note}</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Smoothies</h3>
+                <Link
+                  href={containers.smoothies.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground hover:text-foreground mb-3 block"
+                >
+                  {containers.smoothies.type}
+                </Link>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {containers.smoothies.features.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Sauces</h3>
+                <p className="text-sm text-muted-foreground">{containers.sauces.type}</p>
               </div>
             </div>
           </section>
@@ -428,24 +437,24 @@ export default function FrameworkPage() {
           {/* Storage */}
           <section>
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Scale className="h-5 w-5 text-primary flex-shrink-0" />
-              Storage Layout
+              <Package className="h-5 w-5 text-primary flex-shrink-0" />
+              Storage Organization
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="bg-card border rounded-lg p-4 sm:p-6">
-                <h3 className="font-medium mb-4">Refrigerator</h3>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Fridge Layout</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   {framework.storage.fridge.map((item, index) => (
-                    <li key={index} className="flex justify-between">
-                      <span>{item.shelf}</span>
-                      <span className="text-right">{item.contents}</span>
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span className="flex-1">{item.shelf}</span>
+                      <span>{item.contents}</span>
                     </li>
                   ))}
                 </ul>
               </div>
-
-              <div className="bg-card border rounded-lg p-4 sm:p-6">
-                <h3 className="font-medium mb-4">Freezer</h3>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Freezer Organization</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   {framework.storage.freezer.map((item, index) => (
                     <li key={index} className="flex items-start gap-2">
@@ -458,26 +467,96 @@ export default function FrameworkPage() {
             </div>
           </section>
 
+          {/* Scaling */}
+          <section>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Scale className="h-5 w-5 text-primary flex-shrink-0" />
+              Scaling Guide
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Base Quantities</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {Object.entries(framework.scaling.base).map(([key, value]) => (
+                    <li key={key} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span className="capitalize flex-1">{key}</span>
+                      <span>{value}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Scaling Multipliers</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {framework.scaling.multipliers.map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span className="flex-1">{item.people} people</span>
+                      <span>{item.factor}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-4 text-sm text-muted-foreground">
+                  <p>Base time: {framework.scaling.timeAdjustments.base}</p>
+                  <p>{framework.scaling.timeAdjustments.additional}</p>
+                  <p>Maximum: {framework.scaling.timeAdjustments.maximum}</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* Troubleshooting */}
           <section>
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <AlertCircle className="h-5 w-5 text-primary flex-shrink-0" />
-              Troubleshooting
+              Troubleshooting Guide
             </h2>
-            <div className="grid gap-4">
-              {Object.entries(framework.troubleshooting).map(([category, items]) => (
-                <div key={category} className="bg-card border rounded-lg p-4 sm:p-6">
-                  <h3 className="font-medium mb-4 capitalize">{category.replace(/([A-Z])/g, ' $1').trim()}</h3>
-                  <ul className="space-y-4">
-                    {items.map((item, index) => (
-                      <li key={index} className="text-sm">
-                        <div className="font-medium mb-1">{item.issue}</div>
-                        <div className="text-muted-foreground">{item.solution}</div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Food Safety</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {framework.troubleshooting.foodSafety.map((item, index) => (
+                    <li key={index} className="flex flex-col gap-1">
+                      <span className="font-medium">{item.issue}</span>
+                      <span>{item.solution}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Container Issues</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {framework.troubleshooting.containers.map((item, index) => (
+                    <li key={index} className="flex flex-col gap-1">
+                      <span className="font-medium">{item.issue}</span>
+                      <span>{item.solution}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Quality Issues</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {framework.troubleshooting.quality.map((item, index) => (
+                    <li key={index} className="flex flex-col gap-1">
+                      <span className="font-medium">{item.issue}</span>
+                      <span>{item.solution}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Time Management</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {framework.troubleshooting.timeManagement.map((item, index) => (
+                    <li key={index} className="flex flex-col gap-1">
+                      <span className="font-medium">{item.issue}</span>
+                      <span>{item.solution}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </section>
         </div>
