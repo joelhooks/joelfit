@@ -9,7 +9,14 @@ export const metricSchema = z.object({
   rsmi: z.number().min(0)
 })
 
-export type Metrics = z.infer<typeof metricSchema>
+export interface Metrics {
+  androidFat: number
+  gynoidFat: number
+  agRatio: number
+  visceralFat: number
+  totalBodyFat: number
+  rsmi: number
+}
 
 export const targetSchema = z.object({
   androidFat: z.number().max(24),
@@ -17,7 +24,14 @@ export const targetSchema = z.object({
   visceralFat: z.number().max(2)
 })
 
-export type Targets = z.infer<typeof targetSchema>
+export interface Targets {
+  androidFat: number
+  gynoidFat: number
+  agRatio: number
+  visceralFat: number
+  totalBodyFat: number
+  rsmi: number
+}
 
 export const strengthAreaSchema = z.object({
   title: z.string(),

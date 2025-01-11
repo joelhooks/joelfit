@@ -14,43 +14,87 @@ interface NutritionProfileProps {
 export function NutritionProfile({ data }: NutritionProfileProps) {
   return (
     <div className="space-y-12">
-      <section>
-        <SectionHeader title="Daily Targets" icon={Apple} />
+      <section className="daily-targets">
+        <SectionHeader 
+          title="Daily Targets" 
+          icon={Apple} 
+        />
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <MetricCard
             title="CALORIES"
-            value="2250-2500"
-            subtitle={<span className="text-sm uppercase tracking-wide text-muted-foreground">kcal per day</span>}
+            value={
+              <div className="flex flex-col space-y-2">
+                <div className="text-[32px] font-bold tracking-tight">
+                  2250-2500
+                </div>
+                <div className="text-base text-muted-foreground">
+                  Target Range
+                </div>
+              </div>
+            }
+            subtitle={
+              <div className="text-sm uppercase tracking-wide text-muted-foreground/80">
+                Kilocalories Per Day
+              </div>
+            }
+            className="h-[200px]"
           />
           <MetricCard
             title="PROTEIN"
             value={
-              <div className="flex items-baseline gap-1">
-                <span>200-220g</span>
-                <span className="text-2xl">(35-40%)</span>
+              <div className="flex flex-col space-y-2">
+                <div className="text-[32px] font-bold tracking-tight">
+                  200-220g
+                </div>
+                <div className="text-base text-muted-foreground">
+                  35-40% of Total Calories
+                </div>
               </div>
             }
-            subtitle={<span className="text-sm uppercase tracking-wide text-muted-foreground">per day</span>}
+            subtitle={
+              <div className="text-sm uppercase tracking-wide text-muted-foreground/80">
+                Grams Per Day
+              </div>
+            }
+            className="h-[200px]"
           />
           <MetricCard
-            title="CARBS"
+            title="CARBOHYDRATES"
             value={
-              <div className="flex items-baseline gap-1">
-                <span>225-250g</span>
-                <span className="text-2xl">(40-45%)</span>
+              <div className="flex flex-col space-y-2">
+                <div className="text-[32px] font-bold tracking-tight">
+                  225-250g
+                </div>
+                <div className="text-base text-muted-foreground">
+                  40-45% of Total Calories
+                </div>
               </div>
             }
-            subtitle={<span className="text-sm uppercase tracking-wide text-muted-foreground">per day</span>}
+            subtitle={
+              <div className="text-sm uppercase tracking-wide text-muted-foreground/80">
+                Grams Per Day
+              </div>
+            }
+            className="h-[200px]"
           />
           <MetricCard
-            title="FAT"
+            title="FATS"
             value={
-              <div className="flex items-baseline gap-1">
-                <span>65-75g</span>
-                <span className="text-2xl">(25-30%)</span>
+              <div className="flex flex-col space-y-2">
+                <div className="text-[32px] font-bold tracking-tight">
+                  65-75g
+                </div>
+                <div className="text-base text-muted-foreground">
+                  25-30% of Total Calories
+                </div>
               </div>
             }
-            subtitle={<span className="text-sm uppercase tracking-wide text-muted-foreground">per day</span>}
+            subtitle={
+              <div className="text-sm uppercase tracking-wide text-muted-foreground/80">
+                Grams Per Day
+              </div>
+            }
+            className="h-[200px]"
           />
         </div>
       </section>

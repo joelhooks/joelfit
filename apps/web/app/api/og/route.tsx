@@ -162,40 +162,6 @@ function distortPoint(x: number, y: number, intensity: number, rng: SeededRandom
 }
 
 function generateVoronoiPath(width: number, height: number, rng: SeededRandom) {
-  // Match Voronoi extension
-  const extendedWidth = width * 2
-  const extendedHeight = height * 2
-  const offsetX = -width * 0.5
-  const offsetY = -height * 0.5
-
-  // Reduce to 2 shapes: one dominant and one accent
-  const points = Array.from({ length: 2 }, (_, i) => {
-    const cluster = rng.chance(0.5)
-    const baseX = offsetX + rng.range(0, extendedWidth)
-    const baseY = offsetY + rng.range(0, extendedHeight)
-    const colors = rng.pick(getColors(rng))
-    
-    // More dramatic size difference between shapes
-    const size = i === 0 
-      ? 4 + rng.range(0, 5) // Main shape: 4-9x (bigger)
-      : 0.8 + rng.range(0, 1.2) // Accent shape: 0.8-2x (smaller)
-    
-    return {
-      x: cluster ? baseX + rng.range(-500, 500) : baseX,
-      y: cluster ? baseY + rng.range(-500, 500) : baseY,
-      colors,
-      size,
-      distortion: i === 0
-        ? 200 + rng.range(0, 300) // More dramatic for main shape
-        : 50 + rng.range(0, 100), // Subtle for accent
-      complexity: i === 0 ? 8 : 12, // Different detail levels
-      roughness: i === 0 ? rng.range(0.2, 0.4) : rng.range(0.6, 0.8), // Main smooth, accent rough
-      isBouba: i === 0, // Main shape always smooth
-      rotation: rng.next() * Math.PI * 2,
-      glow: i === 0 ? 0.9 : 0.5, // Stronger glow on main shape
-    }
-  })
-
   const paths: Array<{ 
     path: string; 
     colors: string[]; 
@@ -204,95 +170,43 @@ function generateVoronoiPath(width: number, height: number, rng: SeededRandom) {
     glow: number;
   }> = []
   
-  points.forEach((point, i) => {
-    const cell: string[] = []
+  // Reduce to just 2 shapes for main aesthetic
+  const points = Array.from({ length: 2 }, (_, i) => {
+    const baseX = rng.range(-width * 0.5, width * 0.5)
+    const baseY = rng.range(-height * 0.5, height * 0.5)
+    const colors = rng.pick(getColors(rng))
+    
+    return {
+      x: baseX,
+      y: baseY,
+      colors,
+      size: i === 0 ? 4 + rng.range(0, 5) : 0.8 + rng.range(0, 1.2),
+      distortion: i === 0 ? 200 : 50,
+      complexity: i === 0 ? 8 : 12,
+      rotation: rng.next() * Math.PI * 2,
+      glow: i === 0 ? 0.9 : 0.5,
+    }
+  })
+
+  points.forEach(point => {
     const basePoints: Array<{x: number, y: number}> = []
     
-    // Create base polygon points with size variation
+    // Simplified polygon generation
     for (let angle = 0; angle < 360; angle += point.complexity) {
       const radian = (angle * Math.PI) / 180
-      let radius = (400 + rng.range(0, 300)) * point.size // Larger base radius with size variation
-      
-      // Find nearest point in this direction
-      points.forEach((other, j) => {
-        if (i !== j) {
-          const dx = other.x - point.x
-          const dy = other.y - point.y
-          const distance = Math.sqrt(dx * dx + dy * dy)
-          const pointAngle = Math.atan2(dy, dx)
-          const angleDiff = Math.abs(radian - pointAngle)
-          
-          if (angleDiff < Math.PI / 2.5) { // Wider angle for more overlap
-            radius = Math.min(radius, distance * 0.9) // More overlap
-          }
-        }
-      })
-      
-      // Add some controlled randomness to the radius
-      radius *= 0.7 + rng.range(0, 0.6) // More radius variation
+      const radius = (400 + rng.range(0, 300)) * point.size
       
       const baseX = point.x + radius * Math.cos(radian)
       const baseY = point.y + radius * Math.sin(radian)
       basePoints.push({ x: baseX, y: baseY })
     }
-    
-    // Add distortion and roughness to the edges
-    if (point.isBouba) {
-      // Create smooth, organic curves for Bouba shapes
-      const smoothedPoints: string[] = []
-      basePoints.forEach((basePoint, idx) => {
-        const nextIdx = (idx + 1) % basePoints.length
-        const prevIdx = (idx - 1 + basePoints.length) % basePoints.length
-        
-        const prev = basePoints[prevIdx]!
-        const next = basePoints[nextIdx]!
-        
-        // Calculate control points with more dramatic curves
-        const controlPoint1 = {
-          x: basePoint.x + (next.x - prev.x) * 0.3,
-          y: basePoint.y + (next.y - prev.y) * 0.3
-        }
-        
-        const controlPoint2 = {
-          x: next.x - (next.x - basePoint.x) * 0.3,
-          y: next.y - (next.y - basePoint.y) * 0.3
-        }
-        
-        // Add more dramatic waviness
-        const wave = Math.sin(idx * 0.8) * point.distortion * 0.5
-        controlPoint1.x += wave
-        controlPoint1.y += wave
-        controlPoint2.x -= wave
-        controlPoint2.y -= wave
-        
-        if (idx === 0) {
-          smoothedPoints.push(`M${basePoint.x},${basePoint.y}`)
-        }
-        smoothedPoints.push(`C${controlPoint1.x},${controlPoint1.y} ${controlPoint2.x},${controlPoint2.y} ${next.x},${next.y}`)
-      })
-      cell.push(smoothedPoints.join(' ') + 'Z')
-    } else {
-      // More aggressive distortion for Kiki shapes
-      basePoints.forEach((basePoint, idx) => {
-        const distorted = distortPoint(basePoint.x, basePoint.y, point.distortion * point.roughness * 1.5, rng)
-        
-        if (rng.chance(0.6)) { // More extra points
-          const nextPoint = basePoints[(idx + 1) % basePoints.length]!
-          const extraPoint = distortPoint(
-            (basePoint.x + nextPoint.x) / 2,
-            (basePoint.y + nextPoint.y) / 2,
-            point.distortion * 2,
-            rng
-          )
-          cell.push(`${distorted.x},${distorted.y} ${extraPoint.x},${extraPoint.y}`)
-        } else {
-          cell.push(`${distorted.x},${distorted.y}`)
-        }
-      })
-    }
+
+    // Create smooth path
+    const path = `M${basePoints[0]!.x},${basePoints[0]!.y}` + 
+      basePoints.slice(1).map(p => `L${p.x},${p.y}`).join('') + 'Z'
     
     paths.push({ 
-      path: point.isBouba ? cell[0]! : `M${cell.join('L')}Z`,
+      path,
       colors: point.colors,
       rotation: point.rotation,
       size: point.size,
@@ -304,20 +218,13 @@ function generateVoronoiPath(width: number, height: number, rng: SeededRandom) {
 }
 
 function generateNoisePattern(width: number, height: number, rng: SeededRandom) {
-  // Match Voronoi extension
-  const extendedWidth = width * 2
-  const extendedHeight = height * 2
-  const offsetX = -width * 0.5
-  const offsetY = -height * 0.5
-  
-  const cellSize = 40
+  const cellSize = 80 // Larger cells = fewer elements
   const paths: string[] = []
   
-  for (let x = offsetX; x < offsetX + extendedWidth; x += cellSize) {
-    for (let y = offsetY; y < offsetY + extendedHeight; y += cellSize) {
-      const noise = rng.next()
-      if (noise > 0.75) {
-        const size = cellSize * (0.3 + noise * 0.4)
+  for (let x = -width; x < width; x += cellSize) {
+    for (let y = -height; y < height; y += cellSize) {
+      if (rng.next() > 0.8) { // Reduce density
+        const size = cellSize * 0.3
         paths.push(`M${x},${y}h${size}v${size}h-${size}Z`)
       }
     }
@@ -328,85 +235,40 @@ function generateNoisePattern(width: number, height: number, rng: SeededRandom) 
 
 function generateShatteredLines(width: number, height: number, rng: SeededRandom) {
   const lines: Array<{path: string, opacity: number, width: number}> = []
-  const numLines = 25 // Fewer lines
+  const numLines = 15 // Fewer lines
   
-  // Match Voronoi extension
-  const extendedWidth = width * 2
-  const extendedHeight = height * 2
-  const offsetX = -width * 0.5
-  const offsetY = -height * 0.5
-  
-  // Generate fewer anchor points for more intentional paths
-  const anchors = Array.from({ length: 8 }, () => ({
-    x: offsetX + rng.range(0, extendedWidth),
-    y: offsetY + rng.range(0, extendedHeight),
+  const anchors = Array.from({ length: 4 }, () => ({ // Fewer anchor points
+    x: rng.range(-width, width),
+    y: rng.range(-height, height),
     influence: 0.3 + rng.range(0, 0.7)
   }))
   
-  // Generate lines between random points with smoother curves
   for (let i = 0; i < numLines; i++) {
     const start = anchors[Math.floor(rng.next() * anchors.length)]!
+    let path = `M${start.x},${start.y}`
+    
+    // Simpler line generation
+    const segments = 2
     let currentPoint = { x: start.x, y: start.y }
-    let path = `M${currentPoint.x},${currentPoint.y}`
-    
-    // Add 2-3 segments for cleaner lines
-    const segments = 2 + Math.floor(rng.next() * 2)
-    
-    // Each line gets unique characteristics
-    const lineStyle = {
-      opacity: 0.1 + rng.range(0, 0.3), // More variance in opacity
-      width: rng.chance(0.7) 
-        ? 2 + rng.range(0, 4) // Occasional thick lines
-        : 0.5 + rng.range(0, 1.5), // Usually thin lines
-      smoothness: rng.chance(0.3) // 70% chance of smooth curves
-    }
     
     for (let j = 0; j < segments; j++) {
-      // Use nearby anchor points to influence the curve
-      let influenceX = 0
-      let influenceY = 0
-      
-      anchors.forEach(anchor => {
-        const dx = anchor.x - currentPoint.x
-        const dy = anchor.y - currentPoint.y
-        const distance = Math.sqrt(dx * dx + dy * dy)
-        const pull = (1 - Math.min(1, distance / 400)) * anchor.influence
-        influenceX += dx * pull
-        influenceY += dy * pull
-      })
-      
-      // Add some gentle randomness to the direction
-      const angle = Math.atan2(influenceY, influenceX) + (rng.next() - 0.5) * Math.PI * 0.5
-      const length = 300 + rng.range(0, 300) // Varied lengths
+      const angle = Math.atan2(
+        anchors[(j + 1) % anchors.length]!.y - currentPoint.y,
+        anchors[(j + 1) % anchors.length]!.x - currentPoint.x
+      )
+      const length = 300 + rng.range(0, 300)
       
       const endX = currentPoint.x + Math.cos(angle) * length
       const endY = currentPoint.y + Math.sin(angle) * length
       
-      if (lineStyle.smoothness) {
-        // Create smooth, organic curves
-        const control1X = currentPoint.x + Math.cos(angle - 0.2) * length * 0.5
-        const control1Y = currentPoint.y + Math.sin(angle - 0.2) * length * 0.5
-        const control2X = endX - Math.cos(angle + 0.2) * length * 0.3
-        const control2Y = endY - Math.sin(angle + 0.2) * length * 0.3
-        
-        path += ` C${control1X},${control1Y} ${control2X},${control2Y} ${endX},${endY}`
-      } else {
-        // Create subtle angles instead of sharp zigzags
-        const midX = currentPoint.x + Math.cos(angle) * length * 0.5
-        const midY = currentPoint.y + Math.sin(angle) * length * 0.5
-        const controlX = midX + (rng.next() - 0.5) * 50 // Gentler deviation
-        const controlY = midY + (rng.next() - 0.5) * 50
-        
-        path += ` Q${controlX},${controlY} ${endX},${endY}`
-      }
-      
+      path += ` L${endX},${endY}`
       currentPoint = { x: endX, y: endY }
     }
     
     lines.push({
       path,
-      opacity: lineStyle.opacity,
-      width: lineStyle.width
+      opacity: 0.1 + rng.range(0, 0.3),
+      width: 1 + rng.range(0, 2)
     })
   }
   
@@ -414,89 +276,53 @@ function generateShatteredLines(width: number, height: number, rng: SeededRandom
 }
 
 function generateDistortedGrid(width: number, height: number, rng: SeededRandom) {
-  const gridSize = 25 // Base grid cell size
-  
-  // Match Voronoi extension
-  const extendedWidth = width * 2
-  const extendedHeight = height * 2
-  const offsetX = -width * 0.5
-  const offsetY = -height * 0.5
-  
-  // Create more varied black holes
-  const blackHoles = Array.from({ length: 6 }, () => ({
-    x: offsetX + rng.range(0, extendedWidth),
-    y: offsetY + rng.range(0, extendedHeight),
-    radius: 150 + rng.range(0, 300),
-    strength: 1 + rng.range(0, 2.5),
-    gravityField: 50 + rng.range(0, 200)
-  }))
-
+  const gridSize = 50 // Larger grid size = fewer lines
   const paths: Array<{ path: string; thickness: number }> = []
   
-  // Generate vertical lines with extended coverage
-  for (let x = offsetX; x <= offsetX + extendedWidth; x += gridSize) {
-    let path = `M ${x} ${offsetY}`
-    let maxDistortion = 0
-    
-    // Create points along the line
-    for (let y = offsetY; y <= offsetY + extendedHeight; y += gridSize / 4) {
+  // Reduce number of distortion points
+  const distortionPoints = Array.from({ length: 3 }, () => ({
+    x: rng.range(-width, width),
+    y: rng.range(-height, height),
+    radius: 200 + rng.range(0, 300),
+    strength: 1 + rng.range(0, 2)
+  }))
+
+  // Generate fewer grid lines
+  for (let x = -width; x <= width; x += gridSize * 2) {
+    let path = `M${x},${-height}`
+    for (let y = -height; y <= height; y += gridSize) {
       let distortedX = x
-      let distortedY = y
-      let currentDistortion = 0
       
-      // Apply black hole distortion
-      blackHoles.forEach(hole => {
-        const dx = x - hole.x
-        const dy = y - hole.y
+      distortionPoints.forEach(point => {
+        const dx = x - point.x
+        const dy = y - point.y
         const distance = Math.sqrt(dx * dx + dy * dy)
-        const influence = Math.max(0, 1 - distance / hole.radius)
-        const angle = Math.atan2(dy, dx)
-        
-        const distortion = influence * influence * influence * hole.strength
-        distortedX += Math.cos(angle) * distortion * 50
-        distortedY += Math.sin(angle) * distortion * 50
-        
-        currentDistortion += (1 - distance / hole.gravityField) * influence
+        const influence = Math.max(0, 1 - distance / point.radius)
+        distortedX += dx * influence * point.strength
       })
       
-      maxDistortion = Math.max(maxDistortion, currentDistortion)
-      path += ` L ${distortedX} ${distortedY}`
+      path += ` L${distortedX},${y}`
     }
-    
-    paths.push({ path, thickness: Math.max(0.5, maxDistortion * 2) })
+    paths.push({ path, thickness: 1 })
   }
-  
-  // Generate horizontal lines with extended coverage
-  for (let y = offsetY; y <= offsetY + extendedHeight; y += gridSize) {
-    let path = `M ${offsetX} ${y}`
-    let maxDistortion = 0
-    
-    // Create points along the line
-    for (let x = offsetX; x <= offsetX + extendedWidth; x += gridSize / 4) {
-      let distortedX = x
+
+  // Fewer horizontal lines
+  for (let y = -height; y <= height; y += gridSize * 2) {
+    let path = `M${-width},${y}`
+    for (let x = -width; x <= width; x += gridSize) {
       let distortedY = y
-      let currentDistortion = 0
       
-      // Apply black hole distortion
-      blackHoles.forEach(hole => {
-        const dx = x - hole.x
-        const dy = y - hole.y
+      distortionPoints.forEach(point => {
+        const dx = x - point.x
+        const dy = y - point.y
         const distance = Math.sqrt(dx * dx + dy * dy)
-        const influence = Math.max(0, 1 - distance / hole.radius)
-        const angle = Math.atan2(dy, dx)
-        
-        const distortion = influence * influence * influence * hole.strength
-        distortedX += Math.cos(angle) * distortion * 50
-        distortedY += Math.sin(angle) * distortion * 50
-        
-        currentDistortion += (1 - distance / hole.gravityField) * influence
+        const influence = Math.max(0, 1 - distance / point.radius)
+        distortedY += dy * influence * point.strength
       })
       
-      maxDistortion = Math.max(maxDistortion, currentDistortion)
-      path += ` L ${distortedX} ${distortedY}`
+      path += ` L${x},${distortedY}`
     }
-    
-    paths.push({ path, thickness: Math.max(0.5, maxDistortion * 2) })
+    paths.push({ path, thickness: 1 })
   }
   
   return paths
@@ -506,58 +332,21 @@ function generateStarfield(width: number, height: number, rng: SeededRandom) {
   const stars: Array<{
     path: string,
     opacity: number,
-    rotation: number,
     size: number
   }> = []
   
-  // Match extended area
-  const extendedWidth = width * 2
-  const extendedHeight = height * 2
-  const offsetX = -width * 0.5
-  const offsetY = -height * 0.5
-  
-  // Generate 50-75 stars instead of 200-300
-  const numStars = 50 + Math.floor(rng.next() * 25)
+  const numStars = 30 // Fewer stars
   
   for (let i = 0; i < numStars; i++) {
-    const x = offsetX + rng.range(0, extendedWidth)
-    const y = offsetY + rng.range(0, extendedHeight)
+    const x = rng.range(-width, width)
+    const y = rng.range(-height, height)
+    const size = rng.chance(0.9) ? 2 : 4
+    const opacity = 0.15 + rng.next() * 0.35
     
-    // Smaller sizes with rare big ones
-    const size = rng.chance(0.98)
-      ? 6 + rng.range(0, 8) // 2% chance of big stars (6-14px)
-      : rng.chance(0.8)
-        ? 3 + rng.range(0, 3) // 18% chance of medium stars (3-6px)
-        : 1 + rng.range(0, 2) // 80% chance of small stars (1-3px)
+    // Simpler star shape
+    const path = `M${x-size},${y} L${x+size},${y} M${x},${y-size} L${x},${y+size}`
     
-    // Lower base opacity
-    const opacity = 0.15 + rng.next() * 0.35 // 0.15-0.5 opacity
-    const rotation = rng.next() * Math.PI * 2
-    
-    // Create 5-pointed star path
-    const points: Array<[number, number]> = []
-    const outerRadius = size
-    const innerRadius = size * (0.2 + rng.range(0, 0.3)) // Varied inner radius (20-50% of outer)
-    
-    for (let j = 0; j < 10; j++) {
-      const radius = j % 2 === 0 ? outerRadius : innerRadius
-      const angle = (j * Math.PI) / 5 + rotation
-      points.push([
-        x + radius * Math.cos(angle),
-        y + radius * Math.sin(angle)
-      ])
-    }
-    
-    // We know points[0] exists because we just added 10 points
-    const path = `M${points[0]![0]},${points[0]![1]}` + 
-      points.slice(1).map(p => `L${p[0]},${p[1]}`).join('') + 'Z'
-    
-    stars.push({
-      path,
-      opacity,
-      rotation,
-      size
-    })
+    stars.push({ path, opacity, size })
   }
   
   return stars
@@ -568,67 +357,22 @@ function generateTechnicalRings(width: number, height: number, rng: SeededRandom
     path: string,
     strokeColor: string,
     strokeWidth: number,
-    rotation: number,
     dashArray?: string
   }> = []
 
-  // Generate 2-3 ring clusters
-  const numClusters = 2 + Math.floor(rng.next() * 2)
+  // Fewer rings
+  const numRings = 3
+  const centerX = rng.range(-width * 0.3, width * 0.3)
+  const centerY = rng.range(-height * 0.3, height * 0.3)
   
-  for (let cluster = 0; cluster < numClusters; cluster++) {
-    // Wider spread for ring centers
-    const centerX = rng.range(-width * 0.5, width * 0.5)
-    const centerY = rng.range(-height * 0.5, height * 0.5)
-    const rotation = rng.next() * Math.PI * 2
-    
-    // Generate 3-6 rings per cluster (fewer but bigger)
-    const numRings = 3 + Math.floor(rng.next() * 4)
-    
-    for (let i = 0; i < numRings; i++) {
-      // Much larger base radius
-      const radius = 200 + i * 80 + rng.range(0, 120)
-      const detail = rng.chance(0.7)
-      
-      if (detail) {
-        // Technical detailed ring
-        let path = `M ${centerX - radius} ${centerY} A ${radius} ${radius} 0 1 0 ${centerX + radius} ${centerY}`
-        
-        // Add technical details
-        const numDetails = 8 + Math.floor(rng.next() * 8)
-        for (let j = 0; j < numDetails; j++) {
-          const angle = (j / numDetails) * Math.PI * 2
-          const detailRadius = radius + (rng.next() - 0.5) * 20
-          const x = centerX + Math.cos(angle) * detailRadius
-          const y = centerY + Math.sin(angle) * detailRadius
-          
-          if (rng.chance(0.3)) {
-            // Even bigger circles
-            path += ` M ${x - 6} ${y} a 6 6 0 1 0 12 0 a 6 6 0 1 0 -12 0`
-          } else if (rng.chance(0.5)) {
-            // Much longer tick marks
-            path += ` M ${x} ${y} l ${Math.cos(angle) * 24} ${Math.sin(angle) * 24}`
-          }
-        }
-        
-        rings.push({
-          path,
-          strokeColor: rng.chance(0.7) 
-            ? `rgba(255,255,255,${0.15 + rng.next() * 0.15})` // White rings: 0.15-0.3 opacity
-            : `rgba(128,128,128,${0.1 + rng.next() * 0.1})`, // Mid-gray rings: 0.1-0.2 opacity
-          strokeWidth: 2 + rng.next() * 3,
-          rotation,
-          dashArray: rng.chance(0.3) ? '12,12' : undefined
-        })
-      } else {
-        rings.push({
-          path: `M ${centerX - radius} ${centerY} A ${radius} ${radius} 0 1 0 ${centerX + radius} ${centerY}`,
-          strokeColor: `rgba(96,96,96,${0.05 + rng.next() * 0.1})`, // Dark gray rings: 0.05-0.15 opacity
-          strokeWidth: 1.5,
-          rotation,
-          dashArray: '6,12'
-        })
-      }
-    }
+  for (let i = 0; i < numRings; i++) {
+    const radius = 200 + i * 100
+    rings.push({
+      path: `M ${centerX - radius} ${centerY} A ${radius} ${radius} 0 1 0 ${centerX + radius} ${centerY}`,
+      strokeColor: `rgba(255,255,255,${0.1 + i * 0.1})`,
+      strokeWidth: 1.5,
+      dashArray: i === 1 ? '8,8' : undefined
+    })
   }
   
   return rings
@@ -638,79 +382,29 @@ function generateSwooshes(width: number, height: number, rng: SeededRandom) {
   const swooshes: Array<{
     path: string,
     gradient: [string, string],
-    opacity: number,
-    rotation: number
+    opacity: number
   }> = []
 
-  // Generate 3-5 swooshes
-  const numSwooshes = 3 + Math.floor(rng.next() * 3)
+  // Just 2 swooshes
+  const numSwooshes = 2
   const colors = getColors(rng)
 
   for (let i = 0; i < numSwooshes; i++) {
-    // Much wider spread
-    const startX = rng.range(-width * 0.8, width * 0.8)
-    const startY = rng.range(-height * 0.8, height * 0.8)
-    const controlScale = 0.8 + rng.next() * 0.4
-
-    // Create swoosh path with multiple curves
-    let path = `M ${startX} ${startY}`
+    const startX = rng.range(-width * 0.5, width * 0.5)
+    const startY = rng.range(-height * 0.5, height * 0.5)
     
-    // Add 2-3 curve segments
-    let currentX = startX
-    let currentY = startY
-    const segments = 2 + Math.floor(rng.next() * 2)
+    // Simpler curve
+    const endX = startX + rng.range(-width * 0.3, width * 0.3)
+    const endY = startY + rng.range(-height * 0.3, height * 0.3)
+    const controlX = (startX + endX) / 2 + rng.range(-200, 200)
+    const controlY = (startY + endY) / 2 + rng.range(-200, 200)
     
-    for (let j = 0; j < segments; j++) {
-      const angle = rng.next() * Math.PI * 2
-      // Much longer swooshes
-      const length = 500 + rng.range(0, 600)
-      
-      // More dramatic control points
-      const cp1x = currentX + Math.cos(angle) * length * 0.7
-      const cp1y = currentY + Math.sin(angle) * length * 0.7
-      const cp2x = currentX + Math.cos(angle + 0.5) * length * 0.95
-      const cp2y = currentY + Math.sin(angle + 0.5) * length * 0.95
-      
-      // End point
-      const endX = currentX + Math.cos(angle + 1) * length
-      const endY = currentY + Math.sin(angle + 1) * length
-      
-      path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${endX} ${endY}`
-      
-      currentX = endX
-      currentY = endY
-    }
-
-    // Much thicker swooshes
-    const offset = 40 + rng.range(0, 80)
-    path += ` m ${offset} 0`
-    
-    // Return path in reverse
-    for (let j = segments - 1; j >= 0; j--) {
-      const angle = rng.next() * Math.PI * 2
-      const length = 200 + rng.range(0, 300)
-      
-      const cp1x = currentX - Math.cos(angle) * length * 0.8
-      const cp1y = currentY - Math.sin(angle) * length * 0.8
-      const cp2x = currentX - Math.cos(angle + 0.5) * length * 0.5
-      const cp2y = currentY - Math.sin(angle + 0.5) * length * 0.5
-      
-      const endX = currentX - Math.cos(angle + 1) * length
-      const endY = currentY - Math.sin(angle + 1) * length
-      
-      path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${endX} ${endY}`
-      
-      currentX = endX
-      currentY = endY
-    }
-    
-    path += ' Z'
+    const path = `M ${startX} ${startY} Q ${controlX} ${controlY} ${endX} ${endY}`
 
     swooshes.push({
       path,
       gradient: rng.pick(colors),
-      opacity: 0.5 + rng.next() * 0.4, // Higher base opacity
-      rotation: rng.next() * Math.PI * 2
+      opacity: 0.5 + rng.next() * 0.4
     })
   }
 
@@ -763,16 +457,13 @@ export async function GET(req: NextRequest) {
     const title = searchParams.get('title')?.slice(0, 150) || 'JoelFit'
     const description = searchParams.get('description')?.slice(0, 250) || 'a personal health & fitness framework'
     
-    // Generate a stable public ID for Cloudinary based on the content
     const publicId = `og-images/${Buffer.from(title + description).toString('base64').slice(0, 50)}`
     
     if (USE_CLOUDINARY) {
-      // Try to fetch from Cloudinary first
       const cloudinaryUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/${publicId}.png`
       const cloudinaryResponse = await fetch(cloudinaryUrl, { method: 'HEAD' })
       
       if (cloudinaryResponse.ok) {
-        // Image exists in Cloudinary, redirect to it
         return new Response(null, {
           status: 302,
           headers: {
@@ -822,7 +513,7 @@ export async function GET(req: NextRequest) {
     const technicalRings = generateTechnicalRings(width, height, rng)
     const swooshes = generateSwooshes(width, height, rng)
  
-    const response = new ImageResponse(
+    const imageResponse = new ImageResponse(
       (
         <div
           style={{
@@ -959,19 +650,7 @@ export async function GET(req: NextRequest) {
             {/* Technical Rings */}
             <g style={{ mixBlendMode: 'screen' }}>
               {technicalRings.map((ring, i) => (
-                <g key={`ring-${i}`} transform={`rotate(${(ring.rotation * 180) / Math.PI})`}>
-                  {/* Glow effect for white rings */}
-                  {ring.strokeColor === '#FFFFFF' && (
-                    <path
-                      d={ring.path}
-                      fill="none"
-                      stroke={ring.strokeColor}
-                      strokeWidth={ring.strokeWidth + 1}
-                      strokeDasharray={ring.dashArray}
-                      filter="url(#glow)"
-                      style={{ opacity: 0.3 }}
-                    />
-                  )}
+                <g key={`ring-${i}`}>
                   {/* Main ring */}
                   <path
                     d={ring.path}
@@ -995,19 +674,11 @@ export async function GET(req: NextRequest) {
                       y1="0%"
                       x2="100%"
                       y2="100%"
-                      gradientTransform={`rotate(${(swoosh.rotation * 180) / Math.PI})`}
                     >
                       <stop offset="0%" style={{ stopColor: swoosh.gradient[0], stopOpacity: swoosh.opacity }} />
                       <stop offset="100%" style={{ stopColor: swoosh.gradient[1], stopOpacity: swoosh.opacity * 0.5 }} />
                     </linearGradient>
                   </defs>
-                  {/* Glow effect */}
-                  <path
-                    d={swoosh.path}
-                    fill={`url(#swoosh-grad-${i})`}
-                    filter="url(#glow)"
-                    style={{ opacity: swoosh.opacity * 0.5 }}
-                  />
                   {/* Main swoosh */}
                   <path
                     d={swoosh.path}
@@ -1192,29 +863,44 @@ export async function GET(req: NextRequest) {
       },
     )
     
+    // Get the image data once
+    const imageBuffer = await imageResponse.arrayBuffer()
+    
     if (USE_CLOUDINARY && CLOUDINARY_API_KEY && CLOUDINARY_API_SECRET) {
       try {
-        // Convert ImageResponse to buffer and upload to Cloudinary
-        const buffer = await response.arrayBuffer()
-        const cloudinaryResponse = await uploadToCloudinary(buffer, publicId)
+        const formData = new FormData()
+        formData.append('file', new Blob([imageBuffer]))
+        formData.append('public_id', publicId)
+        formData.append('api_key', CLOUDINARY_API_KEY)
+        formData.append('timestamp', String(Math.round(Date.now() / 1000)))
         
-        // Redirect to the Cloudinary URL
-        return new Response(null, {
-          status: 302,
-          headers: {
-            'Location': cloudinaryResponse.secure_url,
-            'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=60'
-          }
-        })
-      } catch (cloudinaryError) {
-        console.error('Cloudinary upload failed:', cloudinaryError)
-        // Fall back to serving the image directly
+        const cloudinaryResponse = await fetch(
+          `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+          { method: 'POST', body: formData }
+        )
+        
+        if (cloudinaryResponse.ok) {
+          const result = await cloudinaryResponse.json()
+          return new Response(null, {
+            status: 302,
+            headers: {
+              'Location': result.secure_url,
+              'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=60'
+            }
+          })
+        }
+      } catch (error) {
+        console.error('Cloudinary upload failed:', error)
       }
     }
     
-    // Add cache headers for direct serving
-    response.headers.set('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=60')
-    return response
+    // Return a new response with the buffer
+    return new Response(imageBuffer, {
+      headers: {
+        'Content-Type': 'image/png',
+        'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=60'
+      }
+    })
     
   } catch (e: any) {
     console.log(`${e.message}`)
