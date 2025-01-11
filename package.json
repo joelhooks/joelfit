@@ -17,6 +17,8 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@radix-ui/react-avatar": "^1.1.2"
+    "@radix-ui/react-avatar": "^1.1.2",
+    "@repo/core": "workspace:^",
+    "@repo/ui": "workspace:^"
   }
 }

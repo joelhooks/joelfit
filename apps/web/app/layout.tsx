@@ -5,6 +5,7 @@ import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import { SiteHeader } from '@/components/site-header'
 import { PageFooter } from '@/components/page-footer'
+import { Providers } from '@/components/providers'
 
 export const metadata: Metadata = {
   title: 'JoelFit',
@@ -38,9 +39,11 @@ export default function RootLayout({
           <div className="cyberpunk-scanlines" />
           <div className="cyberpunk-noise" />
           
-          <SiteHeader />
-          <div className="flex-1">{children}</div>
-          <PageFooter />
+          <Providers>
+            <SiteHeader />
+            <div className="flex-1">{children}</div>
+            <PageFooter />
+          </Providers>
         </div>
       </body>
     </html>
