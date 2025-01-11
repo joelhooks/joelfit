@@ -111,12 +111,12 @@
 ### 3.2 Component Updates 🚧
 
 #### 3.2.1 Shared Components
-- [ ] Add loading components to packages/ui
-  - Skeleton: base component for loading states
-  - PageSkeleton: for initial page load
-  - CardSkeleton: for individual card items
-  - ListSkeleton: for list items
-  - StatsSkeleton: for metric displays
+- [x] Add loading components to packages/ui
+  - Skeleton: base component for loading states ✅
+  - PageSkeleton: for initial page load ✅
+  - CardSkeleton: for individual card items ✅
+  - ListSkeleton: for list items ✅
+  - StatsSkeleton: for metric displays 🚧
 - [ ] Add error components to packages/ui
   - ErrorBoundary: catch and display errors
   - NotFound: for missing data
