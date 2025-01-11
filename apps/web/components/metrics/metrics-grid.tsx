@@ -11,10 +11,13 @@ interface MetricsGridProps {
 export function MetricsGrid({ data, targets }: MetricsGridProps) {
   // Helper to determine status based on current vs target value
   const getStatus = (current: number, target: number | undefined, isLowerBetter = true) => {
-    if (!target) return 'default'
+    if (!target) return 'info'
     const diff = isLowerBetter ? current - target : target - current
-    if (diff > target * 0.1) return 'warning'
-    if (diff < 0) return 'success'
+    const percentDiff = (diff / target) * 100
+
+    if (percentDiff > 20) return 'warning'
+    if (percentDiff > 5) return 'caution'
+    if (percentDiff < 0) return 'success'
     return 'info'
   }
 
@@ -46,7 +49,7 @@ export function MetricsGrid({ data, targets }: MetricsGridProps) {
         <MetricCard
           title="Total Body Fat"
           value={`${data.totalBodyFat}%`}
-          status={getStatus(data.totalBodyFat, 20)} // Assuming 20% is a good target
+          status={getStatus(data.totalBodyFat, 20)}
         />
         <MetricCard
           title="Gynoid Fat"
@@ -56,7 +59,7 @@ export function MetricsGrid({ data, targets }: MetricsGridProps) {
         <MetricCard
           title="RSMI"
           value={data.rsmi}
-          status="success" // High RSMI is good
+          status={getStatus(data.rsmi, 8, false)} // Higher is better, target minimum of 8
         />
       </div>
     </div>
