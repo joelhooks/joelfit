@@ -9,7 +9,7 @@ import { ProfileRepository } from '@/lib/repositories/profile'
 
 export default async function JoelProfilePage() {
   const repo = new ProfileRepository()
-  const profile = await repo.findBySlug('joel')
+  const profile = await repo.findBySlug('joel-hooks')
 
   return (
     <div className="container relative">
