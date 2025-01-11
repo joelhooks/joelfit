@@ -1,4 +1,4 @@
-import { type PersonalStats, type Metrics, type Targets, type StrengthArea, type ActionPlan } from '../types/metrics'
+import { type PersonalStats, type Metrics, type Targets, type StrengthArea, type ActionPlan, type NutritionProfile } from '../types/metrics'
 
 export const personalStats: PersonalStats = {
   name: 'Joel Hooks',
@@ -107,4 +107,80 @@ export const actionPlan: ActionPlan[] = [
       }
     ]
   }
-] 
+]
+
+export const nutritionProfile: NutritionProfile = {
+  targets: {
+    calories: '2250-2500',
+    protein: '200-220g (35-40%)',
+    carbs: '225-250g (40-45%)',
+    fat: '65-75g (25-30%)'
+  },
+  meals: [
+    {
+      name: 'Breakfast (A)',
+      time: '7:00 AM',
+      calories: 400,
+      protein: 30,
+      carbs: 45,
+      fat: 15,
+      container: '16oz mason jar'
+    },
+    {
+      name: 'Lunch (C)',
+      time: '11:30 AM',
+      calories: 650,
+      protein: 45,
+      carbs: 75,
+      fat: 20,
+      container: '34oz 3-compartment'
+    },
+    {
+      name: 'Mid-day Meal (D)',
+      time: '3:00 PM',
+      calories: 550,
+      protein: 35,
+      carbs: 55,
+      fat: 20,
+      container: '34oz 3-compartment'
+    },
+    {
+      name: 'Dinner (E)',
+      time: '7:00 PM',
+      calories: 400,
+      protein: 25,
+      carbs: 35,
+      fat: 13,
+      container: '34oz 3-compartment'
+    },
+    {
+      name: 'Night Snack (F)',
+      time: '9:00 PM',
+      calories: 200,
+      protein: 15,
+      carbs: 20,
+      fat: 7,
+      container: '8oz container'
+    }
+  ],
+  portions: {
+    protein: '6-8 oz per main meal',
+    carbs: '1.5-2 cups per main meal',
+    vegetables: '2 cups per main meal',
+    fats: '1-1.5 tbsp per main meal'
+  },
+  weeklyPrep: {
+    proteins: [
+      '1.5 lbs chicken',
+      '1.25 lbs turkey',
+      '1.4 lbs fish'
+    ],
+    carbs: [
+      '2.5 cups dry rice',
+      '1.25 lbs potatoes',
+      '1.25 cups dry quinoa'
+    ],
+    vegetables: '12-13 cups total',
+    sauces: '1x base recipes'
+  }
+} 

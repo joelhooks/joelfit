@@ -1,9 +1,8 @@
 'use client'
 
-import { PageHeader } from '@/components/page-header'
 import { MetricsGrid } from '@/components/metrics/metrics-grid'
 import { StrengthAreas } from '@/components/strength/strength-areas'
-import { ProfileNav, sections } from '@/components/navigation/profile-nav'
+import { ProfileNav } from '@/components/navigation/profile-nav'
 import { MobileNav } from '@/components/navigation/mobile-nav'
 import { ActionPlan } from '@/components/action/action-plan'
 import { ProgressTracking } from '@/components/progress/progress-tracking'

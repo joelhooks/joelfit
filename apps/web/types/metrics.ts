@@ -55,4 +55,48 @@ export const actionPlanSchema = z.object({
   items: z.array(actionItemSchema)
 })
 
-export type ActionPlan = z.infer<typeof actionPlanSchema> 
+export type ActionPlan = z.infer<typeof actionPlanSchema>
+
+export const mealSchema = z.object({
+  name: z.string(),
+  time: z.string(),
+  calories: z.number(),
+  protein: z.number(),
+  carbs: z.number(),
+  fat: z.number(),
+  container: z.string()
+})
+
+export const nutritionTargetsSchema = z.object({
+  calories: z.string(),
+  protein: z.string(),
+  carbs: z.string(),
+  fat: z.string()
+})
+
+export const portionsSchema = z.object({
+  protein: z.string(),
+  carbs: z.string(),
+  vegetables: z.string(),
+  fats: z.string()
+})
+
+export const weeklyPrepSchema = z.object({
+  proteins: z.array(z.string()),
+  carbs: z.array(z.string()),
+  vegetables: z.string(),
+  sauces: z.string()
+})
+
+export const nutritionProfileSchema = z.object({
+  targets: nutritionTargetsSchema,
+  meals: z.array(mealSchema),
+  portions: portionsSchema,
+  weeklyPrep: weeklyPrepSchema
+})
+
+export type Meal = z.infer<typeof mealSchema>
+export type NutritionTargets = z.infer<typeof nutritionTargetsSchema>
+export type Portions = z.infer<typeof portionsSchema>
+export type WeeklyPrep = z.infer<typeof weeklyPrepSchema>
+export type NutritionProfile = z.infer<typeof nutritionProfileSchema> 
