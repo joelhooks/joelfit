@@ -1,0 +1,248 @@
+# JoelFit System Specification
+
+<system_context>
+<purpose>
+Personal fitness and nutrition tracking system built specifically for Joel Hooks, designed to be a reference implementation that can be shared selectively. Not a marketing site.
+</purpose>
+
+<user_context>
+<personal_info>
+- Name: Joel Hooks
+- Sex: Male
+- Age: 50 (DOB: 1974-05-11)
+- Height: 75 inches (6'3")
+- Current Weight: 251 lbs (as of 2024-12-31)
+- Activity Level: Moderately Active
+- Exercise Frequency: 4-6 sessions per week
+- Training Experience:
+  * Lifting: Advanced
+  * Cardio: Intermediate
+</personal_info>
+</user_context>
+</system_context>
+
+<core_principles>
+<development>
+- Ship fast, refactor when patterns emerge
+- Optimize for readability and maintainability
+- Follow existing patterns unless compelling reason exists
+- Server Components by default
+- Handle errors early, return happy path late
+</development>
+
+<typescript_practices>
+- Use `type` for composition, `interface` for extension
+- Zod for runtime validation, TypeScript for compile-time safety
+- No enums - use const objects with `as const`
+- Explicit return types on exported functions
+- Leverage inference for internal implementation
+- Keep types close to where they're used
+</typescript_practices>
+
+<tech_stack>
+<frontend>
+- Next.js with Server Components
+- React Query for client-side data
+- `next-safe-action` for server actions
+- `nuqs` for URL state management
+- Shadcn for common components
+- Tailwind for styling
+</frontend>
+
+<state_management>
+- Server state > Client state
+- URL state > Local state
+- Minimize client-side state
+- React Query for async state
+- URL params for shareable state
+</state_management>
+
+<backend>
+- Early validation with Zod
+- Strong typing with Prisma
+- Handle errors explicitly
+- Use transactions for multi-step operations
+- Cache aggressively but invalidate correctly
+</backend>
+</tech_stack>
+
+<nutrition_system>
+<daily_baseline>
+Based on tracking data averages and goals:
+- Calories: 2250-2500 kcal
+- Protein: 200-220g (35-40%)
+- Carbs: 225-250g (40-45%)
+- Fat: 65-75g (25-30%)
+</daily_baseline>
+
+<meal_structure>
+Distribution across 6 daily meals:
+
+1. Breakfast (A) - 7:00 AM
+- Calories: 400
+- Protein: 30g
+- Carbs: 45g
+- Fat: 15g
+
+2. Pre-workout (B) - 9:00 AM
+- Calories: 200
+- Protein: 25g
+- Carbs: 20g
+- Fat: 5g
+
+3. Post-workout/Lunch (C) - 11:30 AM
+- Calories: 650
+- Protein: 45g
+- Carbs: 75g
+- Fat: 20g
+
+4. Mid-day Meal (D) - 3:00 PM
+- Calories: 550
+- Protein: 35g
+- Carbs: 55g
+- Fat: 20g
+
+5. Dinner (E) - 7:00 PM
+- Calories: 400
+- Protein: 25g
+- Carbs: 35g
+- Fat: 13g
+
+6. Night Snack (F) - 9:00 PM
+- Calories: 200
+- Protein: 15g
+- Carbs: 20g
+- Fat: 7g
+</meal_structure>
+</nutrition_system>
+
+<meal_prep_system>
+<weekly_schedule>
+<timeline>
+- Saturday: Planning & Shopping
+  * Inventory check (30 min)
+  * Shopping list creation (15 min)
+  * Grocery shopping (1 hour)
+
+- Sunday: Prep Day (2.5-3 hours)
+  * Setup (30 min)
+  * Wave 1 (30 min)
+  * Wave 2 (30 min)
+  * Wave 3 (30 min)
+  * Final Wave (30 min)
+
+- Wednesday: Mid-week
+  * Move Thursday/Friday meals from freezer to fridge
+  * Quick container inventory
+  * Sauce check/refresh
+</timeline>
+</weekly_schedule>
+
+<container_system>
+<specifications>
+- Main Meals: PrepNaturals 3-Section 34oz Glass
+- Breakfast: 16oz Wide Mouth Mason Jars
+- Smoothies: OXO Good Grips Silicone Bags
+- Sauce Containers: 2oz portion cups
+</specifications>
+
+<storage_layout>
+Refrigerator Organization:
+- Top shelf: Current day's meals
+- Middle shelf: Next day's meals
+- Bottom shelf: Day 3 meals
+- Door: Sauces and snacks
+</storage_layout>
+</container_system>
+</meal_prep_system>
+
+<website_implementation>
+<pages>
+<page id="home">
+<title>Meal Prep Operating System</title>
+<key_elements>
+- Hero section explaining the 1-2-3 framework
+- Quick navigation to key system components
+- Visual representation of the weekly timeline
+- Overview of core principles
+</key_elements>
+</page>
+
+<page id="framework">
+<title>Core Framework</title>
+<key_elements>
+- Weekly schedule breakdown
+- Meal slot system explanation
+- Container organization guide
+- Rotation system visualization
+</key_elements>
+</page>
+</pages>
+
+<style_guidelines>
+<colors>
+- Primary: slate-900
+- Secondary: emerald-600
+- Accent: amber-500
+- Background: slate-50
+- Text: slate-700
+</colors>
+
+<typography>
+- Headers: font-bold text-2xl (desktop) text-xl (mobile)
+- Subheaders: font-semibold text-xl (desktop) text-lg (mobile)
+- Body: text-base leading-relaxed
+- Navigation: text-sm font-medium
+</typography>
+</style_guidelines>
+
+<components>
+<component id="navigation">
+<type>Primary navigation bar</type>
+<features>
+- Mobile-responsive menu
+- Current page indicator
+- Quick access to key sections
+</features>
+</component>
+
+<component id="content-card">
+<type>Information card template</type>
+<features>
+- Consistent padding
+- Optional icon
+- Title and content areas
+</features>
+</component>
+</components>
+</website_implementation>
+
+<monorepo_structure>
+<rules>
+- Shared code in `packages/`
+- Apps in `apps/`
+- Share types, not implementations
+- Version lock workspace deps
+- Keep package boundaries clean
+- Use workspace protocols
+- Hoist common dependencies
+- Build packages in dependency order
+- Test at package boundaries
+- No circular dependencies
+</rules>
+
+<testing>
+- Unit test business logic
+- Integration test critical paths
+- E2E test user flows
+- Mock external dependencies
+</testing>
+
+<git_workflow>
+- Conventional commits
+- Feature branches
+- Clean, focused PRs
+- Automate everything possible
+- Monitor what you ship
+</git_workflow>
+</monorepo_structure> 
