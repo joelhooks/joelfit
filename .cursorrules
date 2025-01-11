@@ -88,3 +88,4 @@ Keep that in mind at all times.
 - Build packages in dependency order
 - Test at package boundaries
 - No circular dependencies
+- Most dependencies aren't added to the root package.json
