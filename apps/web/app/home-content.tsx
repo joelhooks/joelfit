@@ -19,8 +19,49 @@ interface Section {
 
 const sections: Section[] = [
   {
-    title: "Current Status",
-    description: "DEXA analysis, strength metrics, and action plans based on latest data.",
+    title: "Meal Prep System",
+    description: "High-protein meal prep framework with 1-2-3 rotation for optimal variety.",
+    icon: UtensilsCrossed,
+    href: "/eat",
+    features: [
+      {
+        title: "Framework",
+        description: "3 proteins × 3 starches × 2 veggies",
+        href: "/eat/framework"
+      },
+      {
+        title: "Meal Plan",
+        description: "5 meals, 2250-2500 cal, 200g+ protein",
+        href: "/eat/meal-plan"
+      },
+      {
+        title: "Prep Guide",
+        description: "2-3 hour Sunday workflow",
+        href: "/eat/preparation"
+      }
+    ]
+  },
+  {
+    title: "Shoulder Protocol",
+    description: "Progressive rehab routine focusing on mobility, stability, and strength.",
+    icon: Dumbbell,
+    href: "/shoulder",
+    features: [
+      {
+        title: "Form-First",
+        description: "Quality over quantity approach",
+        href: "/shoulder"
+      },
+      {
+        title: "Progressive Load",
+        description: "Gradual strength development",
+        href: "/shoulder"
+      }
+    ]
+  },
+  {
+    title: "Personal Metrics",
+    description: "Current DEXA analysis, strength metrics, and optimization strategies.",
     icon: Activity,
     href: "/profile/joel",
     status: "Updated Jan 2024",
@@ -31,44 +72,8 @@ const sections: Section[] = [
         href: "/profile/joel#personal-stats"
       },
       {
-        title: "Strength Metrics",
-        description: "RSMI 11.16, Z-score 2.9",
-        href: "/profile/joel#strength-foundation"
-      }
-    ]
-  },
-  {
-    title: "Active Projects",
-    description: "Current focus areas and implementation strategies.",
-    icon: Target,
-    href: "/profile/joel#action-plan",
-    features: [
-      {
-        title: "Fat Loss Protocol",
-        description: "300-500 cal deficit, preserving muscle",
-        href: "/profile/joel#action-plan"
-      },
-      {
-        title: "Shoulder Rehab",
-        description: "Progressive mobility & strength",
-        href: "/shoulder"
-      }
-    ]
-  },
-  {
-    title: "Systems & Frameworks",
-    description: "Battle-tested approaches for consistent execution.",
-    icon: Brain,
-    href: "/eat",
-    features: [
-      {
-        title: "Meal Prep OS",
-        description: "5-day high-protein framework",
-        href: "/eat"
-      },
-      {
-        title: "Training Structure",
-        description: "4-6 sessions/week split",
+        title: "Action Plan",
+        description: "Fat loss protocol & training structure",
         href: "/profile/joel#action-plan"
       }
     ]
@@ -83,7 +88,7 @@ export function HomeContent() {
           <Balancer>JoelFit</Balancer>
         </h1>
         <p className="cyberpunk-text text-lg text-muted-foreground mb-12 max-w-2xl">
-          <Balancer>Personal health & fitness optimization lab. Current experiments, metrics, and systems.</Balancer>
+          <Balancer>Personal health & fitness frameworks, built for consistency and results.</Balancer>
         </p>
 
         <div className="space-y-8">
