@@ -1,5 +1,6 @@
-import { type ButtonProps } from '../ui/button.js'
-import { Button } from '../ui/button.js'
+'use client'
+
+import { type ButtonProps, Button } from '../ui/button.js'
 import { ReloadIcon } from '@radix-ui/react-icons'
 import { cn } from '../../lib/utils.js'
 
