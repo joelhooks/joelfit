@@ -1,13 +1,15 @@
+'use client'
+
 import { type ReactNode } from 'react'
-import { ErrorFallback, type ErrorFallbackProps } from '@repo/ui'
+import { ErrorFallback } from '@repo/ui'
 
 interface AsyncDataProps<T> {
-  data: T | undefined
+  data: T | null
   error?: Error
   isLoading: boolean
   children: (data: T) => ReactNode
   loadingFallback?: ReactNode
-  errorFallback?: ReactNode | ((props: ErrorFallbackProps) => ReactNode)
+  errorFallback?: ReactNode
 }
 
 export function AsyncData<T>({
@@ -16,17 +18,14 @@ export function AsyncData<T>({
   isLoading,
   children,
   loadingFallback,
-  errorFallback
+  errorFallback = <ErrorFallback title="Something went wrong" error={error} />
 }: AsyncDataProps<T>) {
   if (isLoading) {
-    return loadingFallback || null
+    return loadingFallback
   }
 
   if (error) {
-    if (typeof errorFallback === 'function') {
-      return errorFallback({ error }) as ReactNode
-    }
-    return errorFallback || <ErrorFallback error={error} />
+    return errorFallback
   }
 
   if (!data) {
