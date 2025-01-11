@@ -180,7 +180,15 @@ export const nutritionProfile: NutritionProfile = {
       '1.25 lbs potatoes',
       '1.25 cups dry quinoa'
     ],
-    vegetables: '12-13 cups total',
-    sauces: '1x base recipes'
+    vegetables: [
+      '4 cups leafy greens',
+      '4 cups cruciferous',
+      '4 cups mixed vegetables'
+    ],
+    sauces: [
+      'Lemon herb marinade',
+      'Teriyaki glaze',
+      'Greek yogurt dressing'
+    ]
   }
 } 
