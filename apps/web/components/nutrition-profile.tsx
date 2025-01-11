@@ -1,17 +1,19 @@
 'use client'
 
 import React from 'react'
-import type { NutritionProfile as NutritionProfileType } from '@/types/metrics'
+import { Profile } from '@/lib/repositories/profile/schema'
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
 import { SectionHeader } from '@/components/ui/section-header'
 import { Apple, Calendar, ListChecks } from 'lucide-react'
 import { MetricCard } from '@/components/ui/metric-card'
 
 interface NutritionProfileProps {
-  data: NutritionProfileType
+  data: Profile
 }
 
 export function NutritionProfile({ data }: NutritionProfileProps) {
+  const { nutritionProfile } = data
+
   return (
     <div className="space-y-12">
       <section className="daily-targets">
@@ -25,7 +27,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             value={
               <div className="flex flex-col space-y-2">
                 <div className="text-[32px] font-bold tracking-tight">
-                  2250-2500
+                  {nutritionProfile.targets.calories}
                 </div>
                 <div className="text-base text-muted-foreground">
                   Target Range
@@ -44,7 +46,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             value={
               <div className="flex flex-col space-y-2">
                 <div className="text-[32px] font-bold tracking-tight">
-                  200-220g
+                  {nutritionProfile.targets.protein}
                 </div>
                 <div className="text-base text-muted-foreground">
                   35-40% of Total Calories
@@ -63,7 +65,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             value={
               <div className="flex flex-col space-y-2">
                 <div className="text-[32px] font-bold tracking-tight">
-                  225-250g
+                  {nutritionProfile.targets.carbs}
                 </div>
                 <div className="text-base text-muted-foreground">
                   40-45% of Total Calories
@@ -82,7 +84,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             value={
               <div className="flex flex-col space-y-2">
                 <div className="text-[32px] font-bold tracking-tight">
-                  65-75g
+                  {nutritionProfile.targets.fat}
                 </div>
                 <div className="text-base text-muted-foreground">
                   25-30% of Total Calories
@@ -102,7 +104,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
       <section>
         <SectionHeader title="Meal Schedule" icon={Calendar} />
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {data.meals.map((meal) => (
+          {nutritionProfile.meals.map((meal) => (
             <Card key={meal.name} className="h-full">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold">
@@ -149,7 +151,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             </CardHeader>
             <CardContent>
               <ul className="list-inside list-disc space-y-2 text-sm">
-                {data.weeklyPrep.proteins.map((item) => (
+                {nutritionProfile.weeklyPrep.proteins.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
@@ -161,7 +163,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             </CardHeader>
             <CardContent>
               <ul className="list-inside list-disc space-y-2 text-sm">
-                {data.weeklyPrep.carbs.map((item) => (
+                {nutritionProfile.weeklyPrep.carbs.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
@@ -173,7 +175,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             </CardHeader>
             <CardContent>
               <ul className="list-inside list-disc space-y-2 text-sm">
-                {data.weeklyPrep.vegetables.map((item) => (
+                {nutritionProfile.weeklyPrep.vegetables.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
@@ -185,7 +187,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             </CardHeader>
             <CardContent>
               <ul className="list-inside list-disc space-y-2 text-sm">
-                {data.weeklyPrep.sauces.map((item) => (
+                {nutritionProfile.weeklyPrep.sauces.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>

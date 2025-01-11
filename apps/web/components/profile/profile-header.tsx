@@ -1,9 +1,9 @@
-import type { PersonalStats } from '@/types/metrics'
+import { Profile } from '@/lib/repositories/profile/schema'
 import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui'
 import { Activity } from 'lucide-react'
 
 interface ProfileHeaderProps {
-  data: PersonalStats
+  data: Profile
 }
 
 export function ProfileHeader({ data }: ProfileHeaderProps) {
@@ -18,15 +18,15 @@ export function ProfileHeader({ data }: ProfileHeaderProps) {
         <div className="mt-1 flex items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <Activity className="h-4 w-4" />
-            <span>{data.activity}</span>
+            <span>{data.metrics.activity}</span>
           </div>
-          <div>Weight: {data.weight}lbs</div>
-          <div>Age: {data.age}</div>
-          <div>Height: {data.height}</div>
+          <div>Weight: {data.metrics.weight}lbs</div>
+          <div>Age: {data.metrics.age}</div>
+          <div>Height: {data.metrics.height}</div>
         </div>
         <div className="mt-2 text-sm text-muted-foreground">
-          <span>Training {data.exercise} days/week • </span>
-          <span>Lifting: {data.experience.lifting} years • Cardio: {data.experience.cardio} years</span>
+          <span>Training {data.metrics.exercise} days/week • </span>
+          <span>Lifting: {data.metrics.experience.lifting} • Cardio: {data.metrics.experience.cardio}</span>
         </div>
       </div>
     </div>

@@ -5,17 +5,20 @@ import { MetricsGrid } from '@/components/metrics/metrics-grid'
 import { StrengthAreas } from '@/components/strength/strength-areas'
 import { ActionPlan } from '@/components/action/action-plan'
 import { NutritionProfile } from '@/components/nutrition-profile'
-import { personalStats, currentMetrics, targets, strengthAreas, actionPlan, nutritionProfile } from '@/config/joel'
+import { ProfileRepository } from '@/lib/repositories/profile'
 
-export default function JoelProfilePage() {
+export default async function JoelProfilePage() {
+  const repo = new ProfileRepository()
+  const profile = await repo.findBySlug('joel')
+
   return (
     <div className="container relative">
       <div className="space-y-8 py-8">
-        <ProfileHeader data={personalStats} />
-        <MetricsGrid data={currentMetrics} targets={targets} />
-        <StrengthAreas data={strengthAreas} />
-        <ActionPlan data={actionPlan} />
-        <NutritionProfile data={nutritionProfile} />
+        <ProfileHeader data={profile} />
+        <MetricsGrid data={profile.metrics} targets={profile.targets} />
+        <StrengthAreas data={profile.strengthAreas} />
+        <ActionPlan data={profile.actionPlan} />
+        <NutritionProfile data={profile} />
       </div>
     </div>
   )

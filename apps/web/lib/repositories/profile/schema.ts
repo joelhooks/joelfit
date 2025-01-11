@@ -50,12 +50,51 @@ export const actionCategorySchema = z.object({
   items: z.array(actionItemSchema)
 })
 
+export const mealSchema = z.object({
+  name: z.string(),
+  time: z.string(),
+  calories: z.number(),
+  protein: z.number(),
+  carbs: z.number(),
+  fat: z.number(),
+  container: z.string()
+})
+
+export const nutritionTargetsSchema = z.object({
+  calories: z.string(),
+  protein: z.string(),
+  carbs: z.string(),
+  fat: z.string()
+})
+
+export const portionsSchema = z.object({
+  protein: z.string(),
+  carbs: z.string(),
+  vegetables: z.string(),
+  fats: z.string()
+})
+
+export const weeklyPrepSchema = z.object({
+  proteins: z.array(z.string()),
+  carbs: z.array(z.string()),
+  vegetables: z.array(z.string()),
+  sauces: z.array(z.string())
+})
+
+export const nutritionProfileSchema = z.object({
+  targets: nutritionTargetsSchema,
+  meals: z.array(mealSchema),
+  portions: portionsSchema,
+  weeklyPrep: weeklyPrepSchema
+})
+
 export const profileSchema = baseSchema.extend({
   name: z.string().min(1),
   metrics: metricsSchema,
   targets: targetsSchema,
   strengthAreas: z.array(strengthAreaSchema),
-  actionPlan: z.array(actionCategorySchema)
+  actionPlan: z.array(actionCategorySchema),
+  nutritionProfile: nutritionProfileSchema
 })
 
 export type ActivityLevel = z.infer<typeof activityLevelSchema>
@@ -66,4 +105,9 @@ export type Targets = z.infer<typeof targetsSchema>
 export type StrengthArea = z.infer<typeof strengthAreaSchema>
 export type ActionItem = z.infer<typeof actionItemSchema>
 export type ActionCategory = z.infer<typeof actionCategorySchema>
+export type Meal = z.infer<typeof mealSchema>
+export type NutritionTargets = z.infer<typeof nutritionTargetsSchema>
+export type Portions = z.infer<typeof portionsSchema>
+export type WeeklyPrep = z.infer<typeof weeklyPrepSchema>
+export type NutritionProfile = z.infer<typeof nutritionProfileSchema>
 export type Profile = z.infer<typeof profileSchema> & Entity 
