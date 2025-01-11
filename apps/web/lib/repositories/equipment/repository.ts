@@ -28,9 +28,9 @@ export class EquipmentRepository extends BaseRepository<Equipment, typeof equipm
     }
   }
 
-  protected generateSlug(data: Partial<Equipment>): string {
-    if (!data.title) throw new SlugGenerationError('Title is required to generate slug')
-    return data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+  public generateSlug(data: Partial<Equipment>): string {
+    if (!data.title) throw new SlugGenerationError('Equipment title is required for slug generation')
+    return data.title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '')
   }
 
   async getByCategory(category: Equipment['category']): Promise<Equipment[]> {

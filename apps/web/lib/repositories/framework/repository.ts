@@ -1,35 +1,33 @@
-import { BaseRepository, NotFoundError, SlugGenerationError } from '../base'
-import { Framework, frameworkSchema } from './schema'
+import { BaseRepository, NotFoundError } from '../base'
+import { type Framework, frameworkSchema } from './schema'
 import { initialFramework } from './data'
-import { randomUUID } from 'crypto'
 
 export class FrameworkRepository extends BaseRepository<Framework, typeof frameworkSchema> {
   private initialized = false
   protected items: Framework[] = []
 
-  constructor() {
-    super(frameworkSchema, 'framework')
+  constructor(schema = frameworkSchema, entityName = 'Framework') {
+    super(schema, entityName)
   }
 
-  private async ensureInitialized() {
-    if (!this.initialized) {
-      if (this.items.length === 0) {
-        const now = new Date()
-        const id = randomUUID()
-        this.items = [{
+  private ensureInitialized() {
+    if (!this.initialized && this.items.length === 0) {
+      const now = new Date()
+      this.items = [
+        {
+          id: crypto.randomUUID(),
+          slug: 'default-framework',
           ...initialFramework,
-          id,
-          slug: this.generateSlug({ id }),
           createdAt: now,
           updatedAt: now
-        }]
-      }
+        }
+      ]
       this.initialized = true
     }
   }
 
   protected async getData(): Promise<Framework[]> {
-    await this.ensureInitialized()
+    this.ensureInitialized()
     return this.items
   }
 
@@ -38,37 +36,25 @@ export class FrameworkRepository extends BaseRepository<Framework, typeof framew
     this.initialized = true
   }
 
-  protected generateSlug(data: Partial<Framework>): string {
-    // For framework, we'll use a simple slug since it's a singleton
-    return 'core-framework'
+  public generateSlug(framework: Framework): string {
+    return 'default-framework'
   }
 
-  // Helper method for tests
-  getDefaultFrameworkId(): string {
-    return this.items[0]?.id ?? ''
-  }
-
-  // Override base methods to ensure initialization
   async findById(id: string): Promise<Framework> {
-    await this.ensureInitialized()
-    return super.findById(id)
+    this.ensureInitialized()
+    const framework = this.items.find(f => f.id === id)
+    if (!framework) {
+      throw new NotFoundError('Framework', id)
+    }
+    return framework
   }
 
   async findBySlug(slug: string): Promise<Framework> {
-    await this.ensureInitialized()
-    return super.findBySlug(slug)
-  }
-
-  async findAll(): Promise<Framework[]> {
-    await this.ensureInitialized()
-    return super.findAll()
-  }
-
-  // Get the default framework (since it's a singleton)
-  async getFramework(): Promise<Framework> {
-    await this.ensureInitialized()
-    const frameworks = await this.findAll()
-    if (!frameworks[0]) throw new NotFoundError('framework', 'default')
-    return frameworks[0]
+    this.ensureInitialized()
+    const framework = this.items.find(f => f.slug === slug)
+    if (!framework) {
+      throw new NotFoundError('Framework', `slug:${slug}`)
+    }
+    return framework
   }
 } 

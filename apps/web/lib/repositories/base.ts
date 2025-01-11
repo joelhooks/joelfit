@@ -157,7 +157,7 @@ export abstract class BaseRepository<
     await this.setData(items)
   }
 
-  protected generateSlug(data: any): string {
+  public generateSlug(data: any): string {
     // Subclasses should implement their own slug generation logic
     throw new Error('generateSlug not implemented')
   }

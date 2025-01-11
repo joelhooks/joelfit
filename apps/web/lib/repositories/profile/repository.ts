@@ -36,14 +36,9 @@ export class ProfileRepository extends BaseRepository<Profile, typeof profileSch
     this.initialized = true
   }
 
-  protected generateSlug(data: Partial<Profile>): string {
-    if (!data.name) throw new SlugGenerationError('Name is required to generate slug')
-    
-    // Generate a URL-friendly slug from the name
-    return data.name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '')
+  public generateSlug(data: Partial<Profile>): string {
+    if (!data.name) throw new SlugGenerationError('Profile name is required for slug generation')
+    return data.name.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '')
   }
 
   // Helper method for tests

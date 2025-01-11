@@ -38,9 +38,9 @@ export class ShoppingRepository extends BaseRepository<ShoppingList, typeof shop
     this.initialized = true
   }
 
-  protected generateSlug(data: Partial<ShoppingList>): string {
-    if (!data.name) throw new SlugGenerationError('Name is required for shopping list slug generation')
-    return data.name.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-')
+  public generateSlug(data: Partial<ShoppingList>): string {
+    if (!data.name) throw new SlugGenerationError('Shopping list name is required for slug generation')
+    return data.name.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '')
   }
 
   // Helper method for tests

@@ -38,9 +38,9 @@ export class MealPlanRepository extends BaseRepository<MealPlan, typeof mealPlan
     this.initialized = true
   }
 
-  protected generateSlug(data: Partial<MealPlan>): string {
-    if (!data.name) throw new SlugGenerationError('Name is required for meal plan slug generation')
-    return data.name.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-')
+  public generateSlug(data: Partial<MealPlan>): string {
+    if (!data.name) throw new SlugGenerationError('Meal plan name is required for slug generation')
+    return data.name.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '')
   }
 
   // Helper method for tests
