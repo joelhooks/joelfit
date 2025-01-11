@@ -23,25 +23,49 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <MetricCard
             title="CALORIES"
-            value={nutritionProfile.targets.calories}
+            value={
+              <div className="flex flex-col space-y-2">
+                <div className="text-[32px] font-bold tracking-tight">
+                  {nutritionProfile.targets.calories}
+                </div>
+              </div>
+            }
             subtitle="Kilocalories Per Day"
             className="h-[180px]"
           />
           <MetricCard
             title="PROTEIN"
-            value={nutritionProfile.targets.protein}
+            value={
+              <div className="flex flex-col space-y-2">
+                <div className="text-[32px] font-bold tracking-tight">
+                  {nutritionProfile.targets.protein}g
+                </div>
+              </div>
+            }
             subtitle="Grams Per Day"
             className="h-[180px]"
           />
           <MetricCard
             title="CARBOHYDRATES"
-            value={nutritionProfile.targets.carbs}
+            value={
+              <div className="flex flex-col space-y-2">
+                <div className="text-[32px] font-bold tracking-tight">
+                  {nutritionProfile.targets.carbs}g
+                </div>
+              </div>
+            }
             subtitle="Grams Per Day"
             className="h-[180px]"
           />
           <MetricCard
             title="FATS"
-            value={nutritionProfile.targets.fat}
+            value={
+              <div className="flex flex-col space-y-2">
+                <div className="text-[32px] font-bold tracking-tight">
+                  {nutritionProfile.targets.fat}g
+                </div>
+              </div>
+            }
             subtitle="Grams Per Day"
             className="h-[180px]"
           />
