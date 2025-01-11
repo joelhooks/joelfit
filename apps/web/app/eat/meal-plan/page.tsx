@@ -2,7 +2,6 @@ import { Metadata } from 'next'
 import { PageHeader } from '@/components/page-header'
 import { Clock, ShoppingBag, Container, AlertCircle } from 'lucide-react'
 import { MealMixer } from '@/components/meal-mixer'
-import { AiDisclaimer } from '@/components/ai-disclaimer'
 
 export const metadata: Metadata = {
   title: 'Meal Plan Details | High-Protein Meal Prep OS',
@@ -320,8 +319,6 @@ export default function MealPlanPage() {
               </ul>
             </div>
           </section>
-
-          <AiDisclaimer />
         </div>
       </div>
     </main>
