@@ -10,3 +10,6 @@ export { cn } from './lib/utils.js'
 // Loading components
 export * from './components/loading/index.js'
 export * from './components/ui/skeleton.js' 
+
+// Error components
+export * from './components/error/index.js' 
