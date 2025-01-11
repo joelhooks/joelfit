@@ -5,6 +5,7 @@ import { MetricsGrid } from '@/components/metrics/metrics-grid'
 import { StrengthAreas } from '@/components/strength/strength-areas'
 import { ProfileNav, sections } from '@/components/navigation/profile-nav'
 import { MobileNav } from '@/components/navigation/mobile-nav'
+import { ActionPlan } from '@/components/action/action-plan'
 
 export default function JoelProfilePage() {
   return (
@@ -37,7 +38,7 @@ export default function JoelProfilePage() {
 
           <section id="action-plan">
             <h2 className="text-2xl font-bold mb-6">Action Plan</h2>
-            {/* TODO: Add ActionPlan component */}
+            <ActionPlan />
           </section>
         </div>
       </div>
