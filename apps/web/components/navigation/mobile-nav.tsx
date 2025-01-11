@@ -1,6 +1,5 @@
-import { Button } from '@repo/ui'
+import { Button, Sheet, SheetContent, SheetTrigger } from '@repo/ui'
 import { Menu } from 'lucide-react'
-import { Sheet, SheetContent, SheetTrigger } from '@repo/ui'
 import { sections, type SectionId } from './profile-nav'
 import { cn } from '@/lib/utils'
 import { useState, useEffect } from 'react'
