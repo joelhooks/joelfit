@@ -1,55 +1,26 @@
 'use client'
 
 import React from 'react'
-import { Activity, Scale, Clock, ChefHat, Container } from 'lucide-react'
-import { nutritionProfile, personalStats } from '@/config/joel'
+import { Scale, Clock, ChefHat, Container } from 'lucide-react'
+import { nutritionProfile } from '@/config/joel'
 
 export function NutritionProfile() {
   return (
     <div className="space-y-8">
-      {/* Personal Stats & Daily Targets */}
-      <div className="grid gap-6 sm:grid-cols-2">
-        {/* Personal Stats */}
-        <div className="bg-card border rounded-lg p-4">
-          <h3 className="flex items-center gap-2 text-lg font-semibold mb-4">
-            <Activity className="h-5 w-5 text-primary flex-shrink-0" />
-            Personal Stats
-          </h3>
-          <dl className="grid gap-3">
-            {Object.entries(personalStats).map(([key, value]) => {
-              if (typeof value === 'object') return null
-              return (
-                <div key={key} className="grid grid-cols-2 text-sm">
-                  <dt className="font-medium capitalize">{key}:</dt>
-                  <dd className="text-muted-foreground">{value}</dd>
-                </div>
-              )
-            })}
-            <div className="grid grid-cols-2 text-sm">
-              <dt className="font-medium">Experience:</dt>
-              <dd className="text-muted-foreground">
-                Lifting: {personalStats.experience.lifting}<br />
-                Cardio: {personalStats.experience.cardio}
-              </dd>
+      {/* Daily Targets */}
+      <div className="bg-card border rounded-lg p-4">
+        <h3 className="flex items-center gap-2 text-lg font-semibold mb-4">
+          <Scale className="h-5 w-5 text-primary flex-shrink-0" />
+          Daily Targets
+        </h3>
+        <dl className="grid gap-3">
+          {Object.entries(nutritionProfile.targets).map(([key, value]) => (
+            <div key={key} className="grid grid-cols-2 text-sm">
+              <dt className="font-medium capitalize">{key}:</dt>
+              <dd className="text-muted-foreground">{value}</dd>
             </div>
-          </dl>
-        </div>
-
-        {/* Daily Targets */}
-        <div className="bg-card border rounded-lg p-4">
-          <h3 className="flex items-center gap-2 text-lg font-semibold mb-4">
-            <Scale className="h-5 w-5 text-primary flex-shrink-0" />
-            Daily Targets
-          </h3>
-          <dl className="grid gap-3">
-            {Object.entries(nutritionProfile.targets).map(([key, value]) => (
-              <div key={key} className="grid grid-cols-2 text-sm">
-                <dt className="font-medium capitalize">{key}:</dt>
-                <dd className="text-muted-foreground">{value}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
+          ))}
+        </dl>
       </div>
 
       {/* Meal Schedule */}
