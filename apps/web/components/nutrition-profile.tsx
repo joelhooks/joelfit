@@ -1,11 +1,10 @@
 'use client'
 
 import React from 'react'
-import { Scale, Clock, ChefHat, Container } from 'lucide-react'
-import type { NutritionProfile as NutritionProfileType } from '../types/metrics'
+import type { NutritionProfile as NutritionProfileType } from '@/types/metrics'
 import { Card } from '@repo/ui'
-import { SectionHeader } from './ui/section-header'
-import { cn } from '@/lib/utils'
+import { SectionHeader } from '@/components/ui/section-header'
+import { Apple } from 'lucide-react'
 
 interface NutritionProfileProps {
   data: NutritionProfileType
@@ -13,104 +12,89 @@ interface NutritionProfileProps {
 
 export function NutritionProfile({ data }: NutritionProfileProps) {
   return (
-    <div className="space-y-8">
-      {/* Daily Targets */}
-      <div>
-        <SectionHeader title="Daily Targets" icon={Scale} />
-        <Card className="relative overflow-hidden before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-green-500">
-          <div className="p-4">
-            <dl className="grid gap-3">
-              {Object.entries(data.targets).map(([key, value]) => (
-                <div key={key} className="grid grid-cols-2 text-sm">
-                  <dt className="font-medium capitalize">{key}:</dt>
-                  <dd className="text-muted-foreground">{value}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </Card>
-      </div>
-
-      {/* Meal Schedule */}
-      <div>
-        <SectionHeader title="Daily Meal Schedule" icon={Clock} />
-        <div className="grid gap-4">
-          {data.meals.map((meal, index) => (
-            <Card key={meal.name} className={cn(
-              "relative overflow-hidden",
-              "before:absolute before:left-0 before:top-0 before:h-full before:w-1",
-              index % 3 === 0 && "before:bg-green-500",
-              index % 3 === 1 && "before:bg-blue-500",
-              index % 3 === 2 && "before:bg-purple-500"
-            )}>
-              <div className="p-4">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
-                  <h4 className="font-medium">{meal.name}</h4>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Clock className="h-4 w-4 flex-shrink-0" />
-                    <span>{meal.time}</span>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-                  <div className="bg-muted/50 rounded p-2">
-                    <dt className="text-muted-foreground mb-1">Calories</dt>
-                    <dd className="font-medium">{meal.calories}</dd>
-                  </div>
-                  <div className="bg-muted/50 rounded p-2">
-                    <dt className="text-muted-foreground mb-1">Protein</dt>
-                    <dd className="font-medium">{meal.protein}g</dd>
-                  </div>
-                  <div className="bg-muted/50 rounded p-2">
-                    <dt className="text-muted-foreground mb-1">Carbs</dt>
-                    <dd className="font-medium">{meal.carbs}g</dd>
-                  </div>
-                  <div className="bg-muted/50 rounded p-2">
-                    <dt className="text-muted-foreground mb-1">Fat</dt>
-                    <dd className="font-medium">{meal.fat}g</dd>
-                  </div>
-                </div>
-                <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-                  <Container className="h-4 w-4 flex-shrink-0" />
-                  <span>{meal.container}</span>
-                </div>
-              </div>
+    <div>
+      <SectionHeader title="Nutrition Details" icon={Apple} />
+      <div className="space-y-8">
+        <div>
+          <h3 className="mb-4 text-lg font-medium">Daily Targets</h3>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Card className="p-4">
+              <div className="text-sm font-medium">Calories</div>
+              <div className="mt-1 text-2xl font-semibold">{data.targets.calories}</div>
             </Card>
-          ))}
+            <Card className="p-4">
+              <div className="text-sm font-medium">Protein</div>
+              <div className="mt-1 text-2xl font-semibold">{data.targets.protein}g</div>
+            </Card>
+            <Card className="p-4">
+              <div className="text-sm font-medium">Carbs</div>
+              <div className="mt-1 text-2xl font-semibold">{data.targets.carbs}g</div>
+            </Card>
+            <Card className="p-4">
+              <div className="text-sm font-medium">Fat</div>
+              <div className="mt-1 text-2xl font-semibold">{data.targets.fat}g</div>
+            </Card>
+          </div>
         </div>
-      </div>
 
-      {/* Weekly Prep */}
-      <div>
-        <SectionHeader title="Weekly Prep Quantities" icon={ChefHat} />
-        <div className="grid gap-6 sm:grid-cols-2">
-          <Card className="relative overflow-hidden before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-blue-500">
-            <div className="p-4">
-              <h4 className="font-medium mb-3">Portions per Meal</h4>
-              <dl className="grid gap-2 text-sm">
-                {Object.entries(data.portions).map(([key, value]) => (
-                  <div key={key} className="grid grid-cols-2">
-                    <dt className="font-medium capitalize">{key}:</dt>
-                    <dd className="text-muted-foreground">{value}</dd>
+        <div>
+          <h3 className="mb-4 text-lg font-medium">Meal Schedule</h3>
+          <div className="space-y-4">
+            {data.meals.map((meal) => (
+              <Card key={meal.name} className="p-4">
+                <div className="flex justify-between">
+                  <div>
+                    <div className="font-medium">{meal.name}</div>
+                    <div className="mt-1 text-sm text-muted-foreground">{meal.time}</div>
                   </div>
-                ))}
-              </dl>
-            </div>
-          </Card>
-          <Card className="relative overflow-hidden before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-purple-500">
-            <div className="p-4">
-              <h4 className="font-medium mb-3">Weekly Quantities</h4>
-              <dl className="grid gap-2 text-sm">
-                {Object.entries(data.weeklyPrep).map(([key, value]) => (
-                  <div key={key} className="grid grid-cols-2">
-                    <dt className="font-medium capitalize">{key}:</dt>
-                    <dd className="text-muted-foreground">
-                      {Array.isArray(value) ? value.join(', ') : value}
-                    </dd>
+                  <div className="text-right">
+                    <div className="text-sm">{meal.calories} cal</div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      P: {meal.protein}g • C: {meal.carbs}g • F: {meal.fat}g
+                    </div>
                   </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h3 className="mb-4 text-lg font-medium">Weekly Prep</h3>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Card className="p-4">
+              <div className="font-medium">Proteins</div>
+              <ul className="mt-2 list-inside list-disc text-sm text-muted-foreground">
+                {data.weeklyPrep.proteins.map((item) => (
+                  <li key={item}>{item}</li>
                 ))}
-              </dl>
-            </div>
-          </Card>
+              </ul>
+            </Card>
+            <Card className="p-4">
+              <div className="font-medium">Carbs</div>
+              <ul className="mt-2 list-inside list-disc text-sm text-muted-foreground">
+                {data.weeklyPrep.carbs.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </Card>
+            <Card className="p-4">
+              <div className="font-medium">Vegetables</div>
+              <ul className="mt-2 list-inside list-disc text-sm text-muted-foreground">
+                {data.weeklyPrep.vegetables.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </Card>
+            <Card className="p-4">
+              <div className="font-medium">Sauces</div>
+              <ul className="mt-2 list-inside list-disc text-sm text-muted-foreground">
+                {data.weeklyPrep.sauces.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
