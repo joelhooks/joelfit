@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { PageHeader } from '@/components/page-header'
-import { Clock, Thermometer, Scale, AlertCircle } from 'lucide-react'
+import { Clock, Thermometer, Scale, AlertCircle, Package } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Core Framework | High-Protein Meal Prep OS',
@@ -233,33 +233,42 @@ export default function FrameworkPage() {
             <h2 className="text-xl font-semibold mb-4">Weekly Schedule</h2>
             <div className="space-y-4">
               {/* Saturday */}
-              <div className="bg-card border rounded-lg p-6">
+              <div className="bg-card border rounded-lg p-4 sm:p-6">
                 <h3 className="font-medium mb-4 flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-primary" />
+                  <Clock className="h-5 w-5 text-primary flex-shrink-0" />
                   {framework.weeklySchedule.saturday.title}
                 </h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   {framework.weeklySchedule.saturday.tasks.map((item, index) => (
-                    <li key={index}>
-                      • {item.task} ({item.time})
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span className="flex-1">{item.task}</span>
+                      <span className="text-xs bg-muted px-2 py-0.5 rounded">{item.time}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
               {/* Sunday */}
-              <div className="bg-card border rounded-lg p-6">
-                <h3 className="font-medium mb-4 flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-primary" />
-                  {framework.weeklySchedule.sunday.title} ({framework.weeklySchedule.sunday.totalTime})
+              <div className="bg-card border rounded-lg p-4 sm:p-6">
+                <h3 className="font-medium mb-2 flex items-center gap-2">
+                  <Clock className="h-5 w-5 text-primary flex-shrink-0" />
+                  {framework.weeklySchedule.sunday.title}
                 </h3>
+                <p className="text-sm text-muted-foreground mb-4">Total time: {framework.weeklySchedule.sunday.totalTime}</p>
                 <div className="space-y-6">
                   {framework.weeklySchedule.sunday.waves.map((wave, index) => (
-                    <div key={index}>
-                      <h4 className="font-medium mb-2">{wave.title} ({wave.time})</h4>
-                      <ul className="space-y-1 text-sm text-muted-foreground">
+                    <div key={index} className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-medium">{wave.title}</h4>
+                        <span className="text-xs bg-muted px-2 py-0.5 rounded">{wave.time}</span>
+                      </div>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
                         {wave.tasks.map((task, taskIndex) => (
-                          <li key={taskIndex}>• {task}</li>
+                          <li key={taskIndex} className="flex items-start gap-2">
+                            <span className="flex-shrink-0">•</span>
+                            <span>{task}</span>
+                          </li>
                         ))}
                       </ul>
                     </div>
@@ -268,174 +277,162 @@ export default function FrameworkPage() {
               </div>
 
               {/* Wednesday */}
-              <div className="bg-card border rounded-lg p-6">
+              <div className="bg-card border rounded-lg p-4 sm:p-6">
                 <h3 className="font-medium mb-4 flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-primary" />
+                  <Clock className="h-5 w-5 text-primary flex-shrink-0" />
                   {framework.weeklySchedule.wednesday.title}
                 </h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   {framework.weeklySchedule.wednesday.tasks.map((task, index) => (
-                    <li key={index}>• {task}</li>
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span>{task}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
             </div>
           </section>
 
+          {/* Quality Control */}
           <section>
-            <h2 className="text-xl font-semibold mb-4">Quality Control</h2>
-            <div className="bg-card border rounded-lg p-6">
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-medium mb-2 flex items-center gap-2">
-                    <Thermometer className="h-5 w-5 text-primary" />
-                    Required Temperatures
-                  </h3>
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="text-sm font-medium mb-2">Proteins</h4>
-                      <ul className="space-y-1 text-sm text-muted-foreground">
-                        {framework.qualityControl.temperatures.protein.map((item, index) => (
-                          <li key={index}>• {item.item}: {item.temp}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-medium mb-2">Storage</h4>
-                      <ul className="space-y-1 text-sm text-muted-foreground">
-                        {framework.qualityControl.temperatures.storage.map((item, index) => (
-                          <li key={index}>• {item.zone}: {item.temp}</li>
-                        ))}
-                      </ul>
-                    </div>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Thermometer className="h-5 w-5 text-primary flex-shrink-0" />
+              Quality Control
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="bg-card border rounded-lg p-4 sm:p-6">
+                <h3 className="font-medium mb-4">Temperature Guidelines</h3>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="text-sm font-medium mb-2">Proteins</h4>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      {framework.qualityControl.temperatures.protein.map((item, index) => (
+                        <li key={index} className="flex justify-between">
+                          <span>{item.item}</span>
+                          <span className="font-mono">{item.temp}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium mb-2">Storage</h4>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      {framework.qualityControl.temperatures.storage.map((item, index) => (
+                        <li key={index} className="flex justify-between">
+                          <span>{item.zone}</span>
+                          <span className="font-mono">{item.temp}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
-                <div>
-                  <h3 className="font-medium mb-2">Cooling Requirements</h3>
-                  <p className="text-sm text-muted-foreground">{framework.qualityControl.cooling}</p>
+              </div>
+
+              <div className="bg-card border rounded-lg p-4 sm:p-6">
+                <h3 className="font-medium mb-4">Cooling Requirements</h3>
+                <div className="text-sm text-muted-foreground">
+                  <p>{framework.qualityControl.cooling}</p>
                 </div>
               </div>
             </div>
           </section>
 
+          {/* Containers */}
           <section>
-            <h2 className="text-xl font-semibold mb-4">Container System</h2>
-            <div className="space-y-4">
-              {/* Main Meals */}
-              <div className="bg-card border rounded-lg p-6">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Package className="h-5 w-5 text-primary flex-shrink-0" />
+              Container System
+            </h2>
+            <div className="grid gap-4">
+              <div className="bg-card border rounded-lg p-4 sm:p-6">
                 <h3 className="font-medium mb-4">Main Meals</h3>
                 <p className="text-sm text-muted-foreground mb-4">{framework.containers.mainMeals.type}</p>
-                <div className="grid gap-4 md:grid-cols-3">
-                  {framework.containers.mainMeals.sections.map((section) => (
-                    <div key={section.name} className="bg-accent/50 rounded-lg p-4">
-                      <h4 className="font-medium mb-1">{section.name}</h4>
-                      <p className="text-sm text-muted-foreground">Capacity: {section.capacity}</p>
+                <div className="grid gap-4 sm:grid-cols-3">
+                  {framework.containers.mainMeals.sections.map((section, index) => (
+                    <div key={index} className="bg-muted/50 rounded p-3">
+                      <h4 className="text-sm font-medium mb-1">{section.name}</h4>
+                      <p className="text-sm text-muted-foreground">{section.capacity}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Other Containers */}
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="bg-card border rounded-lg p-6">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="bg-card border rounded-lg p-4 sm:p-6">
                   <h3 className="font-medium mb-2">Breakfast</h3>
                   <p className="text-sm text-muted-foreground mb-2">{framework.containers.breakfast.type}</p>
-                  <p className="text-sm text-muted-foreground">Quantity: {framework.containers.breakfast.quantity}</p>
-                  <p className="text-sm text-muted-foreground">Note: {framework.containers.breakfast.note}</p>
+                  <p className="text-sm text-muted-foreground">{framework.containers.breakfast.quantity}</p>
+                  <p className="text-xs text-muted-foreground mt-2">{framework.containers.breakfast.note}</p>
                 </div>
-                <div className="bg-card border rounded-lg p-6">
+
+                <div className="bg-card border rounded-lg p-4 sm:p-6">
                   <h3 className="font-medium mb-2">Smoothies</h3>
                   <p className="text-sm text-muted-foreground mb-2">{framework.containers.smoothies.type}</p>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
+                  <ul className="text-sm text-muted-foreground space-y-1">
                     {framework.containers.smoothies.features.map((feature, index) => (
-                      <li key={index}>• {feature}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-semibold mb-4">Storage Layout</h2>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="bg-card border rounded-lg p-6">
-                <h3 className="font-medium mb-4">Refrigerator</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  {framework.storage.fridge.map((item, index) => (
-                    <li key={index}>• {item.shelf}: {item.contents}</li>
-                  ))}
-                </ul>
-              </div>
-              <div className="bg-card border rounded-lg p-6">
-                <h3 className="font-medium mb-4">Freezer</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  {framework.storage.freezer.map((item, index) => (
-                    <li key={index}>• {item}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-semibold mb-4">Scaling Guide</h2>
-            <div className="space-y-4">
-              <div className="bg-card border rounded-lg p-6">
-                <h3 className="font-medium mb-4 flex items-center gap-2">
-                  <Scale className="h-5 w-5 text-primary" />
-                  Base System
-                </h3>
-                <div className="space-y-2 text-sm text-muted-foreground">
-                  <p>• Servings: {framework.scaling.base.servings}</p>
-                  <p>• Proteins: {framework.scaling.base.proteins}</p>
-                  <p>• Carbs: {framework.scaling.base.carbs}</p>
-                  <p>• Vegetables: {framework.scaling.base.vegetables}</p>
-                  <p>• Sauces: {framework.scaling.base.sauces}</p>
-                </div>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="bg-card border rounded-lg p-6">
-                  <h3 className="font-medium mb-4">Scaling Multipliers</h3>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    {framework.scaling.multipliers.map((item, index) => (
-                      <li key={index}>
-                        • {item.people} people: {item.factor}
-                        {item.note && <span className="block text-xs ml-4">({item.note})</span>}
+                      <li key={index} className="flex items-start gap-2">
+                        <span className="flex-shrink-0">•</span>
+                        <span>{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
-                <div className="bg-card border rounded-lg p-6">
-                  <h3 className="font-medium mb-4">Time Adjustments</h3>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• Base time: {framework.scaling.timeAdjustments.base}</li>
-                    <li>• Additional: {framework.scaling.timeAdjustments.additional}</li>
-                    <li>• Maximum: {framework.scaling.timeAdjustments.maximum}</li>
-                  </ul>
-                </div>
               </div>
             </div>
           </section>
 
+          {/* Storage */}
           <section>
-            <h2 className="text-xl font-semibold mb-4">Troubleshooting</h2>
-            <div className="space-y-4">
-              {Object.entries(framework.troubleshooting).map(([category, issues]) => (
-                <div key={category} className="bg-card border rounded-lg p-6">
-                  <h3 className="font-medium mb-4 flex items-center gap-2">
-                    <AlertCircle className="h-5 w-5 text-primary" />
-                    {category.split(/(?=[A-Z])/).join(" ")}
-                  </h3>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    {issues.map((item, index) => (
-                      <div key={index} className="bg-accent/50 rounded-lg p-4">
-                        <p className="font-medium text-sm mb-1">{item.issue}</p>
-                        <p className="text-sm text-muted-foreground">{item.solution}</p>
-                      </div>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Scale className="h-5 w-5 text-primary flex-shrink-0" />
+              Storage Layout
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="bg-card border rounded-lg p-4 sm:p-6">
+                <h3 className="font-medium mb-4">Refrigerator</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {framework.storage.fridge.map((item, index) => (
+                    <li key={index} className="flex justify-between">
+                      <span>{item.shelf}</span>
+                      <span className="text-right">{item.contents}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="bg-card border rounded-lg p-4 sm:p-6">
+                <h3 className="font-medium mb-4">Freezer</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {framework.storage.freezer.map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          {/* Troubleshooting */}
+          <section>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-primary flex-shrink-0" />
+              Troubleshooting
+            </h2>
+            <div className="grid gap-4">
+              {Object.entries(framework.troubleshooting).map(([category, items]) => (
+                <div key={category} className="bg-card border rounded-lg p-4 sm:p-6">
+                  <h3 className="font-medium mb-4 capitalize">{category.replace(/([A-Z])/g, ' $1').trim()}</h3>
+                  <ul className="space-y-4">
+                    {items.map((item, index) => (
+                      <li key={index} className="text-sm">
+                        <div className="font-medium mb-1">{item.issue}</div>
+                        <div className="text-muted-foreground">{item.solution}</div>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </div>
               ))}
             </div>
