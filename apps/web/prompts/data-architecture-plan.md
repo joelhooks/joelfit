@@ -134,10 +134,10 @@
   - Pass data as props to client components ✅
   - Add loading states ✅
   - Add error handling ✅
-  - [ ] Fix lost styling
-    - [ ] Add back shadcn Card components
-    - [ ] Fix container borders and spacing
-    - [ ] Restore consistent section layouts
+  - [x] Fix lost styling ✅
+    - [x] Add back shadcn Card components ✅
+    - [x] Fix container borders and spacing ✅
+    - [x] Restore consistent section layouts ✅
 - [ ] Update Meal Plan page
   - Use MealPlanRepository for all data
   - Remove hardcoded wife's meal plan
