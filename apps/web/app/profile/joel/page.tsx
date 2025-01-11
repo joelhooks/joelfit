@@ -24,27 +24,22 @@ export default function JoelProfilePage() {
           {/* Main Content */}
           <div className="flex-1 max-w-4xl space-y-12">
             <section id="metrics">
-              <h2 className="text-2xl font-bold mb-6">Key Metrics</h2>
               <MetricsGrid data={currentMetrics} targets={targets} />
             </section>
 
             <section id="strength">
-              <h2 className="text-2xl font-bold mb-6">Strength Foundation</h2>
               <StrengthAreas data={strengthAreas} />
             </section>
 
             <section id="action-plan">
-              <h2 className="text-2xl font-bold mb-6">Action Plan</h2>
               <ActionPlan data={actionPlan} />
             </section>
 
             <section id="progress-tracking">
-              <h2 className="text-2xl font-bold mb-6">Progress Tracking</h2>
               <ProgressTracking />
             </section>
 
             <section id="nutrition">
-              <h2 className="text-2xl font-bold mb-6">Nutrition Details</h2>
               <NutritionProfile data={nutritionProfile} />
             </section>
           </div>
