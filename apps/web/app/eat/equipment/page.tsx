@@ -3,6 +3,7 @@ import { PageHeader } from '@/components/page-header'
 import { ExternalLink } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Package, LayoutGrid, Wrench } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Container System | High-Protein Meal Prep OS',
@@ -36,47 +37,64 @@ interface EquipmentItem {
 
 const equipment: EquipmentItem[] = [
   {
-    title: "PrepNaturals 3-Section Glass Containers",
-    description: "34oz containers with separate sections to keep foods from touching. Perfect for the 1-2-3 system. You'll need 15 for a full week.",
-    link: "https://amzn.to/3ZWylEa",
-    required: true,
-    price: "$40-50 for set"
+    title: "3-Compartment Glass Containers",
+    description: "32 oz glass containers with dividers and snap-locking lids",
+    link: "https://amazon.com",
+    price: "$40/6-pack",
+    required: true
   },
   {
-    title: "Wide Mouth Mason Jars",
-    description: "16oz jars perfect for overnight oats. Get enough for your breakfast prep.",
-    link: "https://amzn.to/3PjL4vT",
-    required: true,
-    price: "$15-20"
+    title: "32 oz Mason Jars",
+    description: "Wide-mouth jars for overnight oats and smoothies",
+    link: "https://amazon.com",
+    price: "$20/12-pack",
+    required: true
   },
   {
-    title: "Mason Jar Plastic Lids",
-    description: "Much better than the metal ones for daily use.",
-    link: "https://amzn.to/405PT0y",
-    required: true,
-    price: "$8-10"
-  },
-  {
-    title: "OXO Silicone Reusable Bags",
-    description: "Perfect for smoothie prep with flat bottoms for easy filling.",
-    link: "https://amzn.to/3C7pM1g",
-    required: true,
-    price: "$20-25"
-  },
-  {
-    title: "Chalk Markers",
-    description: "For labeling containers. Easy to remove and reuse.",
-    link: "https://amzn.to/40kYAWq",
-    price: "$10-15"
+    title: "Digital Food Scale",
+    description: "Precise measurements for portioning",
+    link: "https://amazon.com",
+    price: "$25",
+    required: true
   },
   {
     title: "Rice Cooker",
-    description: "Essential for perfect rice and grains every time. Set it and forget it while focusing on other prep. This specific model is tested and proven for our system.",
-    link: "https://amzn.to/3DA5cXN",
-    required: true,
-    price: "$30-40"
+    description: "6-cup capacity with steamer basket",
+    link: "https://amazon.com",
+    price: "$100",
+    required: true
   }
 ]
+
+const storage = {
+  fridge: [
+    "Dedicate a full shelf to meal prep containers",
+    "Keep Monday-Wednesday meals in main fridge",
+    "Store sauces in door or small containers",
+    "Label everything with day to be eaten"
+  ],
+  freezer: [
+    "Thursday/Friday meals go in freezer initially",
+    "Move to fridge two days before eating",
+    "Keep backup meals in dedicated section",
+    "Store smoothie bags flat for easy stacking"
+  ]
+}
+
+const maintenance = {
+  containers: [
+    "Hand wash containers to prevent warping",
+    "Check seals monthly for wear",
+    "Replace containers annually or if damaged",
+    "Store lids separately to prevent odors"
+  ],
+  equipment: [
+    "Deep clean rice cooker monthly",
+    "Calibrate scale every 3 months",
+    "Clean blender immediately after use",
+    "Check container seals regularly"
+  ]
+}
 
 export default function EquipmentPage() {
   return (
@@ -93,12 +111,15 @@ export default function EquipmentPage() {
 
         <div className="space-y-8">
           <section>
-            <h2 className="text-xl font-semibold mb-4">Core Equipment</h2>
-            <div className="grid gap-6">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Package className="h-5 w-5 text-primary flex-shrink-0" />
+              Core Equipment
+            </h2>
+            <div className="grid gap-4">
               {equipment.map((item) => (
                 <div 
                   key={item.title}
-                  className="bg-card border rounded-lg p-6"
+                  className="bg-card border rounded-lg p-4"
                 >
                   <div className="flex justify-between items-start gap-4">
                     <div className="flex-1">
@@ -110,7 +131,7 @@ export default function EquipmentPage() {
                           </span>
                         )}
                       </div>
-                      <p className="text-muted-foreground mb-4">{item.description}</p>
+                      <p className="text-sm text-muted-foreground mb-4">{item.description}</p>
                       <div className="flex items-center gap-4">
                         <Link 
                           href={item.link}
@@ -129,7 +150,7 @@ export default function EquipmentPage() {
                       </div>
                     </div>
                     {item.imageUrl && (
-                      <div className="relative w-24 h-24 bg-accent rounded">
+                      <div className="relative w-24 h-24 bg-muted rounded">
                         <Image
                           src={item.imageUrl}
                           alt={item.title}
@@ -145,47 +166,74 @@ export default function EquipmentPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-4">Storage Layout</h2>
-            <div className="bg-card border rounded-lg p-6">
-              <div className="aspect-video relative bg-accent rounded mb-6">
-                {/* Image placeholder for storage layout diagram */}
-                <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
-                  Storage Layout Diagram (Coming Soon)
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <LayoutGrid className="h-5 w-5 text-primary flex-shrink-0" />
+              Storage Layout
+            </h2>
+            <div className="grid gap-4">
+              <div className="bg-card border rounded-lg p-4">
+                <div className="aspect-video relative bg-muted rounded mb-4">
+                  {/* Image placeholder for storage layout diagram */}
+                  <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
+                    Storage Layout Diagram (Coming Soon)
+                  </div>
                 </div>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-medium mb-2">Fridge Organization</h3>
-                  <ul className="space-y-2 text-muted-foreground">
-                    <li>• Dedicate a full shelf to meal prep containers</li>
-                    <li>• Keep Monday-Wednesday meals in main fridge</li>
-                    <li>• Store sauces in door or small containers</li>
-                    <li>• Label everything with day to be eaten</li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="font-medium mb-2">Freezer Strategy</h3>
-                  <ul className="space-y-2 text-muted-foreground">
-                    <li>• Thursday/Friday meals go in freezer initially</li>
-                    <li>• Move to fridge two days before eating</li>
-                    <li>• Keep backup meals in dedicated section</li>
-                    <li>• Store smoothie bags flat for easy stacking</li>
-                  </ul>
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="font-medium mb-3">Fridge Organization</h3>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      {storage.fridge.map((item, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <span className="flex-shrink-0">•</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-3">Freezer Strategy</h3>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      {storage.freezer.map((item, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <span className="flex-shrink-0">•</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-4">Maintenance</h2>
-            <div className="bg-card border rounded-lg p-6">
-              <ul className="space-y-2 text-muted-foreground">
-                <li>• Hand wash containers to prevent warping</li>
-                <li>• Check seals monthly for wear</li>
-                <li>• Replace containers annually or if damaged</li>
-                <li>• Deep clean rice cooker monthly</li>
-                <li>• Wash smoothie bags immediately after use</li>
-              </ul>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Wrench className="h-5 w-5 text-primary flex-shrink-0" />
+              Maintenance Tips
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Container Care</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {maintenance.containers.map((tip, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span>{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Equipment Care</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {maintenance.equipment.map((tip, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span>{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </section>
         </div>
