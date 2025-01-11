@@ -41,7 +41,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
                   {nutritionProfile.targets.protein}g
                 </div>
                 <div className="text-base text-muted-foreground">
-                  35-40% of Total Calories
+                  35-40%
                 </div>
               </div>
             }
@@ -56,7 +56,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
                   {nutritionProfile.targets.carbs}g
                 </div>
                 <div className="text-base text-muted-foreground">
-                  40-45% of Total Calories
+                  40-45%
                 </div>
               </div>
             }
@@ -71,7 +71,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
                   {nutritionProfile.targets.fat}g
                 </div>
                 <div className="text-base text-muted-foreground">
-                  25-30% of Total Calories
+                  25-30%
                 </div>
               </div>
             }
