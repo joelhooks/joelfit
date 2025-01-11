@@ -65,17 +65,19 @@
 - [x] Update tests for new schema
 - [x] Fix initialization logic
 
-### 2.4 Framework Migration 🚧
-- [ ] Move framework config to repository data
-- [ ] Update framework routes
-- [ ] Update dependent components
-- [ ] Add tests for new implementations
+### 2.4 Framework Migration ✅
+- [x] Create framework schema
+- [x] Set up initial data structure
+- [x] Implement repository with UUID support
+- [x] Add comprehensive test coverage
+- [x] Fix validation and error handling
 
-### 2.5 Meal Plan Migration
-- [ ] Move meal plan config to repository data
-- [ ] Update meal plan routes
-- [ ] Update dependent components
-- [ ] Add tests for new implementations
+### 2.5 Meal Plan Migration ✅
+- [x] Update schema to match config structure
+- [x] Add support for portions and weekly prep
+- [x] Set up initial data from config
+- [x] Implement repository with UUID support
+- [x] Add comprehensive test coverage
 
 ### 2.6 Shopping Migration
 - [ ] Move shopping config to repository data
@@ -98,7 +100,7 @@
 - [ ] Test data consistency
 
 ### 3.3 Performance
-- [ ] Optimize repository initialization
+- [ ] Audit repository initialization
+- [ ] Optimize data loading
 - [ ] Add caching where needed
-- [ ] Monitor memory usage
-- [ ] Profile and optimize as needed 
+- [ ] Monitor and improve response times 
