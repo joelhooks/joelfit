@@ -216,26 +216,39 @@ const framework = {
 
 export default async function FrameworkPage() {
   const equipmentRepo = new EquipmentRepository()
-  const mealContainers = await equipmentRepo.findBySlug('meal-containers')
-  const masonJars = await equipmentRepo.findBySlug('mason-jars')
-  const smoothieBags = await equipmentRepo.findBySlug('smoothie-bags')
+  
+  // Get equipment with error handling
+  const [mealContainers, masonJars, smoothieBags] = await Promise.all([
+    equipmentRepo.findBySlug('prepnaturals-5-pack-34-oz-glass-meal-prep-containers').catch(() => ({
+      title: 'Glass Meal Prep Containers',
+      description: 'Multi-compartment glass containers',
+      link: '#'
+    })),
+    equipmentRepo.findBySlug('ball-wide-mouth-mason-jars-32-oz').catch(() => ({
+      title: 'Wide Mouth Mason Jars',
+      description: 'Wide mouth mason jars',
+      link: '#'
+    })),
+    equipmentRepo.findBySlug('oxo-good-grips-silicone-reusable-bag').catch(() => ({
+      title: 'Silicone Freezer Bags',
+      description: 'Silicone freezer bags',
+      link: '#'
+    }))
+  ])
 
   // Update container info with equipment data
   const containers = {
     mainMeals: {
-      type: mealContainers.description,
-      link: mealContainers.link,
+      equipment: <Link href={mealContainers.link} className="text-primary hover:underline">{mealContainers.title}</Link>,
       sections: framework.containers.mainMeals.sections
     },
     breakfast: {
-      type: masonJars.description,
-      link: masonJars.link,
+      equipment: <Link href={masonJars.link} className="text-primary hover:underline">{masonJars.title}</Link>,
       quantity: framework.containers.breakfast.quantity,
       note: framework.containers.breakfast.note
     },
     smoothies: {
-      type: smoothieBags.description,
-      link: smoothieBags.link,
+      equipment: <Link href={smoothieBags.link} className="text-primary hover:underline">{smoothieBags.title}</Link>,
       features: framework.containers.smoothies.features
     },
     sauces: framework.containers.sauces
@@ -369,14 +382,9 @@ export default async function FrameworkPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="bg-card border rounded-lg p-4">
                 <h3 className="font-medium mb-3">Main Meals</h3>
-                <Link
-                  href={containers.mainMeals.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-muted-foreground hover:text-foreground mb-3 block"
-                >
-                  {containers.mainMeals.type}
-                </Link>
+                <div className="text-sm text-muted-foreground mb-3">
+                  {containers.mainMeals.equipment}
+                </div>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   {containers.mainMeals.sections.map((section, index) => (
                     <li key={index} className="flex items-start gap-2">
@@ -389,14 +397,9 @@ export default async function FrameworkPage() {
               </div>
               <div className="bg-card border rounded-lg p-4">
                 <h3 className="font-medium mb-3">Breakfast</h3>
-                <Link
-                  href={containers.breakfast.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-muted-foreground hover:text-foreground mb-3 block"
-                >
-                  {containers.breakfast.type}
-                </Link>
+                <div className="text-sm text-muted-foreground mb-3">
+                  {containers.breakfast.equipment}
+                </div>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <span className="flex-shrink-0">•</span>
@@ -410,14 +413,9 @@ export default async function FrameworkPage() {
               </div>
               <div className="bg-card border rounded-lg p-4">
                 <h3 className="font-medium mb-3">Smoothies</h3>
-                <Link
-                  href={containers.smoothies.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-muted-foreground hover:text-foreground mb-3 block"
-                >
-                  {containers.smoothies.type}
-                </Link>
+                <div className="text-sm text-muted-foreground mb-3">
+                  {containers.smoothies.equipment}
+                </div>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   {containers.smoothies.features.map((feature, index) => (
                     <li key={index} className="flex items-start gap-2">
