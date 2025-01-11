@@ -172,12 +172,12 @@ export default async function FrameworkPage() {
         <h2 className="text-2xl font-semibold mb-4">Container System</h2>
         <div className="grid gap-6 md:grid-cols-2">
           {Object.entries(containers).map(([type, container]) => (
-            <div key={type} className="p-4 rounded-lg border">
-              <div className="flex items-center gap-2 mb-2">
+            <Card key={type}>
+              <CardHeader className="flex flex-row items-center gap-2">
                 <Package className="w-5 h-5" />
-                <h3 className="text-lg font-medium capitalize">{type}</h3>
-              </div>
-              <div className="space-y-2">
+                <CardTitle className="capitalize">{type}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
                 <div>{container.equipment}</div>
                 <div className="text-sm text-muted-foreground">
                   Quantity: {container.quantity}
@@ -190,8 +190,8 @@ export default async function FrameworkPage() {
                     </span>
                   ))}
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </section>
@@ -201,30 +201,34 @@ export default async function FrameworkPage() {
         <h2 className="text-2xl font-semibold mb-4">Storage Layout</h2>
         <div className="grid gap-6 md:grid-cols-2">
           {/* Fridge */}
-          <div className="p-4 rounded-lg border">
-            <div className="flex items-center gap-2 mb-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center gap-2">
               <Thermometer className="w-5 h-5" />
-              <h3 className="text-lg font-medium">Fridge Organization</h3>
-            </div>
-            <ul className="list-disc list-inside space-y-2">
-              {framework.storage.fridge.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </div>
+              <CardTitle>Fridge Organization</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="list-disc list-inside space-y-2">
+                {framework.storage.fridge.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
 
           {/* Freezer */}
-          <div className="p-4 rounded-lg border">
-            <div className="flex items-center gap-2 mb-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center gap-2">
               <Thermometer className="w-5 h-5" />
-              <h3 className="text-lg font-medium">Freezer Organization</h3>
-            </div>
-            <ul className="list-disc list-inside space-y-2">
-              {framework.storage.freezer.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </div>
+              <CardTitle>Freezer Organization</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="list-disc list-inside space-y-2">
+                {framework.storage.freezer.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
@@ -233,17 +237,19 @@ export default async function FrameworkPage() {
         <h2 className="text-2xl font-semibold mb-4">Scaling</h2>
         <div className="grid gap-6 md:grid-cols-2">
           {Object.entries(framework.scaling).map(([servings, details]) => (
-            <div key={servings} className="p-4 rounded-lg border">
-              <div className="flex items-center gap-2 mb-4">
+            <Card key={servings}>
+              <CardHeader className="flex flex-row items-center gap-2">
                 <Scale className="w-5 h-5" />
-                <h3 className="text-lg font-medium">{servings} Servings</h3>
-              </div>
-              <ul className="list-disc list-inside space-y-2">
-                {details.map((detail, i) => (
-                  <li key={i}>{detail}</li>
-                ))}
-              </ul>
-            </div>
+                <CardTitle>{servings} Servings</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="list-disc list-inside space-y-2">
+                  {details.map((detail, i) => (
+                    <li key={i}>{detail}</li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </section>
@@ -253,19 +259,21 @@ export default async function FrameworkPage() {
         <h2 className="text-2xl font-semibold mb-4">Troubleshooting</h2>
         <div className="grid gap-6 md:grid-cols-2">
           {Object.entries(framework.troubleshooting).map(([category, items]) => (
-            <div key={category} className="p-4 rounded-lg border">
-              <div className="flex items-center gap-2 mb-4">
+            <Card key={category}>
+              <CardHeader className="flex flex-row items-center gap-2">
                 <AlertCircle className="w-5 h-5" />
-                <h3 className="text-lg font-medium capitalize">
+                <CardTitle className="capitalize">
                   {category.replace(/-/g, ' ')}
-                </h3>
-              </div>
-              <ul className="list-disc list-inside space-y-2">
-                {items.map((item, i) => (
-                  <li key={i}>{item}</li>
-                ))}
-              </ul>
-            </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="list-disc list-inside space-y-2">
+                  {items.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </section>
