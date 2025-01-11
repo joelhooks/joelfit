@@ -7,9 +7,9 @@
     "incremental": false,
     "isolatedModules": true,
     "lib": ["es2022", "DOM", "DOM.Iterable"],
-    "module": "NodeNext",
+    "module": "ESNext",
     "moduleDetection": "force",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "bundler",
     "noUncheckedIndexedAccess": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
@@ -19,6 +19,8 @@
     "noEmit": true,
     "composite": false,
     "downlevelIteration": true,
-    "allowJs": true
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "types": ["react/experimental", "react-dom/experimental"]
   }
 }
