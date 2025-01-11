@@ -109,13 +109,37 @@
   - Create shared components for loading/error states
 
 ### 3.2 Component Updates 🚧
-- [ ] Update Framework page to use FrameworkRepository
-- [ ] Update Meal Plan page to use MealPlanRepository
-- [ ] Update Shopping page to use ShoppingRepository
-- [ ] Add loading states to all pages
-- [ ] Add error handling to all pages
-- [ ] Create shared loading state components
-- [ ] Create shared error boundary components
+
+#### 3.2.1 Shared Components
+- [ ] Create loading state components
+  - PageSkeleton: for initial page load
+  - CardSkeleton: for individual card items
+  - ListSkeleton: for list items
+  - StatsSkeleton: for metric displays
+- [ ] Create error handling components
+  - ErrorBoundary: catch and display errors
+  - NotFound: for missing data
+  - ErrorFallback: for generic errors
+  - RetryButton: for retrying failed operations
+
+#### 3.2.2 Page Updates
+- [ ] Update Framework page
+  - Use FrameworkRepository for schedule/tasks
+  - Use EquipmentRepository for containers
+  - Add loading states
+  - Add error handling
+- [ ] Update Meal Plan page
+  - Use MealPlanRepository for all data
+  - Remove hardcoded wife's meal plan
+  - Add loading states
+  - Add error handling
+- [ ] Update Shopping page
+  - Use ShoppingRepository for all data
+  - Add loading states
+  - Add error handling
+- [ ] Update Equipment page
+  - Add loading states
+  - Add error handling
 
 ### 3.3 Integration Testing
 - [ ] Test all updated components
