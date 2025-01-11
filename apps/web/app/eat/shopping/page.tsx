@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { PageHeader } from '@/components/page-header'
 import { ShoppingBag, Archive, Lightbulb } from 'lucide-react'
-import { shoppingList } from '@/config/joel'
+import { ShoppingRepository } from '@/lib/repositories/shopping'
 
 export const metadata: Metadata = {
   title: 'Shopping List | High-Protein Meal Prep OS',
@@ -24,7 +24,10 @@ export const metadata: Metadata = {
   }
 }
 
-export default function ShoppingListPage() {
+export default async function ShoppingListPage() {
+  const repo = new ShoppingRepository()
+  const shoppingList = await repo.getShoppingList()
+
   return (
     <main className="container py-6">
       <div className="max-w-3xl">
