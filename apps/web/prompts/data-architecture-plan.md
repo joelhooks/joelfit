@@ -122,10 +122,10 @@
   - NotFound: for missing data ✅
   - ErrorFallback: for generic errors ✅
   - RetryButton: for retrying failed operations ✅
-- [ ] Add repository components to packages/repo
-  - AsyncData: wrapper for loading/error states
-  - RepositoryProvider: context for repository instances
-  - useRepository: hook for accessing repositories
+- [x] Add repository components to @repo/core ✅
+  - AsyncData: wrapper for loading/error states ✅
+  - RepositoryProvider: context for repository instances ✅
+  - useRepository: hook for accessing repositories ✅
 
 #### 3.2.2 Page Updates
 - [ ] Update Framework page
