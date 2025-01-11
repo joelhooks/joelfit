@@ -1,10 +1,11 @@
 import { cn } from '@/lib/utils'
 import { Card } from '@repo/ui'
+import { ReactNode } from 'react'
 
 interface MetricCardProps {
   title: string
   value: string | number
-  subtitle?: string
+  subtitle?: ReactNode
   className?: string
   isKey?: boolean
 }
@@ -28,7 +29,7 @@ export function MetricCard({
       )}>{title}</h3>
       <div className="mt-3 text-3xl font-bold tracking-tight">{value}</div>
       {subtitle && (
-        <p className="mt-3 text-sm text-muted-foreground">{subtitle}</p>
+        <div className="mt-3 text-muted-foreground">{subtitle}</div>
       )}
     </Card>
   )

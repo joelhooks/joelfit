@@ -18,24 +18,39 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
         <SectionHeader title="Daily Targets" icon={Apple} />
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <MetricCard
-            title="Calories"
+            title="CALORIES"
             value={data.targets.calories}
-            subtitle="kcal/day"
+            subtitle={<span className="text-xs uppercase tracking-wider">kcal per day</span>}
           />
           <MetricCard
-            title="Protein"
-            value={`${data.targets.protein}g`}
-            subtitle="per day"
+            title="PROTEIN"
+            value={data.targets.protein}
+            subtitle={
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-semibold">g</span>
+                <span className="text-xs uppercase tracking-wider">per day</span>
+              </div>
+            }
           />
           <MetricCard
-            title="Carbs"
-            value={`${data.targets.carbs}g`}
-            subtitle="per day"
+            title="CARBS"
+            value={data.targets.carbs}
+            subtitle={
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-semibold">g</span>
+                <span className="text-xs uppercase tracking-wider">per day</span>
+              </div>
+            }
           />
           <MetricCard
-            title="Fat"
-            value={`${data.targets.fat}g`}
-            subtitle="per day"
+            title="FAT"
+            value={data.targets.fat}
+            subtitle={
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-semibold">g</span>
+                <span className="text-xs uppercase tracking-wider">per day</span>
+              </div>
+            }
           />
         </div>
       </section>
