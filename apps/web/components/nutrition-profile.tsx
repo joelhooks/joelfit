@@ -1,6 +1,3 @@
-'use client'
-
-import React from 'react'
 import { Profile } from '@/lib/repositories/profile/schema'
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
 import { SectionHeader } from '@/components/ui/section-header'
@@ -16,9 +13,9 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
 
   return (
     <div className="space-y-12">
-      <section className="daily-targets">
+      <section className="nutrition-targets">
         <SectionHeader 
-          title="Daily Targets" 
+          title="Nutrition Targets" 
           icon={Apple} 
         />
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -30,16 +27,12 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
                   {nutritionProfile.targets.calories}
                 </div>
                 <div className="text-base text-muted-foreground">
-                  Target Range
+                  Daily Target Range
                 </div>
               </div>
             }
-            subtitle={
-              <div className="text-sm uppercase tracking-wide text-muted-foreground/80">
-                Kilocalories Per Day
-              </div>
-            }
-            className="h-[200px]"
+            subtitle="Kilocalories Per Day"
+            className="h-[180px]"
           />
           <MetricCard
             title="PROTEIN"
@@ -53,12 +46,8 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
                 </div>
               </div>
             }
-            subtitle={
-              <div className="text-sm uppercase tracking-wide text-muted-foreground/80">
-                Grams Per Day
-              </div>
-            }
-            className="h-[200px]"
+            subtitle="Grams Per Day"
+            className="h-[180px]"
           />
           <MetricCard
             title="CARBOHYDRATES"
@@ -72,12 +61,8 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
                 </div>
               </div>
             }
-            subtitle={
-              <div className="text-sm uppercase tracking-wide text-muted-foreground/80">
-                Grams Per Day
-              </div>
-            }
-            className="h-[200px]"
+            subtitle="Grams Per Day"
+            className="h-[180px]"
           />
           <MetricCard
             title="FATS"
@@ -91,12 +76,8 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
                 </div>
               </div>
             }
-            subtitle={
-              <div className="text-sm uppercase tracking-wide text-muted-foreground/80">
-                Grams Per Day
-              </div>
-            }
-            className="h-[200px]"
+            subtitle="Grams Per Day"
+            className="h-[180px]"
           />
         </div>
       </section>
