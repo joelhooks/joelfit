@@ -142,16 +142,31 @@
   - [x] Keep consistent styling with shadcn/ui ✅
   - [x] Add tabbed interface for multiple meal plans ✅
   - [x] Support flexible meal structures ✅
-- [ ] Update Shopping page
-  - [ ] Convert to server component
-  - [ ] Load data directly from ShoppingRepository
-  - [ ] Keep consistent styling with shadcn/ui
+- [x] Update Shopping page ✅
+  - [x] Convert to server component ✅
+  - [x] Load data directly from ShoppingRepository ✅
+  - [x] Keep consistent styling with shadcn/ui ✅
+  - [x] Maintain section organization (weekly, pantry, tips) ✅
 - [ ] Update Equipment page
   - [ ] Convert to server component
   - [ ] Load data directly from EquipmentRepository
   - [ ] Keep consistent styling with shadcn/ui
+  - [ ] Add maintenance schedule section
+  - [ ] Add storage guide section
 
 ### 3.3 Testing & Cleanup
 - [ ] Basic error handling where needed
+  - [ ] Add error boundaries to pages
+  - [ ] Add loading states
+  - [ ] Handle repository errors gracefully
+  - [ ] Add retry mechanisms where appropriate
 - [ ] Remove old config files
-- [ ] Clean up unused code 
+  - [ ] Audit config usage
+  - [ ] Remove unused configs
+  - [ ] Update imports
+  - [ ] Clean up types
+- [ ] Clean up unused code
+  - [ ] Remove old components
+  - [ ] Clean up unused utilities
+  - [ ] Remove deprecated types
+  - [ ] Update documentation 
