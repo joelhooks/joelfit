@@ -1,29 +1,16 @@
-import { Metadata } from 'next'
-import { PageHeader } from '@/components/page-header'
+import { type Metadata } from 'next'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui'
 import { Clock, Thermometer, Scale, AlertCircle, Package } from 'lucide-react'
 import Link from 'next/link'
-import { AsyncData, useRepository, type Entity } from '@repo/core'
+import { type Entity } from '@repo/core'
 import { PageSkeleton, ErrorFallback } from '@repo/ui'
+import { FrameworkRepository } from '@/lib/repositories/framework/repository'
+import { EquipmentRepository } from '@/lib/repositories/equipment'
+import { PageHeader } from '@/components/page-header'
 
 export const metadata: Metadata = {
-  title: 'Core Framework | High-Protein Meal Prep OS',
-  description: 'Systematic approach to high-protein meal preparation',
-  openGraph: {
-    title: 'Core Framework | High-Protein Meal Prep OS',
-    description: 'Systematic approach to high-protein meal preparation',
-    images: [{
-      url: `https://www.joelfit.app/api/og?title=${encodeURIComponent('Core Framework')}&description=${encodeURIComponent('Systematic approach to high-protein meal preparation')}`,
-      width: 1200,
-      height: 630,
-      alt: 'Core Framework'
-    }]
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Core Framework | High-Protein Meal Prep OS',
-    description: 'Systematic approach to high-protein meal preparation',
-    images: [`https://www.joelfit.app/api/og?title=${encodeURIComponent('Core Framework')}&description=${encodeURIComponent('Systematic approach to high-protein meal preparation')}`],
-  }
+  title: 'Framework',
+  description: 'The JoelFit meal prep framework'
 }
 
 interface Framework extends Entity {
@@ -60,8 +47,8 @@ interface Equipment extends Entity {
 }
 
 export default async function FrameworkPage() {
-  const frameworkRepo = useRepository<Framework>('framework')
-  const equipmentRepo = useRepository<Equipment>('equipment')
+  const frameworkRepo = new FrameworkRepository()
+  const equipmentRepo = new EquipmentRepository()
 
   const [framework, equipment] = await Promise.all([
     frameworkRepo.findAll().then(frameworks => frameworks[0]),
@@ -75,6 +62,10 @@ export default async function FrameworkPage() {
       { title: 'Silicone Bags', link: 'https://amzn.to/3RYbRGe' }
     ] as Equipment[])
   ])
+
+  if (!framework) {
+    return <ErrorFallback title="Failed to load framework" />
+  }
 
   const [mealContainers, masonJars, smoothieBags] = equipment
 
@@ -110,181 +101,174 @@ export default async function FrameworkPage() {
   }
 
   return (
-    <AsyncData
-      data={framework}
-      isLoading={false}
-      loadingFallback={<PageSkeleton />}
-      errorFallback={<ErrorFallback title="Failed to load framework" />}
-    >
-      {(framework) => (
-        <div className="container py-6">
-          <PageHeader
-            title="Core Framework"
-            description="Systematic approach to high-protein meal preparation"
-          />
+    <div className="container py-6">
+      <PageHeader
+        title="Core Framework"
+        description="Systematic approach to high-protein meal preparation"
+      />
 
-          {/* Weekly Schedule */}
-          <section className="mt-8">
-            <h2 className="text-2xl font-semibold mb-4">Weekly Schedule</h2>
-            <div className="grid gap-6">
-              {/* Saturday */}
-              <div>
-                <h3 className="text-xl font-medium mb-2">{framework.weeklySchedule.saturday.title}</h3>
-                <div className="space-y-2">
-                  {framework.weeklySchedule.saturday.tasks.map((task, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
-                      <span>{task.task}</span>
-                      <span className="text-muted-foreground">({task.time})</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Sunday */}
-              <div>
-                <h3 className="text-xl font-medium mb-2">
-                  {framework.weeklySchedule.sunday.title}
-                  <span className="text-sm font-normal text-muted-foreground ml-2">
-                    (Total: {framework.weeklySchedule.sunday.totalTime})
-                  </span>
-                </h3>
-                <div className="space-y-4">
-                  {framework.weeklySchedule.sunday.waves.map((wave, i) => (
-                    <div key={i}>
-                      <h4 className="font-medium mb-2">
-                        {wave.title}
-                        <span className="text-sm font-normal text-muted-foreground ml-2">
-                          ({wave.time})
-                        </span>
-                      </h4>
-                      <ul className="list-disc list-inside space-y-1">
-                        {wave.tasks.map((task, j) => (
-                          <li key={j}>{task}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Wednesday */}
-              <div>
-                <h3 className="text-xl font-medium mb-2">{framework.weeklySchedule.wednesday.title}</h3>
-                <div className="space-y-2">
-                  {framework.weeklySchedule.wednesday.tasks.map((task, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
-                      <span>{task}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Container System */}
-          <section className="mt-12">
-            <h2 className="text-2xl font-semibold mb-4">Container System</h2>
-            <div className="grid gap-6 md:grid-cols-2">
-              {Object.entries(containers).map(([type, container]) => (
-                <div key={type} className="p-4 rounded-lg border">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Package className="w-5 h-5" />
-                    <h3 className="text-lg font-medium capitalize">{type}</h3>
-                  </div>
-                  <div className="space-y-2">
-                    <div>{container.equipment}</div>
-                    <div className="text-sm text-muted-foreground">
-                      Quantity: {container.quantity}
-                    </div>
-                    <div className="text-sm">{container.note}</div>
-                    <div className="flex flex-wrap gap-2">
-                      {container.features.map((feature, i) => (
-                        <span key={i} className="text-xs bg-muted px-2 py-1 rounded">
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+      {/* Weekly Schedule */}
+      <section className="mt-8">
+        <h2 className="text-2xl font-semibold mb-4">Weekly Schedule</h2>
+        <div className="grid gap-6">
+          {/* Saturday */}
+          <div>
+            <h3 className="text-xl font-medium mb-2">{framework.weeklySchedule.saturday.title}</h3>
+            <div className="space-y-2">
+              {framework.weeklySchedule.saturday.tasks.map((task, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  <span>{task.task}</span>
+                  <span className="text-muted-foreground">({task.time})</span>
                 </div>
               ))}
             </div>
-          </section>
+          </div>
 
-          {/* Storage Layout */}
-          <section className="mt-12">
-            <h2 className="text-2xl font-semibold mb-4">Storage Layout</h2>
-            <div className="grid gap-6 md:grid-cols-2">
-              {/* Fridge */}
-              <div className="p-4 rounded-lg border">
-                <div className="flex items-center gap-2 mb-4">
-                  <Thermometer className="w-5 h-5" />
-                  <h3 className="text-lg font-medium">Fridge Organization</h3>
-                </div>
-                <ul className="list-disc list-inside space-y-2">
-                  {framework.storage.fridge.map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Freezer */}
-              <div className="p-4 rounded-lg border">
-                <div className="flex items-center gap-2 mb-4">
-                  <Thermometer className="w-5 h-5" />
-                  <h3 className="text-lg font-medium">Freezer Organization</h3>
-                </div>
-                <ul className="list-disc list-inside space-y-2">
-                  {framework.storage.freezer.map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </section>
-
-          {/* Scaling */}
-          <section className="mt-12">
-            <h2 className="text-2xl font-semibold mb-4">Scaling</h2>
-            <div className="grid gap-6 md:grid-cols-2">
-              {Object.entries(framework.scaling).map(([servings, details]) => (
-                <div key={servings} className="p-4 rounded-lg border">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Scale className="w-5 h-5" />
-                    <h3 className="text-lg font-medium">{servings} Servings</h3>
-                  </div>
-                  <ul className="list-disc list-inside space-y-2">
-                    {details.map((detail, i) => (
-                      <li key={i}>{detail}</li>
+          {/* Sunday */}
+          <div>
+            <h3 className="text-xl font-medium mb-2">
+              {framework.weeklySchedule.sunday.title}
+              <span className="text-sm font-normal text-muted-foreground ml-2">
+                (Total: {framework.weeklySchedule.sunday.totalTime})
+              </span>
+            </h3>
+            <div className="space-y-4">
+              {framework.weeklySchedule.sunday.waves.map((wave, i) => (
+                <div key={i}>
+                  <h4 className="font-medium mb-2">
+                    {wave.title}
+                    <span className="text-sm font-normal text-muted-foreground ml-2">
+                      ({wave.time})
+                    </span>
+                  </h4>
+                  <ul className="list-disc list-inside space-y-1">
+                    {wave.tasks.map((task, j) => (
+                      <li key={j}>{task}</li>
                     ))}
                   </ul>
                 </div>
               ))}
             </div>
-          </section>
+          </div>
 
-          {/* Troubleshooting */}
-          <section className="mt-12">
-            <h2 className="text-2xl font-semibold mb-4">Troubleshooting</h2>
-            <div className="grid gap-6 md:grid-cols-2">
-              {Object.entries(framework.troubleshooting).map(([category, items]) => (
-                <div key={category} className="p-4 rounded-lg border">
-                  <div className="flex items-center gap-2 mb-4">
-                    <AlertCircle className="w-5 h-5" />
-                    <h3 className="text-lg font-medium capitalize">{category.replace(/-/g, ' ')}</h3>
-                  </div>
-                  <ul className="list-disc list-inside space-y-2">
-                    {items.map((item, i) => (
-                      <li key={i}>{item}</li>
-                    ))}
-                  </ul>
+          {/* Wednesday */}
+          <div>
+            <h3 className="text-xl font-medium mb-2">{framework.weeklySchedule.wednesday.title}</h3>
+            <div className="space-y-2">
+              {framework.weeklySchedule.wednesday.tasks.map((task, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  <span>{task}</span>
                 </div>
               ))}
             </div>
-          </section>
+          </div>
         </div>
-      )}
-    </AsyncData>
+      </section>
+
+      {/* Container System */}
+      <section className="mt-12">
+        <h2 className="text-2xl font-semibold mb-4">Container System</h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          {Object.entries(containers).map(([type, container]) => (
+            <div key={type} className="p-4 rounded-lg border">
+              <div className="flex items-center gap-2 mb-2">
+                <Package className="w-5 h-5" />
+                <h3 className="text-lg font-medium capitalize">{type}</h3>
+              </div>
+              <div className="space-y-2">
+                <div>{container.equipment}</div>
+                <div className="text-sm text-muted-foreground">
+                  Quantity: {container.quantity}
+                </div>
+                <div className="text-sm">{container.note}</div>
+                <div className="flex flex-wrap gap-2">
+                  {container.features.map((feature, i) => (
+                    <span key={i} className="text-xs bg-muted px-2 py-1 rounded">
+                      {feature}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Storage Layout */}
+      <section className="mt-12">
+        <h2 className="text-2xl font-semibold mb-4">Storage Layout</h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Fridge */}
+          <div className="p-4 rounded-lg border">
+            <div className="flex items-center gap-2 mb-4">
+              <Thermometer className="w-5 h-5" />
+              <h3 className="text-lg font-medium">Fridge Organization</h3>
+            </div>
+            <ul className="list-disc list-inside space-y-2">
+              {framework.storage.fridge.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Freezer */}
+          <div className="p-4 rounded-lg border">
+            <div className="flex items-center gap-2 mb-4">
+              <Thermometer className="w-5 h-5" />
+              <h3 className="text-lg font-medium">Freezer Organization</h3>
+            </div>
+            <ul className="list-disc list-inside space-y-2">
+              {framework.storage.freezer.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Scaling */}
+      <section className="mt-12">
+        <h2 className="text-2xl font-semibold mb-4">Scaling</h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          {Object.entries(framework.scaling).map(([servings, details]) => (
+            <div key={servings} className="p-4 rounded-lg border">
+              <div className="flex items-center gap-2 mb-4">
+                <Scale className="w-5 h-5" />
+                <h3 className="text-lg font-medium">{servings} Servings</h3>
+              </div>
+              <ul className="list-disc list-inside space-y-2">
+                {details.map((detail, i) => (
+                  <li key={i}>{detail}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Troubleshooting */}
+      <section className="mt-12">
+        <h2 className="text-2xl font-semibold mb-4">Troubleshooting</h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          {Object.entries(framework.troubleshooting).map(([category, items]) => (
+            <div key={category} className="p-4 rounded-lg border">
+              <div className="flex items-center gap-2 mb-4">
+                <AlertCircle className="w-5 h-5" />
+                <h3 className="text-lg font-medium capitalize">
+                  {category.replace(/-/g, ' ')}
+                </h3>
+              </div>
+              <ul className="list-disc list-inside space-y-2">
+                {items.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
   )
 } 
