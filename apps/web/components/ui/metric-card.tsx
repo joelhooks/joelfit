@@ -6,27 +6,44 @@ interface MetricCardProps {
   value: string | number
   subtitle?: string
   className?: string
-  colorScheme?: 'default' | 'green' | 'blue' | 'purple'
+  status?: 'warning' | 'success' | 'info' | 'default'
+  isKey?: boolean
 }
 
-const colorSchemes = {
-  default: 'before:bg-primary',
-  green: 'before:bg-green-500',
-  blue: 'before:bg-blue-500',
-  purple: 'before:bg-purple-500'
-}
+const statusColors = {
+  warning: 'before:bg-red-500',
+  success: 'before:bg-green-500',
+  info: 'before:bg-blue-500',
+  default: 'before:bg-gray-300'
+} as const
 
-export function MetricCard({ title, value, subtitle, className, colorScheme = 'default' }: MetricCardProps) {
+export function MetricCard({ 
+  title, 
+  value, 
+  subtitle, 
+  className,
+  status = 'default',
+  isKey = false
+}: MetricCardProps) {
   return (
     <Card className={cn(
       'relative overflow-hidden',
+      isKey && 'ring-1 ring-primary/10',
       'before:absolute before:left-0 before:top-0 before:h-full before:w-1',
-      colorSchemes[colorScheme],
+      statusColors[status],
       className
     )}>
       <div className="p-4">
-        <h3 className="text-base font-medium text-muted-foreground">{title}</h3>
-        <div className="mt-2 text-2xl font-semibold">{value}</div>
+        <h3 className={cn(
+          "text-base font-medium",
+          isKey ? "text-primary" : "text-muted-foreground"
+        )}>{title}</h3>
+        <div className={cn(
+          "mt-2 text-2xl font-semibold",
+          status === 'warning' && "text-red-500",
+          status === 'success' && "text-green-500",
+          status === 'info' && "text-blue-500"
+        )}>{value}</div>
         {subtitle && (
           <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
         )}

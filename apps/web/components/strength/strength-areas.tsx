@@ -8,19 +8,19 @@ interface StrengthAreasProps {
 }
 
 export function StrengthAreas({ data }: StrengthAreasProps) {
-  const colorSchemes = ['green', 'blue', 'purple'] as const
-
+  // All strength areas are currently in good status
+  // In a real app, we'd determine this based on thresholds
   return (
     <div>
       <SectionHeader title="Strength Foundation" icon={Dumbbell} />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {data.map((area, index) => (
+        {data.map((area) => (
           <MetricCard
             key={area.title}
             title={area.title}
             value={area.metric}
             subtitle={area.details}
-            colorScheme={colorSchemes[index % colorSchemes.length]}
+            status="success"
           />
         ))}
       </div>

@@ -9,6 +9,15 @@ interface MetricsGridProps {
 }
 
 export function MetricsGrid({ data, targets }: MetricsGridProps) {
+  // Helper to determine status based on current vs target value
+  const getStatus = (current: number, target: number | undefined, isLowerBetter = true) => {
+    if (!target) return 'default'
+    const diff = isLowerBetter ? current - target : target - current
+    if (diff > target * 0.1) return 'warning'
+    if (diff < 0) return 'success'
+    return 'info'
+  }
+
   return (
     <div>
       <SectionHeader title="Key Metrics" icon={Activity} />
@@ -17,31 +26,37 @@ export function MetricsGrid({ data, targets }: MetricsGridProps) {
           title="Android Fat"
           value={`${data.androidFat}%`}
           subtitle={`Target: ${targets.androidFat}%`}
-          colorScheme="green"
+          status={getStatus(data.androidFat, targets.androidFat)}
+          isKey
         />
         <MetricCard
           title="A/G Ratio"
           value={data.agRatio}
           subtitle={`Target: ${targets.agRatio}`}
-          colorScheme="blue"
+          status={getStatus(data.agRatio, targets.agRatio)}
+          isKey
         />
         <MetricCard
           title="Visceral Fat"
           value={data.visceralFat}
           subtitle={`Target: ${targets.visceralFat}`}
-          colorScheme="purple"
+          status={getStatus(data.visceralFat, targets.visceralFat)}
+          isKey
         />
         <MetricCard
           title="Total Body Fat"
           value={`${data.totalBodyFat}%`}
+          status={getStatus(data.totalBodyFat, 20)} // Assuming 20% is a good target
         />
         <MetricCard
           title="Gynoid Fat"
           value={`${data.gynoidFat}%`}
+          status="info"
         />
         <MetricCard
           title="RSMI"
           value={data.rsmi}
+          status="success" // High RSMI is good
         />
       </div>
     </div>
