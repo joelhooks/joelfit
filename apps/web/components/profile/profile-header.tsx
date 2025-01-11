@@ -26,7 +26,7 @@ export function ProfileHeader({ data }: ProfileHeaderProps) {
         </div>
         <div className="mt-2 text-sm text-muted-foreground">
           <span>Training {data.exercise} days/week • </span>
-          <span>{data.experience} years experience</span>
+          <span>Lifting: {data.experience.lifting} years • Cardio: {data.experience.cardio} years</span>
         </div>
       </div>
     </div>

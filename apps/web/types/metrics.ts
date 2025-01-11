@@ -84,8 +84,8 @@ export const portionsSchema = z.object({
 export const weeklyPrepSchema = z.object({
   proteins: z.array(z.string()),
   carbs: z.array(z.string()),
-  vegetables: z.string(),
-  sauces: z.string()
+  vegetables: z.array(z.string()),
+  sauces: z.array(z.string())
 })
 
 export const nutritionProfileSchema = z.object({
