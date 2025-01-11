@@ -24,13 +24,21 @@
 - [x] Test coverage
 - [x] Clean error handling
 
-### 1.4 Equipment Repository 🚧
-- [ ] Strong typing with Zod schemas
-- [ ] Proper data structure for equipment
-- [ ] Slug generation from names
-- [ ] Initial data setup
-- [ ] Test coverage
-- [ ] Clean error handling
+### 1.4 Equipment Repository ✅
+- [x] Strong typing with Zod schemas
+- [x] Proper data structure for equipment
+- [x] Slug generation from names
+- [x] Initial data setup
+- [x] Test coverage
+- [x] Clean error handling
+
+### 1.5 Shopping Repository ✅
+- [x] Strong typing with Zod schemas
+- [x] Proper data structure for shopping lists
+- [x] Slug generation from names
+- [x] Initial data setup
+- [x] Test coverage
+- [x] Clean error handling
 
 ## Phase 2: Data Storage 🚧
 
