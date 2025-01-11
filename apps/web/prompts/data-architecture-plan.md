@@ -130,51 +130,23 @@
 
 #### 3.2.2 Page Updates
 - [x] Update Framework page ✅
-  - Use FrameworkRepository in server component ✅
-  - Pass data as props to client components ✅
-  - Add loading states ✅
-  - Add error handling ✅
-  - [x] Fix lost styling ✅
-    - [x] Add back shadcn Card components ✅
-    - [x] Fix container borders and spacing ✅
-    - [x] Restore consistent section layouts ✅
-    - [x] Fix link styling and spacing ✅
+  - [x] Convert to server component ✅
+  - [x] Load data directly in server component ✅
+  - [x] Keep consistent styling with shadcn/ui ✅
 - [ ] Update Meal Plan page 🚧
   - [ ] Convert to server component
-  - [ ] Use MealPlanRepository for all data
-  - [ ] Remove hardcoded wife's meal plan
-  - [ ] Add error handling
-  - [ ] Ensure consistent styling with Framework page
+  - [ ] Load data directly from MealPlanRepository
+  - [ ] Keep consistent styling with shadcn/ui
 - [ ] Update Shopping page
-  - Use ShoppingRepository for all data
-  - Add loading states
-  - Add error handling
+  - [ ] Convert to server component
+  - [ ] Load data directly from ShoppingRepository
+  - [ ] Keep consistent styling with shadcn/ui
 - [ ] Update Equipment page
-  - Add loading states
-  - Add error handling
+  - [ ] Convert to server component
+  - [ ] Load data directly from EquipmentRepository
+  - [ ] Keep consistent styling with shadcn/ui
 
-### 3.3 Integration Testing
-- [ ] Test all updated components
-- [ ] Verify data flow
-- [ ] Test error states
-- [ ] Test loading states
-
-## Phase 4: Cleanup 🚧
-
-### 4.1 Code Cleanup
+### 3.3 Testing & Cleanup
+- [ ] Basic error handling where needed
 - [ ] Remove old config files
-- [ ] Update imports to use repositories
-- [ ] Clean up unused code
-- [ ] Update documentation
-
-### 4.2 Testing
-- [ ] Add integration tests
-- [ ] Test all routes with new repositories
-- [ ] Test error handling
-- [ ] Test data consistency
-
-### 4.3 Performance
-- [x] Audit repository initialization
-- [ ] Optimize data loading
-- [ ] Add caching where needed
-- [ ] Monitor and improve response times 
+- [ ] Clean up unused code 
