@@ -4,15 +4,16 @@
   "type": "module",
   "private": true,
   "exports": {
-    ".": "./src/index.ts",
+    ".": "./dist/index.js",
     "./styles": "./src/styles/globals.css",
-    "./utils": "./src/lib/utils.ts",
+    "./utils": "./dist/lib/utils.js",
     "./tailwind-config": "./tailwind.config.js"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "generate:component": "turbo gen react-component",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "build": "tsc"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
