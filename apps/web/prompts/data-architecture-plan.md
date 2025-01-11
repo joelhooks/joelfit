@@ -58,13 +58,14 @@
 - [x] Update dependent components
 - [x] Add tests for new implementations
 
-### 2.3 Profile Migration 🚧
-- [ ] Move profile config to repository data
-- [ ] Update profile routes
-- [ ] Update dependent components
-- [ ] Add tests for new implementations
+### 2.3 Profile Migration ✅
+- [x] Move profile config to repository data
+- [x] Update schema to match config structure
+- [x] Add support for strength areas and action plan
+- [x] Update tests for new schema
+- [x] Fix initialization logic
 
-### 2.4 Framework Migration
+### 2.4 Framework Migration 🚧
 - [ ] Move framework config to repository data
 - [ ] Update framework routes
 - [ ] Update dependent components
@@ -82,44 +83,22 @@
 - [ ] Update dependent components
 - [ ] Add tests for new implementations
 
-## Phase 3: API Layer 🚧
+## Phase 3: Cleanup 🚧
 
-### 3.1 Server Actions
-- [ ] Implement server actions for CRUD operations
-- [ ] Add validation
-- [ ] Add error handling
-- [ ] Add tests
+### 3.1 Code Cleanup
+- [ ] Remove old config files
+- [ ] Update imports to use repositories
+- [ ] Clean up unused code
+- [ ] Update documentation
 
-### 3.2 API Routes
-- [ ] Implement REST endpoints
-- [ ] Add validation
-- [ ] Add error handling
-- [ ] Add tests
+### 3.2 Testing
+- [ ] Add integration tests
+- [ ] Test all routes with new repositories
+- [ ] Test error handling
+- [ ] Test data consistency
 
-## Phase 4: UI Integration 🚧
-
-### 4.1 React Query Integration
-- [ ] Set up React Query
-- [ ] Implement query hooks
-- [ ] Add mutation hooks
-- [ ] Add tests
-
-### 4.2 Forms
-- [ ] Create form components
-- [ ] Add validation
-- [ ] Add error handling
-- [ ] Add tests
-
-## Phase 5: Deployment 🚧
-
-### 5.1 CI/CD
-- [ ] Set up GitHub Actions
-- [ ] Add linting
-- [ ] Add testing
-- [ ] Add deployment
-
-### 5.2 Production
-- [ ] Set up production database
-- [ ] Configure environment variables
-- [ ] Deploy to production
-- [ ] Add monitoring 
+### 3.3 Performance
+- [ ] Optimize repository initialization
+- [ ] Add caching where needed
+- [ ] Monitor memory usage
+- [ ] Profile and optimize as needed 
