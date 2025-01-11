@@ -42,11 +42,15 @@
 
 ## Phase 2: Config to Repository Migration 🚧
 
-### 2.1 Route Analysis
-- [ ] Audit /eat routes for config usage
-- [ ] Map config data to repositories
-- [ ] Document data flow changes
-- [ ] Identify shared components needing updates
+### 2.1 Route Analysis ✅
+- [x] Audit /eat routes for config usage
+  - equipment: uses equipmentRepo, storageGuide, maintenanceSchedule
+  - framework: uses equipmentRepo, has inline data
+  - meal-plan: uses mealPlan from joel config, has inline data
+  - shopping: uses shoppingList from joel config
+- [x] Map config data to repositories
+- [x] Document data flow changes
+- [x] Identify shared components needing updates
 
 ### 2.2 Equipment Migration
 - [ ] Move equipment config to repository data
