@@ -102,7 +102,7 @@ export const initialMealPlan: Omit<MealPlan, keyof { id: string; slug: string; c
 }
 
 export const wifeMealPlan: Omit<MealPlan, keyof { id: string; slug: string; createdAt: Date; updatedAt: Date }> = {
-  name: "Wife's Meal Plan",
+  name: "Kristina's Meal Plan",
   calories: 2100,
   timeline: [
     { time: "7:00 AM", slot: "A", meal: "Breakfast", calories: 350, protein: 24, carbs: 35, fat: 9, container: "Mason jar" },

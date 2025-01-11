@@ -19,16 +19,8 @@ export const mealItemSchema = z.object({
   items: z.array(z.string())
 })
 
-export const mealStructureSchema = z.object({
-  breakfast: mealItemSchema,
-  smoothie: mealItemSchema.optional(),
-  meal1: mealItemSchema.optional(),
-  meal2: mealItemSchema.optional(),
-  lunch: mealItemSchema.optional(),
-  midDay: mealItemSchema.optional(),
-  dinner: mealItemSchema.optional(),
-  nightSnack: mealItemSchema
-})
+// Instead of hardcoding meal names, we use a record type for flexibility
+export const mealStructureSchema = z.record(z.string(), mealItemSchema)
 
 // Emergency backup schema
 export const emergencyBackupSchema = z.object({
