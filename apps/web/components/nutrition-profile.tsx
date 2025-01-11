@@ -38,7 +38,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             value={
               <div className="flex flex-col space-y-2">
                 <div className="text-[32px] font-bold tracking-tight">
-                  {nutritionProfile.targets.protein}
+                  200-220
                 </div>
                 <div className="text-base text-muted-foreground">
                   35-40%
@@ -53,7 +53,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             value={
               <div className="flex flex-col space-y-2">
                 <div className="text-[32px] font-bold tracking-tight">
-                  {nutritionProfile.targets.carbs}
+                  225-250
                 </div>
                 <div className="text-base text-muted-foreground">
                   40-45%
@@ -68,7 +68,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             value={
               <div className="flex flex-col space-y-2">
                 <div className="text-[32px] font-bold tracking-tight">
-                  {nutritionProfile.targets.fat}
+                  65-75
                 </div>
                 <div className="text-base text-muted-foreground">
                   25-30%
