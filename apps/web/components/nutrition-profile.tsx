@@ -30,19 +30,19 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
           <MetricCard
             title="PROTEIN"
             value={nutritionProfile.targets.protein}
-            subtitle="35-40% of Total Calories"
+            subtitle="Grams Per Day"
             className="h-[180px]"
           />
           <MetricCard
             title="CARBOHYDRATES"
             value={nutritionProfile.targets.carbs}
-            subtitle="40-45% of Total Calories"
+            subtitle="Grams Per Day"
             className="h-[180px]"
           />
           <MetricCard
             title="FATS"
             value={nutritionProfile.targets.fat}
-            subtitle="25-30% of Total Calories"
+            subtitle="Grams Per Day"
             className="h-[180px]"
           />
         </div>
