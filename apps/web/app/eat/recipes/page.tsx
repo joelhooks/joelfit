@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { PageHeader } from '@/components/page-header'
 import Link from 'next/link'
-import { ArrowRight, UtensilsCrossed, Droplets, Leaf } from 'lucide-react'
+import { ArrowRight, UtensilsCrossed, Droplets, Leaf, BookOpen, Star, Clock, Timer, Flame, Users, Package } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Base Recipes | High-Protein Meal Prep OS',
@@ -124,110 +124,133 @@ export default function RecipesPage() {
 
         <div className="space-y-8">
           <section>
-            <h2 className="text-xl font-semibold mb-4">Recipe Categories</h2>
-            <div className="grid gap-6">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-primary flex-shrink-0" />
+              Recipe Categories
+            </h2>
+            <div className="grid gap-4">
               {recipeCategories.map((category) => (
                 <Link 
                   key={category.title}
                   href={category.href}
-                  className="group flex items-center justify-between p-6 border rounded-lg bg-card hover:border-primary transition-colors"
+                  className="group bg-card border rounded-lg p-4 hover:border-primary transition-colors"
                 >
                   <div className="flex items-start gap-4">
-                    <category.icon className="h-6 w-6 text-primary mt-1" />
-                    <div>
-                      <h3 className="text-xl font-semibold mb-1 group-hover:text-primary">
+                    <category.icon className="h-6 w-6 text-primary flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-medium mb-1 group-hover:text-primary transition-colors">
                         {category.title}
                       </h3>
-                      <p className="text-muted-foreground">
+                      <p className="text-sm text-muted-foreground">
                         {category.description}
                       </p>
                     </div>
+                    <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
-                  <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                 </Link>
               ))}
             </div>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-4">Featured Recipe</h2>
-            <div className="bg-card border rounded-lg p-6">
-              <div className="aspect-video relative bg-accent rounded mb-6">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Star className="h-5 w-5 text-primary flex-shrink-0" />
+              Featured Recipe
+            </h2>
+            <div className="bg-card border rounded-lg">
+              <div className="aspect-video relative bg-muted rounded-t-lg">
                 {/* Image placeholder for recipe photo */}
                 <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
                   Recipe Photo (Coming Soon)
                 </div>
               </div>
 
-              <h3 className="text-2xl font-semibold mb-2">{featuredRecipe.title}</h3>
-              <p className="text-muted-foreground mb-6">{featuredRecipe.description}</p>
+              <div className="p-4">
+                <h3 className="text-xl font-medium mb-2">{featuredRecipe.title}</h3>
+                <p className="text-sm text-muted-foreground mb-6">{featuredRecipe.description}</p>
 
-              <div className="grid gap-4 md:grid-cols-2 mb-6">
-                <div>
-                  <h4 className="font-medium mb-2">Time & Yield</h4>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
-                    <li>• Prep: {featuredRecipe.prepTime}</li>
-                    <li>• Rest: {featuredRecipe.restTime}</li>
-                    <li>• Cook: {featuredRecipe.cookTime}</li>
-                    <li>• Makes: {featuredRecipe.servings}</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-medium mb-2">Equipment Needed</h4>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
-                    {featuredRecipe.equipment.map((item, index) => (
-                      <li key={index}>• {item}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <div>
-                  <h4 className="font-medium mb-2">Ingredients</h4>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
-                    {featuredRecipe.ingredients.map((item, index) => (
-                      <li key={index}>• {item}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div>
-                  <h4 className="font-medium mb-2">Method</h4>
-                  <ol className="space-y-2 text-sm text-muted-foreground list-decimal list-inside">
-                    {featuredRecipe.method.map((step, index) => (
-                      <li key={index}>{step}</li>
-                    ))}
-                  </ol>
+                <div className="grid gap-4 sm:grid-cols-2 mb-6">
+                  <div className="bg-muted/50 rounded p-3">
+                    <h4 className="font-medium mb-2">Time & Yield</h4>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      <li className="flex items-start gap-2">
+                        <Clock className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                        <span>Prep: {featuredRecipe.prepTime}</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Timer className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                        <span>Rest: {featuredRecipe.restTime}</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Flame className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                        <span>Cook: {featuredRecipe.cookTime}</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Users className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                        <span>Makes: {featuredRecipe.servings}</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="bg-muted/50 rounded p-3">
+                    <h4 className="font-medium mb-2">Equipment Needed</h4>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      {featuredRecipe.equipment.map((item, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <Package className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
 
-                <div>
-                  <h4 className="font-medium mb-2">Meal Prep Notes</h4>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
-                    {featuredRecipe.mealPrepNotes.map((note, index) => (
-                      <li key={index}>• {note}</li>
-                    ))}
-                  </ul>
-                </div>
+                <div className="space-y-6">
+                  <div className="bg-muted/50 rounded p-3">
+                    <h4 className="font-medium mb-2">Ingredients</h4>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      {featuredRecipe.ingredients.map((item, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <span className="flex-shrink-0">•</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
 
-                <div>
-                  <h4 className="font-medium mb-2">Pro Tips</h4>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
-                    {featuredRecipe.proTips.map((tip, index) => (
-                      <li key={index}>• {tip}</li>
-                    ))}
-                  </ul>
-                </div>
+                  <div className="bg-muted/50 rounded p-3">
+                    <h4 className="font-medium mb-2">Method</h4>
+                    <ol className="space-y-2 text-sm text-muted-foreground">
+                      {featuredRecipe.method.map((step, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <span className="flex-shrink-0 font-medium">{index + 1}.</span>
+                          <span>{step}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
 
-                <div>
-                  <h4 className="font-medium mb-2">Serving Suggestions</h4>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    {featuredRecipe.servingSuggestions.map((suggestion) => (
-                      <div key={suggestion.title}>
-                        <p className="text-sm font-medium">{suggestion.title}</p>
-                        <p className="text-sm text-muted-foreground">{suggestion.description}</p>
-                      </div>
-                    ))}
+                  <div className="bg-muted/50 rounded p-3">
+                    <h4 className="font-medium mb-2">Meal Prep Notes</h4>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      {featuredRecipe.mealPrepNotes.map((note, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <span className="flex-shrink-0">•</span>
+                          <span>{note}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="bg-muted/50 rounded p-3">
+                    <h4 className="font-medium mb-2">Pro Tips</h4>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      {featuredRecipe.proTips.map((tip, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <span className="flex-shrink-0">•</span>
+                          <span>{tip}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </div>
