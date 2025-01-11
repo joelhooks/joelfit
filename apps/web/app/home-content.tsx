@@ -28,7 +28,7 @@ const sections: Section[] = [
       {
         title: "5-Meal Structure",
         description: "2250-2500 cal, 200-220g protein",
-        href: "/profile/joel"
+        href: "/eat/meal-plan"
       },
       {
         title: "2-3 Hour Sunday Prep",
