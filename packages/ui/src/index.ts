@@ -1,4 +1,6 @@
-export * from './components/scroll-area/index.js'
-export * from './components/navigation-menu/index.js'
-export * from './components/card/index.js'
+export * from './components/ui/button.js'
+export * from './components/ui/card.js'
+export * from './components/ui/scroll-area.js'
+export * from './components/ui/sheet.js'
+
 export { cn } from './lib/utils.js' 
