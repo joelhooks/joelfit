@@ -1,65 +1,42 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { MealPlanRepository } from './repository'
-import { MealPlan } from './schema'
-import { NotFoundError, SlugGenerationError, ValidationError, Entity } from '../base'
-
-const newMealPlan: Omit<MealPlan, keyof Entity> = {
-  name: 'Test Meal Plan',
-  totalCalories: 2000,
-  timeline: [
-    {
-      time: '8:00 AM',
-      slot: 'Breakfast',
-      meal: 'Test Breakfast',
-      calories: 400,
-      protein: 30,
-      carbs: 45,
-      fat: 12,
-      container: 'Mason Jar'
-    }
-  ],
-  structure: {
-    breakfast: [
-      { name: 'Test Item', amount: '1 cup', container: 'Mason Jar' }
-    ],
-    lunch: [],
-    midDayMeal: [],
-    dinner: [],
-    nightSnack: []
-  },
-  emergencyBackup: ['Test Backup']
-}
+import { type MealPlan } from './schema'
+import { NotFoundError, ValidationError } from '../base'
 
 describe('MealPlanRepository', () => {
   let repo: MealPlanRepository
-  let defaultMealPlanId: string
 
   beforeEach(() => {
     repo = new MealPlanRepository()
-    defaultMealPlanId = repo.getDefaultMealPlanId()
   })
 
   describe('findById', () => {
-    it('should find meal plan by id', async () => {
-      const mealPlan = await repo.findById(defaultMealPlanId)
-      expect(mealPlan).toBeDefined()
-      expect(mealPlan?.name).toBe('Joel\'s Meal Plan')
+    it('should return meal plan by id', async () => {
+      const mealPlans = await repo.findAll()
+      expect(mealPlans[0]).toBeDefined()
+      const mealPlan = await repo.findById(mealPlans[0]!.id)
+      expect(mealPlan.name).toBe("Joel's Meal Plan")
+      expect(mealPlan.calories).toBe(2400)
+      expect(mealPlan.timeline).toHaveLength(5)
+      expect(mealPlan.mealStructure.breakfast.items).toHaveLength(4)
     })
 
-    it('should throw NotFoundError if meal plan not found', async () => {
-      await expect(repo.findById('invalid-id')).rejects.toThrow(NotFoundError)
+    it('should throw NotFoundError for non-existent id', async () => {
+      await expect(repo.findById('999')).rejects.toThrow(NotFoundError)
     })
   })
 
   describe('findBySlug', () => {
-    it('should find meal plan by slug', async () => {
-      const mealPlan = await repo.findBySlug('joel')
-      expect(mealPlan).toBeDefined()
-      expect(mealPlan?.name).toBe('Joel\'s Meal Plan')
+    it('should return meal plan by slug', async () => {
+      const mealPlan = await repo.findBySlug('joels-meal-plan')
+      expect(mealPlan.name).toBe("Joel's Meal Plan")
+      expect(mealPlan.calories).toBe(2400)
+      expect(mealPlan.timeline).toHaveLength(5)
+      expect(mealPlan.mealStructure.breakfast.items).toHaveLength(4)
     })
 
-    it('should throw NotFoundError if meal plan not found', async () => {
-      await expect(repo.findBySlug('invalid-slug')).rejects.toThrow(NotFoundError)
+    it('should throw NotFoundError for non-existent slug', async () => {
+      await expect(repo.findBySlug('non-existent')).rejects.toThrow(NotFoundError)
     })
   })
 
@@ -67,78 +44,148 @@ describe('MealPlanRepository', () => {
     it('should return all meal plans', async () => {
       const mealPlans = await repo.findAll()
       expect(mealPlans).toHaveLength(1)
-      expect(mealPlans[0]?.name).toBe('Joel\'s Meal Plan')
+      expect(mealPlans[0]?.name).toBe("Joel's Meal Plan")
     })
   })
 
-  describe('create', () => {
-    it('should create a new meal plan', async () => {
-      const created = await repo.create(newMealPlan)
-      expect(created).toBeDefined()
-      expect(created.name).toBe('Test Meal Plan')
-      expect(created.slug).toBe('test-meal-plan')
-      expect(created.id).toBeDefined()
-      expect(created.createdAt).toBeDefined()
-      expect(created.updatedAt).toBeDefined()
-    })
-
-    it('should throw SlugGenerationError if name is missing', async () => {
-      const invalidMealPlan = { ...newMealPlan, name: '' }
-      await expect(repo.create(invalidMealPlan)).rejects.toThrow(SlugGenerationError)
-    })
-
-    it('should throw ValidationError if data is invalid', async () => {
-      const invalidMealPlan = { ...newMealPlan, totalCalories: -1 }
-      await expect(repo.create(invalidMealPlan)).rejects.toThrow(ValidationError)
+  describe('getMealPlan', () => {
+    it('should return the default meal plan', async () => {
+      const mealPlan = await repo.getMealPlan()
+      expect(mealPlan.name).toBe("Joel's Meal Plan")
+      expect(mealPlan.calories).toBe(2400)
+      expect(mealPlan.timeline).toHaveLength(5)
+      expect(mealPlan.mealStructure.breakfast.items).toHaveLength(4)
     })
   })
 
   describe('update', () => {
-    it('should update an existing meal plan', async () => {
+    it('should update existing meal plan', async () => {
+      const mealPlans = await repo.findAll()
+      expect(mealPlans[0]).toBeDefined()
       const updates = {
-        name: 'Updated Meal Plan',
-        totalCalories: 2200
+        name: "Updated Meal Plan",
+        calories: 2500,
+        timeline: [
+          { time: "8:00 AM", slot: "A", meal: "Updated Breakfast", calories: 500, protein: 35, carbs: 50, fat: 18, container: "Mason jar" }
+        ],
+        mealStructure: {
+          breakfast: {
+            title: "A: Updated Breakfast (500 cal)",
+            items: [
+              "1 cup oats (200 cal, 35g C)",
+              "1.5 scoop protein powder (180 cal, 36g P)",
+              "1.5 tbsp nut butter (147 cal, 12g F)",
+              "1 banana (105 cal, 27g C)"
+            ]
+          },
+          lunch: {
+            title: "C: Lunch (650 cal)",
+            items: ["Test item"]
+          },
+          midDay: {
+            title: "D: Mid-day Meal (550 cal)",
+            items: ["Test item"]
+          },
+          dinner: {
+            title: "E: Dinner (400 cal)",
+            items: ["Test item"]
+          },
+          nightSnack: {
+            title: "F: Night Snack (200 cal)",
+            items: ["Test item"]
+          }
+        },
+        portions: {
+          protein: "7-9 oz per main meal",
+          carbs: "2-2.5 cups per main meal",
+          vegetables: "2.5 cups per main meal",
+          fats: "1.5-2 tbsp per main meal"
+        },
+        weeklyPrep: {
+          proteins: ["2 lbs chicken"],
+          carbs: ["3 cups dry rice"],
+          vegetables: ["5 cups mixed vegetables"],
+          sauces: ["Updated sauce"]
+        },
+        emergencyBackup: {
+          items: ["Updated backup item"]
+        }
       }
 
-      const updated = await repo.update(defaultMealPlanId, updates)
-      expect(updated.name).toBe('Updated Meal Plan')
-      expect(updated.totalCalories).toBe(2200)
-      expect(updated.updatedAt).toBeDefined()
+      const updated = await repo.update(mealPlans[0]!.id, updates)
+      expect(updated.name).toBe("Updated Meal Plan")
+      expect(updated.calories).toBe(2500)
+      expect(updated.timeline).toHaveLength(1)
+      expect(updated.mealStructure.breakfast.items[0]).toBe("1 cup oats (200 cal, 35g C)")
+      expect(updated.portions.protein).toBe("7-9 oz per main meal")
+      expect(updated.weeklyPrep.proteins[0]).toBe("2 lbs chicken")
+      expect(updated.emergencyBackup.items[0]).toBe("Updated backup item")
+      expect(updated.updatedAt).toBeInstanceOf(Date)
     })
 
-    it('should throw NotFoundError if meal plan not found', async () => {
-      await expect(repo.update('invalid-id', { name: 'Test' })).rejects.toThrow(NotFoundError)
+    it('should throw NotFoundError for non-existent id', async () => {
+      const updates = {
+        name: "Test Plan",
+        calories: 2000,
+        timeline: [],
+        mealStructure: {
+          breakfast: { title: "Test", items: [] },
+          lunch: { title: "Test", items: [] },
+          midDay: { title: "Test", items: [] },
+          dinner: { title: "Test", items: [] },
+          nightSnack: { title: "Test", items: [] }
+        },
+        portions: {
+          protein: "test",
+          carbs: "test",
+          vegetables: "test",
+          fats: "test"
+        },
+        weeklyPrep: {
+          proteins: [],
+          carbs: [],
+          vegetables: [],
+          sauces: []
+        },
+        emergencyBackup: {
+          items: []
+        }
+      }
+      await expect(repo.update('999', updates)).rejects.toThrow(NotFoundError)
     })
 
-    it('should throw ValidationError if updates are invalid', async () => {
-      const invalidUpdates = { totalCalories: -1 }
-      await expect(repo.update(defaultMealPlanId, invalidUpdates)).rejects.toThrow(ValidationError)
-    })
-  })
+    it('should throw ValidationError for invalid updates', async () => {
+      const mealPlans = await repo.findAll()
+      expect(mealPlans[0]).toBeDefined()
+      const invalidUpdates = {
+        name: 123, // Invalid: name should be string
+        calories: -100, // Invalid: calories should be positive
+        timeline: [],
+        mealStructure: {
+          breakfast: { title: "Test", items: [] },
+          lunch: { title: "Test", items: [] },
+          midDay: { title: "Test", items: [] },
+          dinner: { title: "Test", items: [] },
+          nightSnack: { title: "Test", items: [] }
+        },
+        portions: {
+          protein: "test",
+          carbs: "test",
+          vegetables: "test",
+          fats: "test"
+        },
+        weeklyPrep: {
+          proteins: [],
+          carbs: [],
+          vegetables: [],
+          sauces: []
+        },
+        emergencyBackup: {
+          items: []
+        }
+      } as unknown as Partial<MealPlan>
 
-  describe('delete', () => {
-    it('should delete an existing meal plan', async () => {
-      await repo.delete(defaultMealPlanId)
-      await expect(repo.findById(defaultMealPlanId)).rejects.toThrow(NotFoundError)
-    })
-
-    it('should throw NotFoundError if meal plan not found', async () => {
-      await expect(repo.delete('invalid-id')).rejects.toThrow(NotFoundError)
-    })
-  })
-
-  describe('generateSlug', () => {
-    it('should generate a valid slug from name', async () => {
-      const mealPlan = await repo.create({
-        ...newMealPlan,
-        name: 'Test & Special Characters!'
-      })
-      expect(mealPlan.slug).toBe('test-special-characters')
-    })
-
-    it('should throw SlugGenerationError if name is missing', async () => {
-      const invalidMealPlan = { ...newMealPlan, name: '' }
-      await expect(repo.create(invalidMealPlan)).rejects.toThrow(SlugGenerationError)
+      await expect(repo.update(mealPlans[0]!.id, invalidUpdates)).rejects.toThrow(ValidationError)
     })
   })
 }) 
