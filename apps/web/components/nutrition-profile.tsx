@@ -2,9 +2,13 @@
 
 import React from 'react'
 import { Scale, Clock, ChefHat, Container } from 'lucide-react'
-import { nutritionProfile } from '@/config/joel'
+import type { NutritionProfile as NutritionProfileType } from '../types/metrics'
 
-export function NutritionProfile() {
+interface NutritionProfileProps {
+  data: NutritionProfileType
+}
+
+export function NutritionProfile({ data }: NutritionProfileProps) {
   return (
     <div className="space-y-8">
       {/* Daily Targets */}
@@ -14,7 +18,7 @@ export function NutritionProfile() {
           Daily Targets
         </h3>
         <dl className="grid gap-3">
-          {Object.entries(nutritionProfile.targets).map(([key, value]) => (
+          {Object.entries(data.targets).map(([key, value]) => (
             <div key={key} className="grid grid-cols-2 text-sm">
               <dt className="font-medium capitalize">{key}:</dt>
               <dd className="text-muted-foreground">{value}</dd>
@@ -30,7 +34,7 @@ export function NutritionProfile() {
           Daily Meal Schedule
         </h3>
         <div className="grid gap-4">
-          {nutritionProfile.meals.map((meal) => (
+          {data.meals.map((meal) => (
             <div key={meal.name} className="bg-card border rounded-lg p-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
                 <h4 className="font-medium">{meal.name}</h4>
@@ -76,7 +80,7 @@ export function NutritionProfile() {
           <div className="bg-card border rounded-lg p-4">
             <h4 className="font-medium mb-3">Portions per Meal</h4>
             <dl className="grid gap-2 text-sm">
-              {Object.entries(nutritionProfile.portions).map(([key, value]) => (
+              {Object.entries(data.portions).map(([key, value]) => (
                 <div key={key} className="grid grid-cols-2">
                   <dt className="font-medium capitalize">{key}:</dt>
                   <dd className="text-muted-foreground">{value}</dd>
@@ -87,7 +91,7 @@ export function NutritionProfile() {
           <div className="bg-card border rounded-lg p-4">
             <h4 className="font-medium mb-3">Weekly Quantities</h4>
             <dl className="grid gap-2 text-sm">
-              {Object.entries(nutritionProfile.weeklyPrep).map(([key, value]) => (
+              {Object.entries(data.weeklyPrep).map(([key, value]) => (
                 <div key={key} className="grid grid-cols-2">
                   <dt className="font-medium capitalize">{key}:</dt>
                   <dd className="text-muted-foreground">

@@ -1,26 +1,25 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
-import { actionPlan } from '@/config/joel'
+import type { ActionPlan as ActionPlanType } from '@/types/metrics'
 
-export function ActionPlan() {
+interface ActionPlanProps {
+  data: ActionPlanType[]
+}
+
+export function ActionPlan({ data }: ActionPlanProps) {
   return (
-    <div className="space-y-6">
-      {actionPlan.map((section) => (
-        <Card key={section.category}>
-          <CardHeader>
-            <CardTitle>{section.category} Strategy</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {section.items.map((item) => (
-                <div key={item.title} className="border-b pb-2">
-                  <div className="font-medium">{item.title}</div>
-                  <div className="text-sm text-muted-foreground">{item.description}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{item.detail}</div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+    <div className="grid gap-8 sm:grid-cols-3">
+      {data.map((section) => (
+        <div key={section.category} className="space-y-4">
+          <h3 className="text-lg font-semibold">{section.category}</h3>
+          <div className="space-y-4">
+            {section.items.map((item) => (
+              <div key={item.title} className="bg-card border rounded-lg p-4">
+                <h4 className="font-medium">{item.title}</h4>
+                <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>
+                <p className="mt-2 text-xs text-muted-foreground">{item.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       ))}
     </div>
   )
