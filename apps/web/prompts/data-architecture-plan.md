@@ -40,19 +40,43 @@
 - [x] Test coverage
 - [x] Clean error handling
 
-## Phase 2: Data Storage 🚧
+## Phase 2: Config to Repository Migration 🚧
 
-### 2.1 Local Storage
-- [ ] Implement local storage adapter
-- [ ] Update repositories to use storage
-- [ ] Add persistence tests
+### 2.1 Route Analysis
+- [ ] Audit /eat routes for config usage
+- [ ] Map config data to repositories
+- [ ] Document data flow changes
+- [ ] Identify shared components needing updates
 
-### 2.2 Database Integration
-- [ ] Set up Prisma
-- [ ] Create database schemas
-- [ ] Implement database adapter
-- [ ] Update repositories to use database
-- [ ] Add database tests
+### 2.2 Equipment Migration
+- [ ] Move equipment config to repository data
+- [ ] Update equipment routes
+- [ ] Update dependent components
+- [ ] Add tests for new implementations
+
+### 2.3 Profile Migration
+- [ ] Move profile config to repository data
+- [ ] Update profile routes
+- [ ] Update dependent components
+- [ ] Add tests for new implementations
+
+### 2.4 Framework Migration
+- [ ] Move framework config to repository data
+- [ ] Update framework routes
+- [ ] Update dependent components
+- [ ] Add tests for new implementations
+
+### 2.5 Meal Plan Migration
+- [ ] Move meal plan config to repository data
+- [ ] Update meal plan routes
+- [ ] Update dependent components
+- [ ] Add tests for new implementations
+
+### 2.6 Shopping Migration
+- [ ] Move shopping config to repository data
+- [ ] Update shopping routes
+- [ ] Update dependent components
+- [ ] Add tests for new implementations
 
 ## Phase 3: API Layer 🚧
 
