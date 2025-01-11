@@ -1,7 +1,7 @@
-import type { ActionPlan as ActionPlanType } from '@/types/metrics'
+import { ListTodo } from 'lucide-react'
+import { type ActionPlan as ActionPlanType } from '@/types/metrics'
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
 import { SectionHeader } from '@/components/ui/section-header'
-import { Card } from '@repo/ui'
-import { Target } from 'lucide-react'
 
 interface ActionPlanProps {
   data: ActionPlanType[]
@@ -9,24 +9,34 @@ interface ActionPlanProps {
 
 export function ActionPlan({ data }: ActionPlanProps) {
   return (
-    <div>
-      <SectionHeader title="Action Plan" icon={Target} />
-      <div className="grid gap-8 sm:grid-cols-3">
+    <section>
+      <SectionHeader title="Action Plan" icon={ListTodo} />
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {data.map((section) => (
-          <div key={section.category} className="space-y-4">
-            <h3 className="text-lg font-semibold tracking-tight">{section.category}</h3>
-            <div className="grid gap-4">
+          <Card key={section.category} className="h-full">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">
+                {section.category}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               {section.items.map((item) => (
-                <Card key={item.title} className="relative h-[180px] overflow-hidden p-4">
+                <div key={item.title}>
                   <h4 className="font-medium">{item.title}</h4>
-                  <p className="mt-2 text-sm text-muted-foreground">{item.description}</p>
-                  <p className="mt-2 text-xs text-muted-foreground">{item.detail}</p>
-                </Card>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {item.description}
+                  </p>
+                  {item.detail && (
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      {item.detail}
+                    </p>
+                  )}
+                </div>
               ))}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
-    </div>
+    </section>
   )
 } 

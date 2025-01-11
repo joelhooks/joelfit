@@ -1,7 +1,7 @@
-import type { StrengthArea } from '@/types/metrics'
+import { Dumbbell } from 'lucide-react'
+import { type StrengthArea } from '@/types/metrics'
 import { MetricCard } from '@/components/ui/metric-card'
 import { SectionHeader } from '@/components/ui/section-header'
-import { Dumbbell } from 'lucide-react'
 
 interface StrengthAreasProps {
   data: StrengthArea[]
@@ -9,10 +9,10 @@ interface StrengthAreasProps {
 
 export function StrengthAreas({ data }: StrengthAreasProps) {
   return (
-    <div>
+    <section>
       <SectionHeader title="Strength Foundation" icon={Dumbbell} />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {data.map((area) => (
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {data.map((area, index) => (
           <MetricCard
             key={area.title}
             title={area.title}
@@ -21,6 +21,6 @@ export function StrengthAreas({ data }: StrengthAreasProps) {
           />
         ))}
       </div>
-    </div>
+    </section>
   )
 } 

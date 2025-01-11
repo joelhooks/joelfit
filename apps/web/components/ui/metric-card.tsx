@@ -18,20 +18,18 @@ export function MetricCard({
 }: MetricCardProps) {
   return (
     <Card className={cn(
-      'relative overflow-hidden',
+      'relative h-[160px] overflow-hidden p-6',
       isKey && 'ring-1 ring-primary/10',
       className
     )}>
-      <div className="p-4">
-        <h3 className={cn(
-          "text-base font-medium",
-          isKey ? "text-primary" : "text-muted-foreground"
-        )}>{title}</h3>
-        <div className="mt-2 text-2xl font-semibold">{value}</div>
-        {subtitle && (
-          <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
-        )}
-      </div>
+      <h3 className={cn(
+        "text-sm font-medium uppercase tracking-wide",
+        isKey ? "text-primary" : "text-muted-foreground"
+      )}>{title}</h3>
+      <div className="mt-3 text-3xl font-bold tracking-tight">{value}</div>
+      {subtitle && (
+        <p className="mt-3 text-sm text-muted-foreground">{subtitle}</p>
+      )}
     </Card>
   )
 } 
