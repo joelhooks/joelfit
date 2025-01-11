@@ -1,33 +1,65 @@
-import { Metadata } from 'next'
+'use client'
+
+import { useEffect, useRef, useState } from 'react'
 import { PageHeader } from '@/components/page-header'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { NutritionProfile } from '@/components/nutrition-profile'
-
-export const metadata: Metadata = {
-  title: "Joel's Profile | JoelFit",
-  description: 'Personal metrics, DEXA analysis, and optimization strategies',
-  openGraph: {
-    title: "Joel's Profile | JoelFit",
-    description: 'Personal metrics, DEXA analysis, and optimization strategies',
-    images: [{
-      url: `https://www.joelfit.app/api/og?title=${encodeURIComponent("Joel's Profile")}&description=${encodeURIComponent('Personal metrics and optimization strategies')}`,
-      width: 1200,
-      height: 630,
-      alt: "Joel's Profile"
-    }]
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: "Joel's Profile | JoelFit",
-    description: 'Personal metrics, DEXA analysis, and optimization strategies',
-    images: [`https://www.joelfit.app/api/og?title=${encodeURIComponent("Joel's Profile")}&description=${encodeURIComponent('Personal metrics and optimization strategies')}`],
-  }
-}
+import { Activity, Scale } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 type MetricKey = 'androidFat' | 'gynoidFat' | 'agRatio' | 'visceralFat' | 'totalBodyFat' | 'rsmi'
 type TargetKey = 'androidFat' | 'agRatio' | 'visceralFat'
 
+const sections = [
+  { id: 'personal-stats', title: 'Personal Stats' },
+  { id: 'strength-foundation', title: 'Strength Foundation' },
+  { id: 'action-plan', title: 'Action Plan' },
+  { id: 'progress-tracking', title: 'Progress Tracking' },
+  { id: 'nutrition-details', title: 'Nutrition Details' }
+] as const
+
 export default function JoelProfilePage() {
+  const [activeSection, setActiveSection] = useState('personal-stats')
+  const sectionRefs = useRef<Record<string, HTMLElement | null>>({})
+
+  const setRef = (id: string) => (el: HTMLElement | null) => {
+    sectionRefs.current[id] = el
+  }
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id)
+          }
+        })
+      },
+      { threshold: 0.5 }
+    )
+
+    sections.forEach(({ id }) => {
+      const element = sectionRefs.current[id]
+      if (element) observer.observe(element)
+    })
+
+    return () => observer.disconnect()
+  }, [])
+
+  const personalStats = {
+    name: 'Joel Hooks',
+    age: 50,
+    height: '6\'3" (75 inches)',
+    weight: '251 lbs',
+    activity: 'Moderately Active',
+    exercise: '4-6 sessions per week',
+    experience: {
+      lifting: 'Advanced',
+      cardio: 'Intermediate'
+    }
+  }
+
   const currentMetrics: Record<MetricKey, string> = {
     androidFat: "34.0%",
     gynoidFat: "22.5%",
@@ -125,7 +157,7 @@ export default function JoelProfilePage() {
   ]
 
   return (
-    <div className="container max-w-6xl py-6 space-y-12">
+    <div className="container py-6">
       <PageHeader
         title="Joel's Profile"
         description="Personal metrics and optimization strategies"
@@ -134,78 +166,169 @@ export default function JoelProfilePage() {
         ]}
       />
       
-      <div className="space-y-12 max-w-4xl mx-auto">
-        {/* DEXA Analysis Section */}
-        <section>
-          <h2 className="text-2xl font-bold mb-6">DEXA Analysis</h2>
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Current Status & Targets</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {Object.entries(currentMetrics).map(([key, value]) => (
-                    <div key={key} className="p-2 bg-muted rounded">
-                      <div className="text-sm text-muted-foreground capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
-                      <div className="text-lg font-semibold">{value}</div>
-                      {key in targets && <div className="text-sm text-primary">{targets[key as TargetKey]}</div>}
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+      <div className="flex gap-12 pt-6">
+        {/* Sidebar Navigation */}
+        <div className="w-64 hidden lg:block">
+          <div className="sticky top-6">
+            <ScrollArea className="h-[calc(100vh-8rem)]">
+              <nav className="space-y-1">
+                {sections.map(({ id, title }) => (
+                  <a
+                    key={id}
+                    href={`#${id}`}
+                    className={cn(
+                      "block px-3 py-2 text-sm font-medium rounded-md hover:bg-muted transition-colors",
+                      activeSection === id ? "bg-muted text-primary" : "text-muted-foreground"
+                    )}
+                  >
+                    {title}
+                  </a>
+                ))}
+              </nav>
+            </ScrollArea>
+          </div>
+        </div>
 
-            {actionPlan.map((section) => (
-              <Card key={section.category}>
+        {/* Main Content */}
+        <div className="flex-1 max-w-4xl space-y-12">
+          {/* Personal Stats */}
+          <section id="personal-stats" ref={setRef('personal-stats')}>
+            <h2 className="text-2xl font-bold mb-6">Personal Stats</h2>
+            <div className="grid gap-6 sm:grid-cols-2">
+              {/* Basic Stats */}
+              <Card>
                 <CardHeader>
-                  <CardTitle>{section.category} Strategy</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="h-5 w-5 text-primary flex-shrink-0" />
+                    Basic Info
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {section.items.map((item) => (
-                      <div key={item.title} className="border-b pb-2">
-                        <div className="font-medium">{item.title}</div>
-                        <div className="text-sm text-muted-foreground">{item.description}</div>
-                        <div className="text-xs text-muted-foreground mt-1">{item.detail}</div>
+                  <dl className="grid gap-3">
+                    {Object.entries(personalStats).map(([key, value]) => {
+                      if (typeof value === 'object') return null
+                      return (
+                        <div key={key} className="grid grid-cols-2 text-sm">
+                          <dt className="font-medium capitalize">{key}:</dt>
+                          <dd className="text-muted-foreground">{value}</dd>
+                        </div>
+                      )
+                    })}
+                    <div className="grid grid-cols-2 text-sm">
+                      <dt className="font-medium">Experience:</dt>
+                      <dd className="text-muted-foreground">
+                        Lifting: {personalStats.experience.lifting}<br />
+                        Cardio: {personalStats.experience.cardio}
+                      </dd>
+                    </div>
+                  </dl>
+                </CardContent>
+              </Card>
+
+              {/* Body Composition */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Scale className="h-5 w-5 text-primary flex-shrink-0" />
+                    Body Composition
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4">
+                    {Object.entries(currentMetrics).map(([key, value]) => (
+                      <div key={key} className="border-b pb-2">
+                        <div className="text-sm text-muted-foreground capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
+                        <div className="text-lg font-semibold">{value}</div>
+                        {key in targets && <div className="text-sm text-primary">Target: {targets[key as TargetKey]}</div>}
                       </div>
                     ))}
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            </div>
+          </section>
 
+          {/* Strength Foundation */}
+          <section id="strength-foundation" ref={setRef('strength-foundation')}>
+            <h2 className="text-2xl font-bold mb-6">Strength Foundation</h2>
             <Card>
-              <CardHeader>
-                <CardTitle>Progress Monitoring</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <p className="text-sm">Key metrics to track weekly:</p>
-                  <ul className="list-disc pl-4 space-y-1">
-                    <li>Waist circumference (morning, relaxed)</li>
-                    <li>Body weight (3x/week, same conditions)</li>
-                    <li>Progress photos (weekly, same conditions)</li>
-                    <li>Training performance metrics</li>
-                    <li>Sleep quality score</li>
-                  </ul>
-                  <p className="text-sm mt-4">Target rate of change:</p>
-                  <ul className="list-disc pl-4 space-y-1">
-                    <li>0.5-1% body weight per week</li>
-                    <li>Maintain or increase lifting numbers</li>
-                    <li>Reduce waist circumference while maintaining other measurements</li>
-                  </ul>
+              <CardContent className="pt-6">
+                <div className="grid gap-6 sm:grid-cols-3">
+                  {strengthAreas.map((area) => (
+                    <div key={area.title} className="space-y-2">
+                      <div className="font-medium">{area.title}</div>
+                      <div className="text-lg font-semibold text-primary">{area.metric}</div>
+                      <div className="text-sm text-muted-foreground">{area.details}</div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </section>
+          </section>
 
-        {/* Nutrition Section */}
-        <section>
-          <h2 className="text-2xl font-bold mb-6">Nutrition Profile</h2>
-          <NutritionProfile />
-        </section>
+          {/* Action Plan */}
+          <section id="action-plan" ref={setRef('action-plan')}>
+            <h2 className="text-2xl font-bold mb-6">Action Plan</h2>
+            <div className="space-y-6">
+              {actionPlan.map((section) => (
+                <Card key={section.category}>
+                  <CardHeader>
+                    <CardTitle>{section.category} Strategy</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {section.items.map((item) => (
+                        <div key={item.title} className="border-b pb-2">
+                          <div className="font-medium">{item.title}</div>
+                          <div className="text-sm text-muted-foreground">{item.description}</div>
+                          <div className="text-xs text-muted-foreground mt-1">{item.detail}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+
+          {/* Progress Tracking */}
+          <section id="progress-tracking" ref={setRef('progress-tracking')}>
+            <h2 className="text-2xl font-bold mb-6">Progress Tracking</h2>
+            <Card>
+              <CardHeader>
+                <CardTitle>Weekly Monitoring</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="font-medium mb-2">Key Metrics</h3>
+                    <ul className="list-disc pl-4 space-y-1 text-muted-foreground">
+                      <li>Waist circumference (morning, relaxed)</li>
+                      <li>Body weight (3x/week, same conditions)</li>
+                      <li>Progress photos (weekly, same conditions)</li>
+                      <li>Training performance metrics</li>
+                      <li>Sleep quality score</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-2">Target Rate of Change</h3>
+                    <ul className="list-disc pl-4 space-y-1 text-muted-foreground">
+                      <li>0.5-1% body weight per week</li>
+                      <li>Maintain or increase lifting numbers</li>
+                      <li>Reduce waist circumference while maintaining other measurements</li>
+                    </ul>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+
+          {/* Nutrition Details */}
+          <section id="nutrition-details" ref={setRef('nutrition-details')}>
+            <h2 className="text-2xl font-bold mb-6">Nutrition Details</h2>
+            <NutritionProfile />
+          </section>
+        </div>
       </div>
     </div>
   )
