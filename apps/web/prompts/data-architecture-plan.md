@@ -165,8 +165,8 @@
   - [x] Remove unused configs ✅
   - [x] Update imports ✅
   - [x] Clean up types ✅
-- [ ] Clean up unused code
-  - [ ] Remove old components
-  - [ ] Clean up unused utilities
-  - [ ] Remove deprecated types
-  - [ ] Update documentation 
+- [x] Clean up unused code ✅
+  - [x] Remove old components ✅
+  - [x] Clean up unused utilities ✅
+  - [x] Remove deprecated types ✅
+  - [x] Update documentation ✅ 
