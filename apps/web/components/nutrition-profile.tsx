@@ -4,8 +4,8 @@ import React from 'react'
 import { Profile } from '@/lib/repositories/profile/schema'
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
 import { SectionHeader } from '@/components/ui/section-header'
-import { Apple, Calendar, ListChecks } from 'lucide-react'
 import { MetricCard } from '@/components/ui/metric-card'
+import { Apple, Calendar, ListChecks } from 'lucide-react'
 
 interface NutritionProfileProps {
   data: Profile
