@@ -155,14 +155,11 @@
   - [x] Improve section organization ✅
 
 ### 3.3 Testing & Cleanup 🚧
-- [ ] Basic error handling
-  - [ ] Add error.tsx pages for route error handling
-  - [ ] Add loading.tsx pages for suspense
-  - [ ] Add not-found.tsx pages for 404s
-  - [ ] Add error boundaries for component-level errors
-  - [ ] Add retry mechanisms for failed data fetches
-  - [ ] Add error states to UI components
-  - [ ] Add loading skeletons to all pages
+- [ ] Minimal Error Handling
+  - [ ] Add root error.tsx for critical failures
+  - [ ] Add simple loading.tsx for initial page loads
+  - [ ] Let Next.js handle 404s with default behavior
+  - [ ] Add basic error states to repository methods
 - [ ] Remove old config files
   - [ ] Audit config usage
   - [ ] Remove unused configs
