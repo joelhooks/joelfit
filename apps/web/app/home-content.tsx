@@ -30,6 +30,11 @@ const sections: Section[] = [
         href: "/eat/framework"
       },
       {
+        title: "Meal Plan",
+        description: "5 meals, 2250-2500 cal, 200g+ protein",
+        href: "/eat/meal-plan"
+      },
+      {
         title: "Shopping List",
         description: "Weekly ingredients & pantry staples",
         href: "/eat/shopping"
