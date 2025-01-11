@@ -128,11 +128,11 @@
   - useRepository: hook for accessing repositories ✅
 
 #### 3.2.2 Page Updates
-- [ ] Update Framework page
-  - Use FrameworkRepository for schedule/tasks
-  - Use EquipmentRepository for containers
-  - Add loading states
-  - Add error handling
+- [x] Update Framework page ✅
+  - Use FrameworkRepository for schedule/tasks ✅
+  - Use EquipmentRepository for containers ✅
+  - Add loading states ✅
+  - Add error handling ✅
 - [ ] Update Meal Plan page
   - Use MealPlanRepository for all data
   - Remove hardcoded wife's meal plan
