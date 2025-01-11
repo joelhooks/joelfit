@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { PageHeader } from '@/components/page-header'
-import { ShoppingBag, Package, Archive } from 'lucide-react'
+import { ShoppingBag, Package, Archive, Lightbulb } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Shopping List | High-Protein Meal Prep OS',
@@ -26,51 +26,74 @@ export const metadata: Metadata = {
 const shoppingData = {
   weeklyItems: {
     meat: [
-      "4 lbs chicken breast",
-      "3 lbs ground turkey",
-      "2.75 lbs white fish"
+      "5 lbs chicken breast",
+      "3 lbs turkey breast",
+      "2 lbs white fish",
+      "1 lb ground turkey"
     ],
     dairy: [
-      "Greek yogurt (48 oz)"
+      "Greek yogurt (32 oz)",
+      "Cottage cheese (16 oz)",
+      "Egg whites (32 oz)",
+      "Protein drinks"
     ],
     produce: [
-      "Bananas (6)",
-      "Potatoes (2.5 lbs)"
+      "Bananas",
+      "Mixed berries",
+      "Lemons",
+      "Fresh herbs"
     ],
     frozen: [
-      "Mixed berries (32 oz)",
-      "Broccoli & Cauliflower mix (3 lbs)",
-      "Mixed vegetables (3 lbs)"
+      "Broccoli & cauliflower (5 lbs)",
+      "Mixed vegetables (3 lbs)",
+      "Mixed berries (2 lbs)"
     ],
     bulk: [
-      "White rice (5 cups dry)",
-      "Quinoa (2.5 cups dry)",
-      "Rolled oats (24 oz)"
+      "Rice (5 lbs)",
+      "Quinoa (2 lbs)",
+      "Sweet potatoes (3 lbs)",
+      "Oats (2 lbs)"
     ]
   },
   pantryStaples: {
-    proteins: [
-      "Protein powder (2 lbs)"
-    ],
     oils: [
       "Olive oil (16 oz)",
       "MCT oil (8 oz)",
-      "Coconut oil (8 oz)"
-    ],
-    asian: [
-      "Soy sauce (16 oz)",
+      "Coconut oil (8 oz)",
       "Rice vinegar (16 oz)"
     ],
-    condiments: [
-      "Hot sauce (preferred brand)",
-      "Honey (8 oz)",
-      "Almond butter (16 oz)"
-    ],
-    spices: [
+    seasonings: [
       "MSG (4 oz)",
       "Garlic powder",
       "Black pepper",
-      "Kosher salt"
+      "Kosher salt",
+      "Red pepper flakes"
+    ],
+    sauces: [
+      "Soy sauce (16 oz)",
+      "Hot sauce",
+      "Fish sauce",
+      "Oyster sauce"
+    ],
+    dryGoods: [
+      "Protein powder",
+      "Creatine",
+      "Rice cakes",
+      "Chia seeds"
+    ]
+  },
+  tips: {
+    buying: [
+      "Buy meat in bulk when on sale",
+      "Check frozen section for deals",
+      "Compare unit prices",
+      "Buy seasonal produce"
+    ],
+    storage: [
+      "Portion meat before freezing",
+      "Use airtight containers",
+      "Label everything with dates",
+      "Rotate stock regularly"
     ]
   }
 }
@@ -91,48 +114,63 @@ export default function ShoppingListPage() {
         <div className="space-y-8">
           {/* Weekly Shopping */}
           <section>
-            <div className="flex items-center gap-2 mb-4">
-              <ShoppingBag className="w-5 h-5" />
-              <h2 className="text-xl font-semibold">Weekly Shopping</h2>
-            </div>
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="space-y-4">
-                <h3 className="font-medium">Meat Counter</h3>
-                <ul className="list-disc pl-4 space-y-1">
-                  {shoppingData.weeklyItems.meat.map((item) => (
-                    <li key={item}>{item}</li>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <ShoppingBag className="h-5 w-5 text-primary flex-shrink-0" />
+              Weekly Shopping
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Meat Counter</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {shoppingData.weeklyItems.meat.map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span>{item}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
-              <div className="space-y-4">
-                <h3 className="font-medium">Dairy</h3>
-                <ul className="list-disc pl-4 space-y-1">
-                  {shoppingData.weeklyItems.dairy.map((item) => (
-                    <li key={item}>{item}</li>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Dairy</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {shoppingData.weeklyItems.dairy.map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span>{item}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
-              <div className="space-y-4">
-                <h3 className="font-medium">Produce</h3>
-                <ul className="list-disc pl-4 space-y-1">
-                  {shoppingData.weeklyItems.produce.map((item) => (
-                    <li key={item}>{item}</li>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Produce</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {shoppingData.weeklyItems.produce.map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span>{item}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
-              <div className="space-y-4">
-                <h3 className="font-medium">Frozen</h3>
-                <ul className="list-disc pl-4 space-y-1">
-                  {shoppingData.weeklyItems.frozen.map((item) => (
-                    <li key={item}>{item}</li>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Frozen</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {shoppingData.weeklyItems.frozen.map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span>{item}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
-              <div className="space-y-4">
-                <h3 className="font-medium">Bulk</h3>
-                <ul className="list-disc pl-4 space-y-1">
-                  {shoppingData.weeklyItems.bulk.map((item) => (
-                    <li key={item}>{item}</li>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Bulk</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {shoppingData.weeklyItems.bulk.map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span>{item}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -141,48 +179,84 @@ export default function ShoppingListPage() {
 
           {/* Pantry Staples */}
           <section>
-            <div className="flex items-center gap-2 mb-4">
-              <Archive className="w-5 h-5" />
-              <h2 className="text-xl font-semibold">Pantry Staples</h2>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Archive className="h-5 w-5 text-primary flex-shrink-0" />
+              Pantry Staples
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Oils & Vinegars</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {shoppingData.pantryStaples.oils.map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Seasonings</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {shoppingData.pantryStaples.seasonings.map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Sauces</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {shoppingData.pantryStaples.sauces.map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Dry Goods</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {shoppingData.pantryStaples.dryGoods.map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="space-y-4">
-                <h3 className="font-medium">Proteins</h3>
-                <ul className="list-disc pl-4 space-y-1">
-                  {shoppingData.pantryStaples.proteins.map((item) => (
-                    <li key={item}>{item}</li>
+          </section>
+
+          {/* Shopping Tips */}
+          <section>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Lightbulb className="h-5 w-5 text-primary flex-shrink-0" />
+              Shopping Tips
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Buying Strategy</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {shoppingData.tips.buying.map((tip, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span>{tip}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
-              <div className="space-y-4">
-                <h3 className="font-medium">Oils</h3>
-                <ul className="list-disc pl-4 space-y-1">
-                  {shoppingData.pantryStaples.oils.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-              <div className="space-y-4">
-                <h3 className="font-medium">Asian Section</h3>
-                <ul className="list-disc pl-4 space-y-1">
-                  {shoppingData.pantryStaples.asian.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-              <div className="space-y-4">
-                <h3 className="font-medium">Condiments</h3>
-                <ul className="list-disc pl-4 space-y-1">
-                  {shoppingData.pantryStaples.condiments.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-              <div className="space-y-4">
-                <h3 className="font-medium">Spices</h3>
-                <ul className="list-disc pl-4 space-y-1">
-                  {shoppingData.pantryStaples.spices.map((item) => (
-                    <li key={item}>{item}</li>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Storage Tips</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {shoppingData.tips.storage.map((tip, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <span>{tip}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
