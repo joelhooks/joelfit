@@ -4,7 +4,7 @@ import { ReactNode } from 'react'
 
 interface MetricCardProps {
   title: string
-  value: string | number
+  value: ReactNode
   subtitle?: ReactNode
   className?: string
   isKey?: boolean

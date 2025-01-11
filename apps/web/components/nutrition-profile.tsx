@@ -19,38 +19,38 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <MetricCard
             title="CALORIES"
-            value={data.targets.calories}
-            subtitle={<span className="text-xs uppercase tracking-wider">kcal per day</span>}
+            value="2250-2500"
+            subtitle={<span className="text-sm uppercase tracking-wide text-muted-foreground">kcal per day</span>}
           />
           <MetricCard
             title="PROTEIN"
-            value={data.targets.protein}
-            subtitle={
+            value={
               <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-semibold">g</span>
-                <span className="text-xs uppercase tracking-wider">per day</span>
+                <span>200-220g</span>
+                <span className="text-2xl">(35-40%)</span>
               </div>
             }
+            subtitle={<span className="text-sm uppercase tracking-wide text-muted-foreground">per day</span>}
           />
           <MetricCard
             title="CARBS"
-            value={data.targets.carbs}
-            subtitle={
+            value={
               <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-semibold">g</span>
-                <span className="text-xs uppercase tracking-wider">per day</span>
+                <span>225-250g</span>
+                <span className="text-2xl">(40-45%)</span>
               </div>
             }
+            subtitle={<span className="text-sm uppercase tracking-wide text-muted-foreground">per day</span>}
           />
           <MetricCard
             title="FAT"
-            value={data.targets.fat}
-            subtitle={
+            value={
               <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-semibold">g</span>
-                <span className="text-xs uppercase tracking-wider">per day</span>
+                <span>65-75g</span>
+                <span className="text-2xl">(25-30%)</span>
               </div>
             }
+            subtitle={<span className="text-sm uppercase tracking-wide text-muted-foreground">per day</span>}
           />
         </div>
       </section>
