@@ -9,7 +9,8 @@ export const initialShoppingList: Omit<ShoppingList, keyof { id: string; slug: s
       "2 lbs white fish"
     ],
     dairy: [
-      "Greek yogurt (32 oz)"
+      "Greek yogurt (32 oz)",
+      "Almond milk (1 gallon)"
     ],
     produce: [
       "Bananas",
