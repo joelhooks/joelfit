@@ -111,16 +111,21 @@
 ### 3.2 Component Updates 🚧
 
 #### 3.2.1 Shared Components
-- [ ] Create loading state components
+- [ ] Add loading components to packages/ui
+  - Skeleton: base component for loading states
   - PageSkeleton: for initial page load
   - CardSkeleton: for individual card items
   - ListSkeleton: for list items
   - StatsSkeleton: for metric displays
-- [ ] Create error handling components
+- [ ] Add error components to packages/ui
   - ErrorBoundary: catch and display errors
   - NotFound: for missing data
   - ErrorFallback: for generic errors
   - RetryButton: for retrying failed operations
+- [ ] Add repository components to packages/repo
+  - AsyncData: wrapper for loading/error states
+  - RepositoryProvider: context for repository instances
+  - useRepository: hook for accessing repositories
 
 #### 3.2.2 Page Updates
 - [ ] Update Framework page
