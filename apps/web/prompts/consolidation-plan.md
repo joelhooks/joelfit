@@ -19,8 +19,8 @@
 ### 🚀 Phase 2: Component Migration (In Progress)
 1. Initial Components
    - [✓] ScrollArea - Completed
-   - [ ] NavigationMenu - Next
-   - [ ] Card
+   - [✓] NavigationMenu - Completed
+   - [ ] Card - Next
 2. Update apps to use new components
 3. Test and verify functionality
 
