@@ -147,19 +147,22 @@
   - [x] Load data directly from ShoppingRepository ✅
   - [x] Keep consistent styling with shadcn/ui ✅
   - [x] Maintain section organization (weekly, pantry, tips) ✅
-- [ ] Update Equipment page
-  - [ ] Convert to server component
-  - [ ] Load data directly from EquipmentRepository
-  - [ ] Keep consistent styling with shadcn/ui
-  - [ ] Add maintenance schedule section
-  - [ ] Add storage guide section
+- [x] Update Equipment page ✅
+  - [x] Already using server component ✅
+  - [x] Already using EquipmentRepository ✅
+  - [x] Update to consistent shadcn/ui styling ✅
+  - [x] Add proper page header ✅
+  - [x] Improve section organization ✅
 
-### 3.3 Testing & Cleanup
-- [ ] Basic error handling where needed
-  - [ ] Add error boundaries to pages
-  - [ ] Add loading states
-  - [ ] Handle repository errors gracefully
-  - [ ] Add retry mechanisms where appropriate
+### 3.3 Testing & Cleanup 🚧
+- [ ] Basic error handling
+  - [ ] Add error.tsx pages for route error handling
+  - [ ] Add loading.tsx pages for suspense
+  - [ ] Add not-found.tsx pages for 404s
+  - [ ] Add error boundaries for component-level errors
+  - [ ] Add retry mechanisms for failed data fetches
+  - [ ] Add error states to UI components
+  - [ ] Add loading skeletons to all pages
 - [ ] Remove old config files
   - [ ] Audit config usage
   - [ ] Remove unused configs
