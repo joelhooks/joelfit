@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { AlertCircle } from 'lucide-react'
 import { Exercise, type ExerciseProps } from './exercise'
 import { Section } from './section'
+import { PageHeader } from '@/components/page-header'
 
 export const metadata: Metadata = {
   title: 'Shoulder Program | JoelFit',
@@ -117,16 +118,13 @@ export default function ShoulderRehabProgram() {
   return (
     <main className="container py-6">
       <div className="max-w-3xl">
-        <h1 className="text-2xl font-bold mb-6">Shoulder Program</h1>
-        
-        <div className="bg-destructive/10 border-l-4 border-destructive p-4 mb-6 rounded-sm">
-          <div className="flex items-center">
-            <AlertCircle className="h-5 w-5 text-destructive mr-2" />
-            <p className="text-sm text-destructive">
-              Keep pain under 3/10. Stop if sharp pain. Rest if it hurts more after 24h.
-            </p>
-          </div>
-        </div>
+        <PageHeader
+          title="Shoulder Program"
+          description="Progressive rehab routine focusing on mobility, stability, and strength."
+          breadcrumbs={[
+            { title: "Shoulder", href: "/shoulder" }
+          ]}
+        />
 
         <div className="bg-card border border-border rounded-lg p-4 mb-6">
           <h3 className="font-medium mb-2">Form Tips:</h3>

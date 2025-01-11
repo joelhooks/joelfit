@@ -1,0 +1,163 @@
+# Meal Prep Website Build Prompt
+
+<goal>
+Create a structured React-based website that presents a comprehensive meal prep system, focusing on systematic organization and clear user pathways.
+</goal>
+
+<context>
+The system is based on a 1-2-3 framework for meal rotation, utilizing standardized prep methods, precise container organization, and quality control measures.
+</context>
+
+<requirements>
+- Use only Tailwind core utility classes
+- Implement shadcn/ui components
+- Focus on mobile-first responsive design
+- Ensure clear navigation between system components
+</requirements>
+
+<pages>
+<page id="home">
+<title>Meal Prep Operating System</title>
+<purpose>Introduce the systematic approach to meal preparation</purpose>
+<key_elements>
+- Hero section explaining the 1-2-3 framework
+- Quick navigation to key system components
+- Visual representation of the weekly timeline
+- Overview of core principles
+</key_elements>
+</page>
+
+<page id="framework">
+<title>Core Framework</title>
+<purpose>Detail the fundamental structure of the meal prep system</purpose>
+<key_elements>
+- Weekly schedule breakdown
+- Meal slot system explanation
+- Container organization guide
+- Rotation system visualization
+</key_elements>
+</page>
+
+<page id="equipment">
+<title>Container System</title>
+<purpose>Outline required equipment and organization methods</purpose>
+<key_elements>
+- Container specifications and purposes
+- Storage layout recommendations
+- Organization system details
+- Maintenance protocols
+</key_elements>
+</page>
+
+<page id="preparation">
+<title>Prep Workflow</title>
+<purpose>Guide users through the preparation process</purpose>
+<key_elements>
+- Timeline visualization
+- Step-by-step prep guide
+- Tips and troubleshooting
+- Quality control measures
+</key_elements>
+</page>
+
+<page id="recipes">
+<title>Base Recipes</title>
+<purpose>Provide core recipes and variations</purpose>
+<key_elements>
+- Protein preparations
+- Carbohydrate bases
+- Vegetable preparations
+- Sauce systems
+</key_elements>
+</page>
+
+<style_guidelines>
+<colors>
+- Primary: slate-900
+- Secondary: emerald-600
+- Accent: amber-500
+- Background: slate-50
+- Text: slate-700
+</colors>
+
+<typography>
+- Headers: font-bold text-2xl (desktop) text-xl (mobile)
+- Subheaders: font-semibold text-xl (desktop) text-lg (mobile)
+- Body: text-base leading-relaxed
+- Navigation: text-sm font-medium
+</typography>
+
+<spacing>
+- Section padding: p-6 (mobile) p-8 (desktop)
+- Component gaps: gap-4 (mobile) gap-6 (desktop)
+- Content max-width: max-w-7xl mx-auto
+</spacing>
+</style_guidelines>
+
+<components>
+<component id="navigation">
+<type>Primary navigation bar</type>
+<features>
+- Mobile-responsive menu
+- Current page indicator
+- Quick access to key sections
+</features>
+</component>
+
+<component id="page-header">
+<type>Consistent page header</type>
+<features>
+- Title
+- Brief description
+- Navigation breadcrumbs
+</features>
+</component>
+
+<component id="content-card">
+<type>Information card template</type>
+<features>
+- Consistent padding
+- Optional icon
+- Title and content areas
+</features>
+</component>
+
+<component id="timeline">
+<type>Visual timeline component</type>
+<features>
+- Day/time indicators
+- Task descriptions
+- Status markers
+</features>
+</component>
+</components>
+
+<layout>
+<structure>
+- Sticky header with navigation
+- Main content area
+- Optional sidebar for larger screens
+- Footer with quick links
+</structure>
+
+<grid>
+- Mobile: single column
+- Tablet: two columns where appropriate
+- Desktop: flexible grid system
+</grid>
+</layout>
+
+<accessibility>
+- Semantic HTML structure
+- ARIA labels where needed
+- Keyboard navigation support
+- Color contrast compliance
+</accessibility>
+
+<performance>
+- Lazy loading for images
+- Code splitting by route
+- Minimal initial bundle
+- Optimized assets
+</performance>
+</prompt>

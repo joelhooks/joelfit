@@ -1,8 +1,10 @@
 import './globals.css'
+import '../styles/cyberpunk.css'
 import { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import { SiteHeader } from '@/components/site-header'
+import { PageFooter } from '@/components/page-footer'
 
 export const metadata: Metadata = {
   title: 'JoelFit',
@@ -33,8 +35,12 @@ export default function RootLayout({
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body className="min-h-screen bg-background font-sans antialiased">
         <div className="relative flex min-h-screen flex-col">
+          <div className="cyberpunk-scanlines" />
+          <div className="cyberpunk-noise" />
+          
           <SiteHeader />
           <div className="flex-1">{children}</div>
+          <PageFooter />
         </div>
       </body>
     </html>

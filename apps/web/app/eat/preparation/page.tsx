@@ -1,69 +1,58 @@
 import { Metadata } from 'next'
 import { PageHeader } from '@/components/page-header'
-import { Clock } from 'lucide-react'
+import { Timeline } from '@/components/timeline'
 
 export const metadata: Metadata = {
   title: 'Prep Workflow | High-Protein Meal Prep OS',
-  description: 'Step-by-step guide for efficient meal preparation',
+  description: 'Weekly meal prep workflow and timeline',
 }
 
-interface TimelineStep {
-  title: string
-  time: string
-  description: string
-  tips?: string[]
-}
-
-const timeline: TimelineStep[] = [
+const weeklyTimeline = [
   {
-    title: "Start Rice & Quinoa",
-    time: "0:00",
-    description: "Get grains going in the rice cooker first",
-    tips: [
-      "Use chicken stock instead of water for better flavor",
-      "45 minutes total cooking time",
-      "Will need time to cool before packing"
+    day: "Saturday",
+    tasks: [
+      { name: "Inventory Check", duration: "30 min", details: "Check containers, ingredients, and freezer space" },
+      { name: "Shopping List", duration: "15 min", details: "Plan meals and create shopping list" },
+      { name: "Grocery Shopping", duration: "1 hour", details: "Get ingredients for the week" }
     ]
   },
   {
-    title: "Prep Proteins",
-    time: "0:05",
-    description: "While rice is cooking, handle all proteins",
-    tips: [
-      "Proteins should be marinated the day before",
-      "30-45 minutes cooking time",
-      "Start yams at the same time if using"
+    day: "Sunday",
+    tasks: [
+      { 
+        name: "Setup", 
+        duration: "30 min", 
+        details: "Preheat ovens to 425°F, clean workspace, label containers" 
+      },
+      { 
+        name: "Wave 1", 
+        duration: "30 min", 
+        details: "Oven 1: Potatoes, Oven 2: Chicken breasts, Rice Cooker: Rice and quinoa (using our recommended model from the equipment page), Prep: Form turkey meatballs" 
+      },
+      { 
+        name: "Wave 2", 
+        duration: "30 min", 
+        details: "Oven 1: Continue potatoes, Oven 2: Turkey meatballs, Monitor grains, Begin vegetable prep" 
+      },
+      { 
+        name: "Wave 3", 
+        duration: "30 min", 
+        details: "Oven 1: Roast vegetables, Oven 2: Complete proteins, Finish grains, Prepare sauces" 
+      },
+      { 
+        name: "Final Wave", 
+        duration: "30 min", 
+        details: "Assembly line container filling, Cool items with fan, Prepare breakfast jars, Pack smoothie bags" 
+      }
     ]
   },
   {
-    title: "Vegetable & Sauce Prep",
-    time: "0:45",
-    description: "While proteins are cooking, prep remaining components",
-    tips: [
-      "Chop all vegetables (or use frozen)",
-      "Make sauces for the week",
-      "Prep overnight oats",
-      "Pack smoothie bags"
-    ]
-  },
-  {
-    title: "Cooling Period",
-    time: "1:30",
-    description: "Everything must cool completely",
-    tips: [
-      "30-45 minutes cooling time",
-      "Clean kitchen while waiting",
-      "Prepare containers and labels"
-    ]
-  },
-  {
-    title: "Final Assembly",
-    time: "2:00",
-    description: "Pack all containers using the 1-2-3 rotation",
-    tips: [
-      "Label containers with contents and day",
-      "Store sauces separately",
-      "Pack Thursday/Friday meals for freezer"
+    day: "Wednesday",
+    tasks: [
+      { 
+        name: "Mid-week Check", 
+        details: "Move Thursday/Friday meals from freezer to fridge, Quick container inventory, Sauce check/refresh" 
+      }
     ]
   }
 ]
@@ -74,7 +63,7 @@ export default function PreparationPage() {
       <div className="max-w-3xl">
         <PageHeader
           title="Prep Workflow"
-          description="2-3 hour Sunday prep process for the entire week"
+          description="Weekly meal prep workflow and timeline"
           breadcrumbs={[
             { title: "Eat", href: "/eat" },
             { title: "Prep Workflow", href: "/eat/preparation" }
@@ -82,86 +71,37 @@ export default function PreparationPage() {
         />
 
         <div className="space-y-8">
+          {/* Overview */}
           <section>
             <h2 className="text-xl font-semibold mb-4">Weekly Schedule</h2>
-            <div className="bg-card border rounded-lg p-6">
-              <ul className="space-y-2 text-muted-foreground">
-                <li>• Saturday: Shopping day (proteins, produce, restocking)</li>
-                <li>• Sunday: Main prep session (2-3 hours)</li>
-                <li>• Tuesday: Move Thursday meals to fridge</li>
-                <li>• Wednesday: Move Friday meals to fridge</li>
-                <li>• Daily: 5-minute container rotation</li>
-              </ul>
-            </div>
+            <p className="text-muted-foreground mb-6">
+              The meal prep system follows a weekly cycle with three key days: Saturday for planning and shopping, 
+              Sunday for the main prep session, and Wednesday for a mid-week check and rotation.
+            </p>
+            <Timeline days={weeklyTimeline} />
           </section>
 
-          <section>
-            <h2 className="text-xl font-semibold mb-4">Prep Day Timeline</h2>
-            <div className="relative">
-              <div className="absolute top-0 bottom-0 left-[2.875rem] w-px bg-border" />
-              <div className="space-y-8">
-                {timeline.map((step, index) => (
-                  <div key={step.title} className="relative">
-                    <div className="flex items-center gap-4">
-                      <div className="z-10 flex items-center justify-center w-6 h-6 rounded-full bg-background border">
-                        <Clock className="w-4 h-4 text-primary" />
-                      </div>
-                      <div className="flex-1 bg-card border rounded-lg p-6">
-                        <div className="flex items-start justify-between gap-4">
-                          <div>
-                            <h3 className="font-medium">{step.title}</h3>
-                            <p className="text-muted-foreground mt-1">
-                              {step.description}
-                            </p>
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {step.time}
-                          </div>
-                        </div>
-                        {step.tips && (
-                          <div className="mt-4">
-                            <h4 className="text-sm font-medium mb-2">Tips:</h4>
-                            <ul className="space-y-1">
-                              {step.tips.map((tip, tipIndex) => (
-                                <li 
-                                  key={tipIndex}
-                                  className="text-sm text-muted-foreground"
-                                >
-                                  • {tip}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
+          {/* Tips */}
           <section>
             <h2 className="text-xl font-semibold mb-4">Pro Tips</h2>
-            <div className="bg-card border rounded-lg p-6">
-              <ul className="space-y-2 text-muted-foreground">
-                <li>• Clean as you go - don't let dishes pile up</li>
-                <li>• Prep proteins the night before (marinade, seasoning)</li>
-                <li>• Keep cleaning supplies handy</li>
-                <li>• Use multiple timers for different components</li>
-                <li>• Have containers ready and labeled before starting</li>
-              </ul>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-semibold mb-4">Workflow Diagram</h2>
-            <div className="bg-card border rounded-lg p-6">
-              <div className="aspect-video relative bg-accent rounded">
-                {/* Image placeholder for workflow diagram */}
-                <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
-                  Workflow Diagram (Coming Soon)
-                </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-2">Efficiency</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li>• Label containers before starting</li>
+                  <li>• Use multiple timers for different items</li>
+                  <li>• Clean as you go</li>
+                  <li>• Prep all ingredients before cooking</li>
+                </ul>
+              </div>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-2">Quality Control</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li>• Use meat thermometer for proteins</li>
+                  <li>• Cool items quickly with fan</li>
+                  <li>• Store sauces separately</li>
+                  <li>• Rotate freezer meals properly</li>
+                </ul>
               </div>
             </div>
           </section>

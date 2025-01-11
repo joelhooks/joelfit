@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, UtensilsCrossed, Container, Clock, BookOpen } from 'lucide-react'
+import { ArrowRight, UtensilsCrossed, Container, Clock, BookOpen, CalendarDays, User, ShoppingBag, Scale } from 'lucide-react'
+import { PageHeader } from '@/components/page-header'
 
 export const metadata: Metadata = {
   title: 'High-Protein Meal Prep OS | JoelFit',
@@ -13,6 +14,18 @@ const features = [
     description: "The 1-2-3 rotation system for daily variety",
     icon: Clock,
     href: "/eat/framework"
+  },
+  {
+    title: "Meal Plan",
+    description: "Detailed meal plans and portion guides",
+    icon: CalendarDays,
+    href: "/eat/meal-plan"
+  },
+  {
+    title: "Shopping List",
+    description: "Weekly items and pantry staples",
+    icon: ShoppingBag,
+    href: "/eat/shopping"
   },
   {
     title: "Container System",
@@ -31,6 +44,18 @@ const features = [
     description: "Proteins, starches, and sauce system",
     icon: BookOpen,
     href: "/eat/recipes"
+  },
+  {
+    title: "Profile & Targets",
+    description: "Personal nutrition profile and targets",
+    icon: User,
+    href: "/eat/profile"
+  },
+  {
+    title: "Progress & QC",
+    description: "Track progress and maintain quality standards",
+    icon: Scale,
+    href: "/eat/tracking"
   }
 ]
 
@@ -38,68 +63,116 @@ export default function EatPage() {
   return (
     <main className="container py-6">
       <div className="max-w-3xl">
-        <h1 className="text-4xl font-bold mb-4">High-Protein Meal Prep OS</h1>
-        <p className="text-lg text-muted-foreground mb-8">
-          A 5-day high-protein meal prep system that takes the thought out of eating while maintaining variety.
-        </p>
+        <PageHeader
+          title="High-Protein Meal Prep OS"
+          description="A systematic approach to high-protein meal prep that takes the thought out of eating while maintaining variety."
+          breadcrumbs={[
+            { title: "Eat", href: "/eat" }
+          ]}
+        />
 
-        <div className="bg-card border rounded-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4">Daily Macro Targets</h2>
-          <div className="grid gap-4 md:grid-cols-3">
-            <div>
-              <p className="font-medium">Protein</p>
-              <p className="text-muted-foreground">220-240g</p>
-            </div>
-            <div>
-              <p className="font-medium">Carbs</p>
-              <p className="text-muted-foreground">300-350g</p>
-            </div>
-            <div>
-              <p className="font-medium">Fat</p>
-              <p className="text-muted-foreground">65-80g</p>
-            </div>
-          </div>
-          <p className="text-sm text-muted-foreground mt-4">
-            ~2700-2900 calories daily, adjustable based on needs
-          </p>
-        </div>
-
-        <div className="bg-card border rounded-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4">The 1-2-3 Framework</h2>
-          <p className="text-muted-foreground mb-4">
-            A rotation system using three components to create variety without complexity:
-          </p>
-          <ul className="space-y-2 text-muted-foreground mb-4">
-            <li>• 3 proteins (chicken, turkey, fish)</li>
-            <li>• 3 starches (rice, yams, quinoa)</li>
-            <li>• 3 vegetables (peas, broccoli, zucchini)</li>
-          </ul>
-          <p className="text-sm text-muted-foreground">
-            Rotated across 15 meals per week (M-F, 3 meals per day)
-          </p>
-        </div>
-
-        <div className="grid gap-6">
-          {features.map((feature) => (
-            <Link 
-              key={feature.title}
-              href={feature.href}
-              className="group flex items-center justify-between p-6 border rounded-lg bg-card hover:border-primary transition-colors"
-            >
-              <div className="flex items-start gap-4">
-                <feature.icon className="h-6 w-6 text-primary mt-1" />
-                <div>
-                  <h2 className="text-xl font-semibold mb-1 group-hover:text-primary">
-                    {feature.title}
-                  </h2>
-                  <p className="text-muted-foreground">
-                    {feature.description}
-                  </p>
+        <div className="space-y-12">
+          {/* Core System Overview */}
+          <section>
+            <h2 className="text-xl font-semibold mb-4">The 1-2-3 System</h2>
+            <div className="grid gap-6 md:grid-cols-2 mb-6">
+              <div className="space-y-2">
+                <h3 className="font-medium">What It Does</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <ArrowRight className="h-4 w-4 text-primary flex-shrink-0" />
+                    <span>Creates 15 unique meal combinations per week</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <ArrowRight className="h-4 w-4 text-primary flex-shrink-0" />
+                    <span>Maintains protein variety while keeping shopping simple</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <ArrowRight className="h-4 w-4 text-primary flex-shrink-0" />
+                    <span>2-3 hour Sunday prep for the entire week</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <ArrowRight className="h-4 w-4 text-primary flex-shrink-0" />
+                    <span>Standardized portions for easy macro tracking</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-medium">Core Components</h3>
+                <div className="grid grid-cols-3 gap-4 text-sm">
+                  <div className="space-y-1">
+                    <p className="font-medium">Proteins</p>
+                    <p className="text-muted-foreground">🍗 Chicken</p>
+                    <p className="text-muted-foreground">🦃 Turkey</p>
+                    <p className="text-muted-foreground">🐟 Fish</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="font-medium">Starches</p>
+                    <p className="text-muted-foreground">🍚 Rice</p>
+                    <p className="text-muted-foreground">🥔 Potato</p>
+                    <p className="text-muted-foreground">🌱 Quinoa</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="font-medium">Veggies</p>
+                    <p className="text-muted-foreground">❄️ Broccoli & Cauliflower</p>
+                    <p className="text-muted-foreground">❄️ Mixed Vegetables</p>
+                  </div>
                 </div>
               </div>
-              <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-            </Link>
-          ))}
+            </div>
+          </section>
+
+          {/* Quick Actions */}
+          <section>
+            <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              <Link 
+                href="/eat/meal-plan"
+                className="flex items-center gap-4 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+              >
+                <CalendarDays className="h-8 w-8 text-primary" />
+                <div>
+                  <h3 className="font-medium">View Meal Plan</h3>
+                  <p className="text-sm text-muted-foreground">Check portions and mix meals for the week</p>
+                </div>
+              </Link>
+              <Link 
+                href="/eat/shopping"
+                className="flex items-center gap-4 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+              >
+                <ShoppingBag className="h-8 w-8 text-primary" />
+                <div>
+                  <h3 className="font-medium">Shopping List</h3>
+                  <p className="text-sm text-muted-foreground">Get ingredients for your weekly prep</p>
+                </div>
+              </Link>
+            </div>
+          </section>
+
+          {/* All Features */}
+          <section>
+            <h2 className="text-xl font-semibold mb-4">System Components</h2>
+            <div className="grid gap-4">
+              {features.map((feature) => (
+                <Link 
+                  key={feature.title}
+                  href={feature.href}
+                  className="flex items-start gap-4 p-4 rounded-lg border hover:bg-muted/50 transition-colors"
+                >
+                  <feature.icon className="h-6 w-6 mt-1 text-primary" />
+                  <div className="flex-1">
+                    <h3 className="font-medium mb-1">
+                      {feature.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {feature.description}
+                    </p>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-muted-foreground" />
+                </Link>
+              ))}
+            </div>
+          </section>
         </div>
       </div>
     </main>

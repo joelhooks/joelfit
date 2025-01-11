@@ -77,7 +77,7 @@ export default function ProteinsPage() {
       <div className="max-w-3xl">
         <PageHeader
           title="Protein Recipes"
-          description="Core protein recipes for meal prep"
+          description="High-protein main components for meal prep"
           breadcrumbs={[
             { title: "Eat", href: "/eat" },
             { title: "Base Recipes", href: "/eat/recipes" },

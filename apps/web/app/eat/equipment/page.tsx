@@ -55,7 +55,7 @@ const equipment: EquipmentItem[] = [
   },
   {
     title: "Rice Cooker",
-    description: "Essential for consistent rice and grains. Worth the investment.",
+    description: "Essential for perfect rice and grains every time. Set it and forget it while focusing on other prep. This specific model is tested and proven for our system.",
     link: "https://amzn.to/3DA5cXN",
     required: true,
     price: "$30-40"

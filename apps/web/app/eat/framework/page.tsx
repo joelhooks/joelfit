@@ -34,9 +34,12 @@ const framework = {
           title: "Wave 1",
           time: "30 min",
           tasks: [
-            "Oven 1: Sweet potatoes",
+            "Preheat ovens to 425°F",
+            "Clean workspace",
+            "Label containers",
+            "Oven 1: Potatoes",
             "Oven 2: Chicken breasts",
-            "Stovetop: Rice and quinoa",
+            "Rice Cooker: Rice and quinoa",
             "Prep: Form turkey meatballs"
           ]
         },
@@ -44,7 +47,7 @@ const framework = {
           title: "Wave 2",
           time: "30 min",
           tasks: [
-            "Oven 1: Continue sweet potatoes",
+            "Oven 1: Continue potatoes",
             "Oven 2: Turkey meatballs",
             "Monitor grains",
             "Begin vegetable prep"

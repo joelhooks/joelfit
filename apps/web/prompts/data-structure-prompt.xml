@@ -1,0 +1,147 @@
+# User Data Structure for Meal Prep Website
+
+<user_profile>
+<personal_info>
+- Name: Joel Hooks
+- Sex: Male
+- Age: 50 (DOB: 1974-05-11)
+- Height: 75 inches (6'3")
+- Current Weight: 251 lbs (as of 2024-12-31)
+- Activity Level: Moderately Active
+- Exercise Frequency: 4-6 sessions per week
+- Training Experience:
+  * Lifting: Advanced
+  * Cardio: Intermediate
+- Athletic Context: Regular exercise practitioner
+</personal_info>
+
+<nutrition_targets>
+<daily_baseline>
+Based on tracking data averages and goals:
+- Calories: 2250-2500 kcal
+- Protein: 200-220g (35-40%)
+- Carbs: 225-250g (40-45%)
+- Fat: 65-75g (25-30%)
+</daily_baseline>
+
+<meal_structure>
+Distribution across 6 daily meals:
+
+1. Breakfast (A) - 7:00 AM
+- Calories: 400
+- Protein: 30g
+- Carbs: 45g
+- Fat: 15g
+
+2. Pre-workout (B) - 9:00 AM
+- Calories: 200
+- Protein: 25g
+- Carbs: 20g
+- Fat: 5g
+
+3. Post-workout/Lunch (C) - 11:30 AM
+- Calories: 650
+- Protein: 45g
+- Carbs: 75g
+- Fat: 20g
+
+4. Mid-day Meal (D) - 3:00 PM
+- Calories: 550
+- Protein: 35g
+- Carbs: 55g
+- Fat: 20g
+
+5. Dinner (E) - 7:00 PM
+- Calories: 400
+- Protein: 25g
+- Carbs: 35g
+- Fat: 13g
+
+6. Night Snack (F) - 9:00 PM
+- Calories: 200
+- Protein: 15g
+- Carbs: 20g
+- Fat: 7g
+</meal_structure>
+</nutrition_targets>
+
+<implementation_requirements>
+<portion_scaling>
+Based on user metrics (6'3", 251 lbs, advanced lifter):
+- Protein portions: 6-8 oz per main meal
+- Carb portions: 1.5-2 cups per main meal
+- Vegetable portions: 2 cups per main meal
+- Fat portions: 1-1.5 tbsp per main meal
+</portion_scaling>
+
+<container_specifications>
+Sized for user's portion requirements:
+- Main meals: 34oz 3-compartment containers
+  * Protein: 8oz section
+  * Carbs: 2 cups section
+  * Vegetables: 2 cups section
+- Breakfast: 16oz mason jars
+- Pre-workout: Medium smoothie bags
+- Snacks: 8oz containers
+</container_specifications>
+
+<preparation_adjustments>
+Scaled for user's portion sizes:
+- Protein prep: 3 lbs chicken, 2.5 lbs turkey, 2.75 lbs fish per week
+- Carb prep: 5 cups dry rice, 2.5 lbs sweet potatoes, 2.5 cups dry quinoa
+- Vegetable prep: 25 cups total weekly
+- Sauce prep: 1.5x base recipes
+</preparation_adjustments>
+</implementation_requirements>
+
+<customization_notes>
+<preferences>
+- Advanced lifter requiring higher protein
+- Moderate carb tolerance
+- Regular exercise schedule requires precise meal timing
+- Portion sizes reflect larger frame and activity level
+</preferences>
+
+<adjustments>
+- Scale all base recipes up 50%
+- Increase protein portions by 25% from base
+- Maintain higher carb ratio around workouts
+- Include additional pre-workout meal
+</adjustments>
+</customization_notes>
+
+<website_implementation>
+<data_requirements>
+1. User Profile Section:
+- Display current metrics
+- Show training experience
+- Include activity level
+- Note dietary preferences
+
+2. Meal Planning Interface:
+- Show 6-meal structure
+- Display macro breakdowns
+- Include timing guidelines
+- Show portion sizes
+
+3. Preparation Guidelines:
+- Scale recipes to user size
+- Show container layouts
+- Include prep quantities
+- List storage requirements
+
+4. Progress Tracking:
+- Weight tracking capability
+- Macro adherence monitoring
+- Meal timing compliance
+- Container usage tracking
+</data_requirements>
+
+<interface_priorities>
+1. Clear display of 6-meal schedule
+2. Easy access to scaled portions
+3. Visual guide for container packing
+4. Quick reference for prep quantities
+5. Mobile-friendly meal timing reminders
+</interface_priorities>
+</website_implementation>

@@ -1,0 +1,251 @@
+# High-Protein Meal Prep Framework Specifications
+
+<weekly_schedule>
+<timeline>
+- Saturday: Planning & Shopping
+  * Inventory check (30 min)
+  * Shopping list creation (15 min)
+  * Grocery shopping (1 hour)
+
+- Sunday: Prep Day (2.5-3 hours)
+  * Setup (30 min): 
+    - Preheat ovens to 425°F
+    - Clean workspace
+    - Label containers
+  * Wave 1 (30 min):
+    - Oven 1: Sweet potatoes
+    - Oven 2: Chicken breasts
+    - Stovetop: Rice and quinoa
+    - Prep: Form turkey meatballs
+  * Wave 2 (30 min):
+    - Oven 1: Continue sweet potatoes
+    - Oven 2: Turkey meatballs
+    - Monitor grains
+    - Begin vegetable prep
+  * Wave 3 (30 min):
+    - Oven 1: Roast vegetables
+    - Oven 2: Complete proteins
+    - Finish grains
+    - Prepare sauces
+  * Final Wave (30 min):
+    - Assembly line container filling
+    - Cool items with fan
+    - Prepare breakfast jars
+    - Pack smoothie bags
+
+- Wednesday: Mid-week
+  * Move Thursday/Friday meals from freezer to fridge
+  * Quick container inventory
+  * Sauce check/refresh
+</timeline>
+
+<quality_checkpoints>
+- Protein internal temperatures:
+  * Chicken: 165°F
+  * Turkey meatballs: 165°F
+  * Fish: 145°F
+- Cooling: Items must reach 40°F within 2 hours
+- Storage temperature zones:
+  * Fridge: 34-40°F
+  * Freezer: 0°F or below
+</quality_checkpoints>
+</weekly_schedule>
+
+<container_system>
+<specifications>
+- Main Meals: PrepNaturals 3-Section 34oz Glass Containers
+  * Dimensions: Standard divided container
+  * Protein section: 8oz capacity
+  * Carb section: 2 cups capacity
+  * Vegetable section: 2 cups capacity
+
+- Breakfast: 16oz Wide Mouth Mason Jars
+  * Quantity: 5 jars per person
+  * Use plastic mason jar lids
+
+- Smoothies: OXO Good Grips Silicone Reusable Bags
+  * Flat bottom design
+  * Freezer-safe construction
+
+- Sauce Containers: 2oz portion cups with lids
+</specifications>
+
+<storage_layout>
+Refrigerator Organization:
+- Top shelf: Current day's meals
+- Middle shelf: Next day's meals
+- Bottom shelf: Day 3 meals
+- Door: Sauces and snacks
+
+Freezer Organization:
+- Thursday/Friday meals
+- Emergency backup meals
+- Smoothie packs
+</storage_layout>
+
+<container_lifecycle>
+- Wash immediately after use
+- Weekly deep clean in dishwasher
+- Monthly seal check
+- Quarterly replacement assessment
+</container_lifecycle>
+</container_system>
+
+<protein_management>
+<cooking_specifications>
+Chicken Breast:
+- Temp: 425°F
+- Time: 22-25 minutes
+- Target temp: 165°F
+- Quality markers: Slight browning, clear juices
+
+Turkey Meatballs:
+- Temp: 400°F
+- Time: 20-25 minutes
+- Target temp: 165°F
+- Quality markers: Even browning, firm texture
+
+Fish:
+- Temp: 400°F
+- Time: 12-15 minutes
+- Target temp: 145°F
+- Quality markers: Flakes easily, opaque center
+</cooking_specifications>
+
+<storage_protocols>
+- Cool completely before storage
+- Maximum room temp exposure: 2 hours
+- Refrigerated storage: 3-4 days
+- Frozen storage: 2-3 months
+- Thawing: 24 hours in refrigerator
+</storage_protocols>
+
+<reheating_guidelines>
+- Microwave: 2 minutes at 70% power
+- Rest 30 seconds
+- Check internal temp: 165°F
+- Add 30-second intervals if needed
+</reheating_guidelines>
+</protein_management>
+
+<carb_system>
+<cooking_ratios>
+Rice:
+- 1 cup rice : 2 cups water
+- Cooking time: 18-20 minutes
+- Yield: 3 cups cooked
+
+Quinoa:
+- 1 cup quinoa : 2 cups water
+- Cooking time: 15-17 minutes
+- Yield: 3 cups cooked
+
+Sweet Potatoes:
+- 425°F for 35-40 minutes
+- 1 medium potato yields ~1 cup mashed
+</cooking_ratios>
+
+<cooling_protocols>
+- Spread on sheet pans
+- Use cooling fan
+- Maximum depth: 2 inches
+- Target temp: Below 40°F within 2 hours
+</cooling_protocols>
+
+<storage_techniques>
+- Cool completely before storing
+- Store grains separate from proteins
+- Use shallow containers
+- Label with date and type
+</storage_techniques>
+</carb_system>
+
+<sauce_framework>
+<base_recipes>
+Ginger-Soy (2 tbsp serving):
+- ¼ cup low sodium soy sauce
+- 1 tbsp rice vinegar
+- 1 tsp grated ginger
+- 1 clove minced garlic
+- 1 tsp sesame oil
+
+Greek Yogurt Tzatziki (2 tbsp serving):
+- 1 cup non-fat Greek yogurt
+- ½ cucumber, grated and drained
+- 1 clove minced garlic
+- 1 tbsp lemon juice
+- Fresh dill
+
+Chipotle-Lime (2 tbsp serving):
+- ¼ cup Greek yogurt
+- 1 chipotle pepper in adobo
+- 1 tbsp lime juice
+- 1 clove garlic
+- Salt to taste
+</base_recipes>
+
+<storage_protocols>
+- Keep sauces separate from meals
+- Store in 2oz portion containers
+- Standard life: 5-7 days refrigerated
+- Avocado-based: 2-3 days maximum
+</storage_protocols>
+
+<scaling_calculations>
+Base recipe yields (2 tbsp servings):
+- Oil-based: 8 servings
+- Yogurt-based: 10 servings
+- Avocado-based: 6 servings
+
+Scale multipliers:
+- Single week (1 person): 1x recipe
+- Couple week: 1.5x recipe
+- Family week: 2.5x recipe
+</scaling_calculations>
+</sauce_framework>
+
+<troubleshooting>
+Common Issues and Solutions:
+
+1. Food Safety:
+- Issue: Slow cooling
+  * Solution: Use shallow containers, cooling fan
+- Issue: Temperature abuse
+  * Solution: Set timers, use thermometer
+
+2. Container Management:
+- Issue: Seal failure
+  * Solution: Monthly testing, regular replacement
+- Issue: Staining
+  * Solution: Immediate washing, baking soda paste
+
+3. Quality Control:
+- Issue: Dry proteins
+  * Solution: Check internal temps, use sauce packets
+- Issue: Soggy vegetables
+  * Solution: Separate containers, proper cooling
+
+4. Time Management:
+- Issue: Prep running long
+  * Solution: Use parallel processing, prep containers first
+- Issue: Uneven cooking
+  * Solution: Rotate pans, check oven temperature
+</troubleshooting>
+
+<scaling_formulas>
+Base System (1 person, 5 days):
+- Proteins: 8.25 lbs total
+- Carbs: 10 cups cooked total
+- Vegetables: 25 cups total
+- Sauces: 10 2-tbsp servings
+
+Scaling Multipliers:
+- 2 people: 1.75x (accounting for shared prep efficiency)
+- 3 people: 2.5x
+- 4 people: 3.25x
+
+Time Adjustments:
+- Base prep time: 2.5 hours
+- Add 30 minutes per additional person
+- Maximum batch: 4 people per prep session
+</scaling_formulas>

@@ -1,0 +1,139 @@
+/* Base theme effects */
+.cyberpunk-scanlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.02) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mix-blend-mode: overlay;
+  opacity: 0.3;
+  z-index: 50;
+}
+
+.cyberpunk-noise {
+  display: none; /* Removing noise for cleaner look */
+}
+
+/* Typography */
+.cyberpunk-title {
+  @apply text-4xl md:text-6xl font-bold;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary)) 0%,
+    hsl(var(--primary)) 60%,
+    hsl(var(--primary) / 0.8) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.cyberpunk-subtitle {
+  @apply text-xl md:text-2xl font-semibold;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--foreground)) 0%,
+    hsl(var(--foreground) / 0.9) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.cyberpunk-text {
+  @apply text-base text-foreground/90;
+}
+
+/* Cards */
+.cyberpunk-card {
+  @apply relative overflow-hidden border rounded-lg bg-card transition-all duration-300;
+  background: linear-gradient(
+    210deg,
+    hsl(var(--card)) 0%,
+    hsl(var(--card)) 80%,
+    hsl(var(--primary) / 0.05) 100%
+  );
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.02),
+    0 10px 20px rgba(0, 0, 0, 0.03);
+}
+
+.cyberpunk-card:hover {
+  @apply border-primary/30;
+  transform: translateY(-1px);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.03),
+    0 15px 30px rgba(0, 0, 0, 0.04);
+}
+
+.cyberpunk-card-gradient {
+  @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary) / 0.1) 0%,
+    transparent 50%,
+    transparent 100%
+  );
+}
+
+.cyberpunk-card:hover .cyberpunk-card-gradient {
+  @apply opacity-100;
+}
+
+/* Feature cards */
+.cyberpunk-feature {
+  @apply bg-card rounded-lg p-4 relative overflow-hidden border transition-all duration-300;
+  background: linear-gradient(
+    210deg,
+    hsl(var(--card)) 0%,
+    hsl(var(--card)) 80%,
+    hsl(var(--primary) / 0.05) 100%
+  );
+}
+
+.cyberpunk-feature:hover {
+  @apply border-primary/30;
+  transform: translateY(-1px);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.03),
+    0 15px 30px rgba(0, 0, 0, 0.04);
+}
+
+.cyberpunk-feature-gradient {
+  @apply absolute inset-0;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary) / 0.1) 0%,
+    transparent 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cyberpunk-feature:hover .cyberpunk-feature-gradient {
+  opacity: 1;
+}
+
+/* Icons */
+.cyberpunk-icon {
+  @apply text-primary transition-transform duration-300;
+}
+
+.cyberpunk-card:hover .cyberpunk-icon {
+  transform: scale(1.05);
+}
+
+/* Animations */
+@keyframes subtle-glow {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; }
+}
+
+.cyberpunk-glow {
+  animation: subtle-glow 4s ease-in-out infinite;
+} 
