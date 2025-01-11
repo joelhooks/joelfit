@@ -1,49 +1,39 @@
-import { BaseRepository, Entity, SlugGenerationError } from '../base'
+import { BaseRepository, SlugGenerationError } from '../base'
 import { Profile, profileSchema } from './schema'
+import { initialProfile } from './data'
 
 export class ProfileRepository extends BaseRepository<Profile, typeof profileSchema> {
+  private initialized = false
+  protected items: Profile[] = []
+
   constructor() {
-    super(profileSchema, 'Profile')
-    // Initialize with hardcoded data
-    this.items = [
-      {
-        id: crypto.randomUUID(),
-        slug: 'joel',
-        name: 'Joel Hooks',
-        metrics: {
-          height: 75, // 6'3"
-          weight: 251,
-          age: 46,
-          activityLevel: 'active',
-          exerciseLevel: 'advanced'
-        },
-        targets: {
-          androidFat: 24.0,
-          gynoidFat: 18.0,
-          agRatio: 1.0,
-          visceralFat: 2.0,
-          totalBodyFat: 20.0,
-          rsmi: 10.0
-        },
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date('2024-01-01')
-      }
-    ]
+    super(profileSchema, 'profile')
   }
 
-  // Helper method for tests
-  getDefaultProfileId(): string {
-    return this.items[0]?.id ?? ''
+  private async ensureInitialized() {
+    if (!this.initialized) {
+      if (this.items.length === 0) {
+        const now = new Date()
+        this.items = [{
+          ...initialProfile,
+          id: 'profile-1',
+          slug: this.generateSlug(initialProfile),
+          createdAt: now,
+          updatedAt: now
+        }]
+      }
+      this.initialized = true
+    }
   }
 
   protected async getData(): Promise<Profile[]> {
+    await this.ensureInitialized()
     return this.items
   }
 
   protected async setData(data: Profile[]): Promise<void> {
     this.items = data
-    // For now, just log the data. Later we'll implement proper storage
-    console.log('Saving profiles:', data)
+    this.initialized = true
   }
 
   protected generateSlug(data: Partial<Profile>): string {
@@ -54,5 +44,26 @@ export class ProfileRepository extends BaseRepository<Profile, typeof profileSch
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '')
+  }
+
+  // Helper method for tests
+  getDefaultProfileId(): string {
+    return this.items[0]?.id ?? ''
+  }
+
+  // Override base methods to ensure initialization
+  async findById(id: string): Promise<Profile> {
+    await this.ensureInitialized()
+    return super.findById(id)
+  }
+
+  async findBySlug(slug: string): Promise<Profile> {
+    await this.ensureInitialized()
+    return super.findBySlug(slug)
+  }
+
+  async findAll(): Promise<Profile[]> {
+    await this.ensureInitialized()
+    return super.findAll()
   }
 } 
