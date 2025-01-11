@@ -112,9 +112,12 @@ export default async function FrameworkPage() {
         <h2 className="text-2xl font-semibold mb-4">Weekly Schedule</h2>
         <div className="grid gap-6">
           {/* Saturday */}
-          <div>
-            <h3 className="text-xl font-medium mb-2">{framework.weeklySchedule.saturday.title}</h3>
-            <div className="space-y-2">
+          <Card>
+            <CardHeader className="flex flex-row items-center gap-2">
+              <Clock className="w-5 h-5" />
+              <CardTitle>{framework.weeklySchedule.saturday.title}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
               {framework.weeklySchedule.saturday.tasks.map((task, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <Clock className="w-4 h-4" />
@@ -122,18 +125,21 @@ export default async function FrameworkPage() {
                   <span className="text-muted-foreground">({task.time})</span>
                 </div>
               ))}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Sunday */}
-          <div>
-            <h3 className="text-xl font-medium mb-2">
-              {framework.weeklySchedule.sunday.title}
-              <span className="text-sm font-normal text-muted-foreground ml-2">
-                (Total: {framework.weeklySchedule.sunday.totalTime})
-              </span>
-            </h3>
-            <div className="space-y-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center gap-2">
+              <Clock className="w-5 h-5" />
+              <CardTitle>
+                {framework.weeklySchedule.sunday.title}
+                <span className="text-sm font-normal text-muted-foreground ml-2">
+                  (Total: {framework.weeklySchedule.sunday.totalTime})
+                </span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               {framework.weeklySchedule.sunday.waves.map((wave, i) => (
                 <div key={i}>
                   <h4 className="font-medium mb-2">
@@ -149,21 +155,24 @@ export default async function FrameworkPage() {
                   </ul>
                 </div>
               ))}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Wednesday */}
-          <div>
-            <h3 className="text-xl font-medium mb-2">{framework.weeklySchedule.wednesday.title}</h3>
-            <div className="space-y-2">
+          <Card>
+            <CardHeader className="flex flex-row items-center gap-2">
+              <Clock className="w-5 h-5" />
+              <CardTitle>{framework.weeklySchedule.wednesday.title}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
               {framework.weeklySchedule.wednesday.tasks.map((task, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <Clock className="w-4 h-4" />
                   <span>{task}</span>
                 </div>
               ))}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
