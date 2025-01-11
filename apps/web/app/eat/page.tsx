@@ -90,48 +90,57 @@ export default function EatPage() {
         <div className="space-y-12">
           {/* Core System Overview */}
           <section>
-            <h2 className="text-xl font-semibold mb-4">The 1-2-3 System</h2>
-            <div className="grid gap-6 md:grid-cols-2 mb-6">
-              <div className="space-y-2">
-                <h3 className="font-medium">What It Does</h3>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Clock className="h-5 w-5 text-primary flex-shrink-0" />
+              The 1-2-3 System
+            </h2>
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 mb-6">
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">What It Does</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-center gap-2">
-                    <ArrowRight className="h-4 w-4 text-primary flex-shrink-0" />
+                  <li className="flex items-start gap-2">
+                    <ArrowRight className="h-4 w-4 mt-0.5 flex-shrink-0 text-primary" />
                     <span>Creates 15 unique meal combinations per week</span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <ArrowRight className="h-4 w-4 text-primary flex-shrink-0" />
+                  <li className="flex items-start gap-2">
+                    <ArrowRight className="h-4 w-4 mt-0.5 flex-shrink-0 text-primary" />
                     <span>Maintains protein variety while keeping shopping simple</span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <ArrowRight className="h-4 w-4 text-primary flex-shrink-0" />
+                  <li className="flex items-start gap-2">
+                    <ArrowRight className="h-4 w-4 mt-0.5 flex-shrink-0 text-primary" />
                     <span>2-3 hour Sunday prep for the entire week</span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <ArrowRight className="h-4 w-4 text-primary flex-shrink-0" />
+                  <li className="flex items-start gap-2">
+                    <ArrowRight className="h-4 w-4 mt-0.5 flex-shrink-0 text-primary" />
                     <span>Standardized portions for easy macro tracking</span>
                   </li>
                 </ul>
               </div>
-              <div className="space-y-2">
-                <h3 className="font-medium">Core Components</h3>
-                <div className="grid grid-cols-3 gap-4 text-sm">
-                  <div className="space-y-1">
-                    <p className="font-medium">Proteins</p>
-                    <p className="text-muted-foreground">🍗 Chicken</p>
-                    <p className="text-muted-foreground">🦃 Turkey</p>
-                    <p className="text-muted-foreground">🐟 Fish</p>
+              <div className="bg-card border rounded-lg p-4">
+                <h3 className="font-medium mb-3">Core Components</h3>
+                <div className="grid grid-cols-3 gap-3 sm:gap-4 text-sm">
+                  <div className="bg-muted/50 rounded p-3">
+                    <p className="font-medium mb-2">Proteins</p>
+                    <div className="space-y-1 text-muted-foreground">
+                      <p>🍗 Chicken</p>
+                      <p>🦃 Turkey</p>
+                      <p>🐟 Fish</p>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="font-medium">Starches</p>
-                    <p className="text-muted-foreground">🍚 Rice</p>
-                    <p className="text-muted-foreground">🥔 Potato</p>
-                    <p className="text-muted-foreground">🌱 Quinoa</p>
+                  <div className="bg-muted/50 rounded p-3">
+                    <p className="font-medium mb-2">Starches</p>
+                    <div className="space-y-1 text-muted-foreground">
+                      <p>🍚 Rice</p>
+                      <p>🥔 Potato</p>
+                      <p>🌱 Quinoa</p>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="font-medium">Veggies</p>
-                    <p className="text-muted-foreground">❄️ Broccoli & Cauliflower</p>
-                    <p className="text-muted-foreground">❄️ Mixed Vegetables</p>
+                  <div className="bg-muted/50 rounded p-3">
+                    <p className="font-medium mb-2">Veggies</p>
+                    <div className="space-y-1 text-muted-foreground">
+                      <p>❄️ Broccoli & Cauliflower</p>
+                      <p>❄️ Mixed Vegetables</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -140,25 +149,28 @@ export default function EatPage() {
 
           {/* Quick Actions */}
           <section>
-            <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-            <div className="grid gap-4 md:grid-cols-2">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <UtensilsCrossed className="h-5 w-5 text-primary flex-shrink-0" />
+              Quick Actions
+            </h2>
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
               <Link 
                 href="/eat/meal-plan"
-                className="flex items-center gap-4 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+                className="flex items-start gap-3 sm:gap-4 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
               >
-                <CalendarDays className="h-8 w-8 text-primary" />
+                <CalendarDays className="h-6 w-6 mt-0.5 flex-shrink-0 text-primary" />
                 <div>
-                  <h3 className="font-medium">View Meal Plan</h3>
+                  <h3 className="font-medium mb-1">View Meal Plan</h3>
                   <p className="text-sm text-muted-foreground">Check portions and mix meals for the week</p>
                 </div>
               </Link>
               <Link 
                 href="/eat/shopping"
-                className="flex items-center gap-4 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+                className="flex items-start gap-3 sm:gap-4 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
               >
-                <ShoppingBag className="h-8 w-8 text-primary" />
+                <ShoppingBag className="h-6 w-6 mt-0.5 flex-shrink-0 text-primary" />
                 <div>
-                  <h3 className="font-medium">Shopping List</h3>
+                  <h3 className="font-medium mb-1">Shopping List</h3>
                   <p className="text-sm text-muted-foreground">Get ingredients for your weekly prep</p>
                 </div>
               </Link>
@@ -167,16 +179,19 @@ export default function EatPage() {
 
           {/* All Features */}
           <section>
-            <h2 className="text-xl font-semibold mb-4">System Components</h2>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-primary flex-shrink-0" />
+              System Components
+            </h2>
             <div className="grid gap-4">
               {features.map((feature) => (
                 <Link 
                   key={feature.title}
                   href={feature.href}
-                  className="flex items-start gap-4 p-4 rounded-lg border hover:bg-muted/50 transition-colors"
+                  className="flex items-start gap-3 sm:gap-4 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
                 >
-                  <feature.icon className="h-6 w-6 mt-1 text-primary" />
-                  <div className="flex-1">
+                  <feature.icon className="h-6 w-6 mt-0.5 flex-shrink-0 text-primary" />
+                  <div className="flex-1 min-w-0">
                     <h3 className="font-medium mb-1">
                       {feature.title}
                     </h3>
@@ -184,7 +199,7 @@ export default function EatPage() {
                       {feature.description}
                     </p>
                   </div>
-                  <ArrowRight className="h-5 w-5 text-muted-foreground" />
+                  <ArrowRight className="h-5 w-5 mt-0.5 flex-shrink-0 text-muted-foreground group-hover:text-primary transition-all" />
                 </Link>
               ))}
             </div>
