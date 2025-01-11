@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Activity, Scale, Clock, ChefHat } from 'lucide-react'
+import { Activity, Scale, Clock, ChefHat, Container } from 'lucide-react'
 
 const userProfile = {
   personal: {
@@ -94,24 +94,25 @@ const userProfile = {
 export function NutritionProfile() {
   return (
     <div className="space-y-8">
-      <div className="grid gap-6 md:grid-cols-2">
+      {/* Personal Stats & Daily Targets */}
+      <div className="grid gap-6 sm:grid-cols-2">
         {/* Personal Stats */}
-        <div className="space-y-4">
-          <h3 className="flex items-center gap-2 text-lg font-semibold">
-            <Activity className="h-5 w-5" />
+        <div className="bg-card border rounded-lg p-4">
+          <h3 className="flex items-center gap-2 text-lg font-semibold mb-4">
+            <Activity className="h-5 w-5 text-primary flex-shrink-0" />
             Personal Stats
           </h3>
-          <dl className="grid gap-2">
+          <dl className="grid gap-3">
             {Object.entries(userProfile.personal).map(([key, value]) => {
               if (typeof value === 'object') return null
               return (
-                <div key={key} className="grid grid-cols-2">
+                <div key={key} className="grid grid-cols-2 text-sm">
                   <dt className="font-medium capitalize">{key}:</dt>
                   <dd className="text-muted-foreground">{value}</dd>
                 </div>
               )
             })}
-            <div className="grid grid-cols-2">
+            <div className="grid grid-cols-2 text-sm">
               <dt className="font-medium">Experience:</dt>
               <dd className="text-muted-foreground">
                 Lifting: {userProfile.personal.experience.lifting}<br />
@@ -122,14 +123,14 @@ export function NutritionProfile() {
         </div>
 
         {/* Daily Targets */}
-        <div className="space-y-4">
-          <h3 className="flex items-center gap-2 text-lg font-semibold">
-            <Scale className="h-5 w-5" />
+        <div className="bg-card border rounded-lg p-4">
+          <h3 className="flex items-center gap-2 text-lg font-semibold mb-4">
+            <Scale className="h-5 w-5 text-primary flex-shrink-0" />
             Daily Targets
           </h3>
-          <dl className="grid gap-2">
+          <dl className="grid gap-3">
             {Object.entries(userProfile.targets).map(([key, value]) => (
-              <div key={key} className="grid grid-cols-2">
+              <div key={key} className="grid grid-cols-2 text-sm">
                 <dt className="font-medium capitalize">{key}:</dt>
                 <dd className="text-muted-foreground">{value}</dd>
               </div>
@@ -139,55 +140,58 @@ export function NutritionProfile() {
       </div>
 
       {/* Meal Schedule */}
-      <div className="space-y-4">
-        <h3 className="flex items-center gap-2 text-lg font-semibold">
-          <Clock className="h-5 w-5" />
+      <section>
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <Clock className="h-5 w-5 text-primary flex-shrink-0" />
           Daily Meal Schedule
         </h3>
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4">
           {userProfile.meals.map((meal) => (
-            <div key={meal.name} className="rounded-lg border p-4">
-              <div className="flex justify-between mb-2">
+            <div key={meal.name} className="bg-card border rounded-lg p-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
                 <h4 className="font-medium">{meal.name}</h4>
-                <span className="text-sm text-muted-foreground">{meal.time}</span>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Clock className="h-4 w-4 flex-shrink-0" />
+                  <span>{meal.time}</span>
+                </div>
               </div>
-              <dl className="grid grid-cols-2 gap-1 text-sm">
-                <div>
-                  <dt className="text-muted-foreground">Calories:</dt>
-                  <dd>{meal.calories}</dd>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+                <div className="bg-muted/50 rounded p-2">
+                  <dt className="text-muted-foreground mb-1">Calories</dt>
+                  <dd className="font-medium">{meal.calories}</dd>
                 </div>
-                <div>
-                  <dt className="text-muted-foreground">Protein:</dt>
-                  <dd>{meal.protein}g</dd>
+                <div className="bg-muted/50 rounded p-2">
+                  <dt className="text-muted-foreground mb-1">Protein</dt>
+                  <dd className="font-medium">{meal.protein}g</dd>
                 </div>
-                <div>
-                  <dt className="text-muted-foreground">Carbs:</dt>
-                  <dd>{meal.carbs}g</dd>
+                <div className="bg-muted/50 rounded p-2">
+                  <dt className="text-muted-foreground mb-1">Carbs</dt>
+                  <dd className="font-medium">{meal.carbs}g</dd>
                 </div>
-                <div>
-                  <dt className="text-muted-foreground">Fat:</dt>
-                  <dd>{meal.fat}g</dd>
+                <div className="bg-muted/50 rounded p-2">
+                  <dt className="text-muted-foreground mb-1">Fat</dt>
+                  <dd className="font-medium">{meal.fat}g</dd>
                 </div>
-                <div className="col-span-2 mt-2">
-                  <dt className="text-muted-foreground">Container:</dt>
-                  <dd>{meal.container}</dd>
-                </div>
-              </dl>
+              </div>
+              <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+                <Container className="h-4 w-4 flex-shrink-0" />
+                <span>{meal.container}</span>
+              </div>
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* Weekly Prep */}
-      <div className="space-y-4">
-        <h3 className="flex items-center gap-2 text-lg font-semibold">
-          <ChefHat className="h-5 w-5" />
+      <section>
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <ChefHat className="h-5 w-5 text-primary flex-shrink-0" />
           Weekly Prep Quantities
         </h3>
-        <div className="grid gap-6 md:grid-cols-2">
-          <div>
-            <h4 className="font-medium mb-2">Portions per Meal</h4>
-            <dl className="grid gap-2">
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div className="bg-card border rounded-lg p-4">
+            <h4 className="font-medium mb-3">Portions per Meal</h4>
+            <dl className="grid gap-2 text-sm">
               {Object.entries(userProfile.portions).map(([key, value]) => (
                 <div key={key} className="grid grid-cols-2">
                   <dt className="font-medium capitalize">{key}:</dt>
@@ -196,9 +200,9 @@ export function NutritionProfile() {
               ))}
             </dl>
           </div>
-          <div>
-            <h4 className="font-medium mb-2">Weekly Quantities</h4>
-            <dl className="grid gap-2">
+          <div className="bg-card border rounded-lg p-4">
+            <h4 className="font-medium mb-3">Weekly Quantities</h4>
+            <dl className="grid gap-2 text-sm">
               {Object.entries(userProfile.weeklyPrep).map(([key, value]) => (
                 <div key={key} className="grid grid-cols-2">
                   <dt className="font-medium capitalize">{key}:</dt>
@@ -210,7 +214,7 @@ export function NutritionProfile() {
             </dl>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   )
 } 
