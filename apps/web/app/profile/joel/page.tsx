@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { PageHeader } from '@/components/page-header'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Card, CardHeader, CardTitle, CardContent } from '@repo/ui'
 import { ScrollArea } from '@repo/ui'
 import { NutritionProfile } from '@/components/nutrition-profile'
 import { Activity, Scale } from 'lucide-react'
