@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, UtensilsCrossed, Dumbbell, Clock, BookOpen, Container, Scale } from 'lucide-react'
+import { ArrowRight, UtensilsCrossed, Dumbbell, Clock, BookOpen, Container, Scale, User, Activity, LineChart } from 'lucide-react'
 import Balancer from 'react-wrap-balancer'
 
 interface Feature {
@@ -19,6 +19,29 @@ interface Section {
 }
 
 const sections: Section[] = [
+  {
+    title: "Personal Stats & Metrics",
+    description: "Current DEXA analysis, nutrition targets, and optimization strategies.",
+    icon: LineChart,
+    href: "/profile/joel",
+    features: [
+      {
+        title: "Body Composition",
+        description: "DEXA metrics and targets",
+        href: "/profile/joel#personal-stats"
+      },
+      {
+        title: "Strength Foundation",
+        description: "RSMI, bone density, balance",
+        href: "/profile/joel#strength-foundation"
+      },
+      {
+        title: "Action Plan",
+        description: "Nutrition, training, lifestyle",
+        href: "/profile/joel#action-plan"
+      }
+    ]
+  },
   {
     title: "High-Protein Meal Prep OS",
     description: "A systematic 5-day meal prep framework with 1-2-3 rotation for optimal protein intake and variety.",
