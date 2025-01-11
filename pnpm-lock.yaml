@@ -175,14 +175,17 @@ importers:
   packages/ui:
     dependencies:
       '@radix-ui/react-navigation-menu':
-        specifier: ^1.2.3
+        specifier: 1.2.3
         version: 1.2.3(@types/react-dom@18.3.1)(@types/react@18.3.0)(react-dom@19.0.0)(react@19.0.0)
       '@radix-ui/react-scroll-area':
-        specifier: ^1.2.2
+        specifier: 1.2.2
         version: 1.2.2(@types/react-dom@18.3.1)(@types/react@18.3.0)(react-dom@19.0.0)(react@19.0.0)
       '@radix-ui/react-slot':
-        specifier: ^1.1.1
+        specifier: 1.1.1
         version: 1.1.1(@types/react@18.3.0)(react@19.0.0)
+      lucide-react:
+        specifier: ^0.471.0
+        version: 0.471.0(react@19.0.0)
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -197,7 +200,7 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       '@shadcn/ui':
-        specifier: ^0.0.4
+        specifier: 0.0.4
         version: 0.0.4
       '@turbo/gen':
         specifier: ^1.12.4
@@ -212,25 +215,25 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       autoprefixer:
-        specifier: ^10.4.20
+        specifier: 10.4.20
         version: 10.4.20(postcss@8.4.49)
       class-variance-authority:
-        specifier: ^0.7.1
+        specifier: 0.7.1
         version: 0.7.1
       clsx:
-        specifier: ^2.1.1
+        specifier: 2.1.1
         version: 2.1.1
       postcss:
-        specifier: ^8.4.49
+        specifier: 8.4.49
         version: 8.4.49
       tailwind-merge:
-        specifier: ^2.6.0
+        specifier: 2.6.0
         version: 2.6.0
       tailwindcss:
-        specifier: ^3.4.17
+        specifier: 3.4.17
         version: 3.4.17
       tailwindcss-animate:
-        specifier: ^1.0.7
+        specifier: 1.0.7
         version: 1.0.7(tailwindcss@3.4.17)
       typescript:
         specifier: 5.5.4
