@@ -71,28 +71,28 @@ export default async function FrameworkPage() {
 
   const containers = {
     mainMeals: {
-      equipment: <Link href={mealContainers.link} target="_blank">{mealContainers.title}</Link>,
+      equipment: <Link href={mealContainers.link} target="_blank" className="text-primary hover:underline">{mealContainers.title}</Link>,
       sections: ['protein', 'carbs', 'vegetables'],
       quantity: 10,
       note: 'Glass containers with compartments',
       features: ['Microwave safe', 'Dishwasher safe', 'Airtight seal']
     },
     breakfast: {
-      equipment: <Link href={masonJars.link} target="_blank">{masonJars.title}</Link>,
+      equipment: <Link href={masonJars.link} target="_blank" className="text-primary hover:underline">{masonJars.title}</Link>,
       sections: ['overnight oats', 'protein powder'],
       quantity: 5,
       note: 'Wide mouth for easy filling/cleaning',
       features: ['Airtight seal', 'Easy to clean', 'Durable']
     },
     smoothies: {
-      equipment: <Link href={smoothieBags.link} target="_blank">{smoothieBags.title}</Link>,
+      equipment: <Link href={smoothieBags.link} target="_blank" className="text-primary hover:underline">{smoothieBags.title}</Link>,
       sections: ['fruit', 'greens', 'protein'],
       quantity: 5,
       note: 'Pre-portioned smoothie packs',
       features: ['Freezer safe', 'Reusable', 'Easy to fill']
     },
     sauces: {
-      equipment: <Link href={masonJars.link} target="_blank">{masonJars.title}</Link>,
+      equipment: <Link href={masonJars.link} target="_blank" className="text-primary hover:underline">{masonJars.title}</Link>,
       sections: ['sauces', 'dressings'],
       quantity: 3,
       note: 'Small jars for sauces/dressings',
@@ -101,15 +101,15 @@ export default async function FrameworkPage() {
   }
 
   return (
-    <div className="container py-6">
+    <div className="container py-6 space-y-12">
       <PageHeader
         title="Core Framework"
         description="Systematic approach to high-protein meal preparation"
       />
 
       {/* Weekly Schedule */}
-      <section className="mt-8">
-        <h2 className="text-2xl font-semibold mb-4">Weekly Schedule</h2>
+      <section>
+        <h2 className="text-2xl font-semibold mb-6">Weekly Schedule</h2>
         <div className="grid gap-6">
           {/* Saturday */}
           <Card>
@@ -177,8 +177,8 @@ export default async function FrameworkPage() {
       </section>
 
       {/* Container System */}
-      <section className="mt-12">
-        <h2 className="text-2xl font-semibold mb-4">Container System</h2>
+      <section>
+        <h2 className="text-2xl font-semibold mb-6">Container System</h2>
         <div className="grid gap-6 md:grid-cols-2">
           {Object.entries(containers).map(([type, container]) => (
             <Card key={type}>
@@ -206,8 +206,8 @@ export default async function FrameworkPage() {
       </section>
 
       {/* Storage Layout */}
-      <section className="mt-12">
-        <h2 className="text-2xl font-semibold mb-4">Storage Layout</h2>
+      <section>
+        <h2 className="text-2xl font-semibold mb-6">Storage Layout</h2>
         <div className="grid gap-6 md:grid-cols-2">
           {/* Fridge */}
           <Card>
@@ -242,8 +242,8 @@ export default async function FrameworkPage() {
       </section>
 
       {/* Scaling */}
-      <section className="mt-12">
-        <h2 className="text-2xl font-semibold mb-4">Scaling</h2>
+      <section>
+        <h2 className="text-2xl font-semibold mb-6">Scaling</h2>
         <div className="grid gap-6 md:grid-cols-2">
           {Object.entries(framework.scaling).map(([servings, details]) => (
             <Card key={servings}>
@@ -264,8 +264,8 @@ export default async function FrameworkPage() {
       </section>
 
       {/* Troubleshooting */}
-      <section className="mt-12">
-        <h2 className="text-2xl font-semibold mb-4">Troubleshooting</h2>
+      <section>
+        <h2 className="text-2xl font-semibold mb-6">Troubleshooting</h2>
         <div className="grid gap-6 md:grid-cols-2">
           {Object.entries(framework.troubleshooting).map(([category, items]) => (
             <Card key={category}>
