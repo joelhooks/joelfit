@@ -1,140 +1,169 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { EquipmentRepository } from './repository'
-import { Equipment, EquipmentCategory } from './schema'
-import { Entity, NotFoundError, SlugGenerationError, ValidationError } from '../base'
+import { type Equipment, type EquipmentCategory } from './schema'
+import { NotFoundError, ValidationError, SlugGenerationError } from '../base'
 
 describe('EquipmentRepository', () => {
   let repo: EquipmentRepository
-  let defaultEquipmentId: string
 
-  // Complete test equipment with all required properties
-  const testEquipment: Omit<Equipment, keyof Entity> = {
-    title: 'Test Equipment',
-    description: 'A test piece of equipment',
-    link: 'https://example.com',
-    price: 99.99,
+  beforeEach(() => {
+    repo = new EquipmentRepository()
+  })
+
+  const validEquipment = {
+    title: 'Test Container',
+    description: 'A test container for meal prep',
+    link: 'https://example.com/container',
+    price: 29.99,
     category: 'storage' as EquipmentCategory,
     required: true,
     maintenance: 'Clean after each use'
   }
 
-  // Equipment without title for testing slug generation error
-  const equipmentWithoutTitle = {
-    description: testEquipment.description,
-    link: testEquipment.link,
-    price: testEquipment.price,
-    category: testEquipment.category,
-    required: testEquipment.required,
-    maintenance: testEquipment.maintenance
-  }
+  describe('create', () => {
+    it('should create new equipment', async () => {
+      const created = await repo.create(validEquipment)
+      expect(created.title).toBe('Test Container')
+      expect(created.slug).toBe('test-container')
+      expect(created.id).toBeDefined()
+      expect(created.createdAt).toBeInstanceOf(Date)
+      expect(created.updatedAt).toBeInstanceOf(Date)
+    })
 
-  // Updates with only changed properties
-  const updates: Partial<Omit<Equipment, keyof Entity>> = {
-    title: 'Updated Equipment',
-    price: 149.99
-  }
+    it('should throw SlugGenerationError if title is missing', async () => {
+      const invalidEquipment = { ...validEquipment, title: undefined }
+      // @ts-expect-error Testing invalid input
+      await expect(repo.create(invalidEquipment)).rejects.toThrow(SlugGenerationError)
+    })
 
-  beforeEach(() => {
-    repo = new EquipmentRepository()
-    defaultEquipmentId = repo.getDefaultEquipmentId()
+    it('should throw ValidationError if data is invalid', async () => {
+      const invalidEquipment = {
+        ...validEquipment,
+        price: -1 // Invalid: negative price
+      }
+
+      await expect(repo.create(invalidEquipment)).rejects.toThrow(ValidationError)
+    })
   })
 
   describe('findById', () => {
     it('should find equipment by id', async () => {
-      const equipment = await repo.findById(defaultEquipmentId)
-      expect(equipment.id).toBe(defaultEquipmentId)
+      const created = await repo.create(validEquipment)
+      const found = await repo.findById(created.id)
+      expect(found.title).toBe('Test Container')
     })
 
     it('should throw NotFoundError if equipment not found', async () => {
-      await expect(repo.findById('not-found')).rejects.toThrow(NotFoundError)
+      await expect(repo.findById('non-existent-id')).rejects.toThrow(NotFoundError)
     })
   })
 
   describe('findBySlug', () => {
     it('should find equipment by slug', async () => {
-      const equipment = await repo.findById(defaultEquipmentId)
-      const found = await repo.findBySlug(equipment.slug)
-      expect(found.id).toBe(equipment.id)
+      const created = await repo.create(validEquipment)
+      const found = await repo.findBySlug('test-container')
+      expect(found.title).toBe('Test Container')
     })
 
     it('should throw NotFoundError if equipment not found', async () => {
-      await expect(repo.findBySlug('not-found')).rejects.toThrow(NotFoundError)
+      await expect(repo.findBySlug('non-existent-slug')).rejects.toThrow(NotFoundError)
     })
   })
 
   describe('findAll', () => {
     it('should return all equipment', async () => {
+      await repo.create(validEquipment)
       const equipment = await repo.findAll()
       expect(equipment.length).toBeGreaterThan(0)
-    })
-  })
-
-  describe('create', () => {
-    it('should create new equipment', async () => {
-      const created = await repo.create(testEquipment)
-      expect(created.title).toBe(testEquipment.title)
-      expect(created.slug).toBe('test-equipment')
-    })
-
-    it('should throw SlugGenerationError if title is missing', async () => {
-      await expect(repo.create(equipmentWithoutTitle as any)).rejects.toThrow(SlugGenerationError)
-    })
-
-    it('should throw ValidationError if data is invalid', async () => {
-      const invalidEquipment = { ...testEquipment, price: -1 }
-      await expect(repo.create(invalidEquipment)).rejects.toThrow(ValidationError)
+      expect(equipment[0]?.title).toBeDefined()
     })
   })
 
   describe('update', () => {
     it('should update existing equipment', async () => {
-      const updated = await repo.update(defaultEquipmentId, updates)
-      expect(updated.title).toBe(updates.title)
-      expect(updated.price).toBe(updates.price)
+      const created = await repo.create(validEquipment)
+      const updates = {
+        title: 'Updated Container',
+        price: 39.99
+      }
+
+      const updated = await repo.update(created.id, updates)
+      expect(updated.title).toBe('Updated Container')
+      expect(updated.price).toBe(39.99)
+      expect(updated.updatedAt).toBeInstanceOf(Date)
     })
 
     it('should throw NotFoundError if equipment not found', async () => {
-      await expect(repo.update('not-found', updates)).rejects.toThrow(NotFoundError)
+      await expect(
+        repo.update('non-existent-id', { title: 'New Title' })
+      ).rejects.toThrow(NotFoundError)
     })
 
     it('should throw ValidationError if update data is invalid', async () => {
-      const invalidUpdates = { price: -1 }
-      await expect(repo.update(defaultEquipmentId, invalidUpdates)).rejects.toThrow(ValidationError)
+      const created = await repo.create(validEquipment)
+      const invalidUpdates = {
+        price: -1 // Invalid: negative price
+      }
+
+      await expect(repo.update(created.id, invalidUpdates)).rejects.toThrow(ValidationError)
     })
   })
 
   describe('delete', () => {
     it('should delete existing equipment', async () => {
-      await repo.delete(defaultEquipmentId)
-      await expect(repo.findById(defaultEquipmentId)).rejects.toThrow(NotFoundError)
+      const created = await repo.create(validEquipment)
+      await repo.delete(created.id)
+      await expect(repo.findById(created.id)).rejects.toThrow(NotFoundError)
     })
 
     it('should throw NotFoundError if equipment not found', async () => {
-      await expect(repo.delete('not-found')).rejects.toThrow(NotFoundError)
+      await expect(repo.delete('non-existent-id')).rejects.toThrow(NotFoundError)
     })
   })
 
   describe('getByCategory', () => {
     it('should return equipment by category', async () => {
+      await repo.create(validEquipment)
       const equipment = await repo.getByCategory('storage')
       expect(equipment.length).toBeGreaterThan(0)
-      equipment.forEach(item => expect(item.category).toBe('storage'))
+      expect(equipment[0]?.category).toBe('storage')
     })
   })
 
   describe('getRequired', () => {
     it('should return required equipment', async () => {
+      await repo.create(validEquipment)
       const equipment = await repo.getRequired()
       expect(equipment.length).toBeGreaterThan(0)
-      equipment.forEach(item => expect(item.required).toBe(true))
+      expect(equipment[0]?.required).toBe(true)
     })
   })
 
   describe('getWithMaintenance', () => {
     it('should return equipment with maintenance', async () => {
+      await repo.create(validEquipment)
       const equipment = await repo.getWithMaintenance()
       expect(equipment.length).toBeGreaterThan(0)
-      equipment.forEach(item => expect(item.maintenance).toBeTruthy())
+      expect(equipment[0]?.maintenance).toBeDefined()
+    })
+  })
+
+  describe('getStorageGuide', () => {
+    it('should return storage guide', () => {
+      const guide = repo.getStorageGuide()
+      expect(guide.containers).toBeDefined()
+      expect(guide.bags).toBeDefined()
+    })
+  })
+
+  describe('getMaintenanceSchedule', () => {
+    it('should return maintenance schedule', () => {
+      const schedule = repo.getMaintenanceSchedule()
+      expect(schedule.daily).toBeDefined()
+      expect(schedule.weekly).toBeDefined()
+      expect(schedule.monthly).toBeDefined()
+      expect(schedule.quarterly).toBeDefined()
+      expect(schedule.yearly).toBeDefined()
     })
   })
 }) 

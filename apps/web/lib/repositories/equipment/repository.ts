@@ -5,20 +5,26 @@ import { initialEquipment, initialMaintenanceSchedule, initialStorageGuide } fro
 export class EquipmentRepository extends BaseRepository<Equipment, typeof equipmentSchema> {
   private storageGuide: StorageGuide = initialStorageGuide
   private maintenanceSchedule: MaintenanceSchedule = initialMaintenanceSchedule
+  private initialized = false
   protected items: Equipment[] = []
 
   constructor() {
     super(equipmentSchema, 'equipment')
-    this.initializeData()
   }
 
-  private async initializeData() {
-    // Only initialize if no data exists
-    const existingData = await this.findAll()
-    if (existingData.length === 0) {
-      await Promise.all(
-        initialEquipment.map(item => this.create(item))
-      )
+  private async ensureInitialized() {
+    if (!this.initialized) {
+      if (this.items.length === 0) {
+        const now = new Date()
+        this.items = initialEquipment.map((item, index) => ({
+          ...item,
+          id: `equipment-${index + 1}`,
+          slug: this.generateSlug(item),
+          createdAt: now,
+          updatedAt: now
+        }))
+      }
+      this.initialized = true
     }
   }
 
@@ -28,18 +34,18 @@ export class EquipmentRepository extends BaseRepository<Equipment, typeof equipm
   }
 
   async getByCategory(category: Equipment['category']): Promise<Equipment[]> {
-    const items = await this.findAll()
-    return items.filter(item => item.category === category)
+    await this.ensureInitialized()
+    return this.items.filter(item => item.category === category)
   }
 
   async getRequired(): Promise<Equipment[]> {
-    const items = await this.findAll()
-    return items.filter(item => item.required)
+    await this.ensureInitialized()
+    return this.items.filter(item => item.required)
   }
 
   async getWithMaintenance(): Promise<Equipment[]> {
-    const items = await this.findAll()
-    return items.filter(item => item.maintenance)
+    await this.ensureInitialized()
+    return this.items.filter(item => item.maintenance)
   }
 
   getStorageGuide(): StorageGuide {
@@ -51,10 +57,28 @@ export class EquipmentRepository extends BaseRepository<Equipment, typeof equipm
   }
 
   protected async getData(): Promise<Equipment[]> {
+    await this.ensureInitialized()
     return this.items
   }
 
   protected async setData(data: Equipment[]): Promise<void> {
     this.items = data
+    this.initialized = true
+  }
+
+  // Override base methods to ensure initialization
+  async findById(id: string): Promise<Equipment> {
+    await this.ensureInitialized()
+    return super.findById(id)
+  }
+
+  async findBySlug(slug: string): Promise<Equipment> {
+    await this.ensureInitialized()
+    return super.findBySlug(slug)
+  }
+
+  async findAll(): Promise<Equipment[]> {
+    await this.ensureInitialized()
+    return super.findAll()
   }
 } 
