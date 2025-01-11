@@ -1,7 +1,6 @@
 import { type Metadata } from 'next'
 import { PageHeader } from '@/components/page-header'
 import { Clock, ShoppingBag, Container, AlertCircle } from 'lucide-react'
-import { MealMixer } from '@/components/meal-mixer'
 import { MealPlanRepository } from '@/lib/repositories/meal-plan'
 import { Card, CardContent, CardHeader, CardTitle, Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui'
 import { type MealPlan } from '@/lib/repositories/meal-plan/schema'
