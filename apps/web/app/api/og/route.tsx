@@ -3,6 +3,12 @@ import { NextRequest } from 'next/server'
  
 export const runtime = 'edge'
 
+// Cloudinary configuration
+const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY
+const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET
+const USE_CLOUDINARY = process.env.USE_CLOUDINARY === 'true'
+
 // Font files in public/fonts directory
 const geistRegular = fetch(
   new URL('../../../public/fonts/Geist-Regular.ttf', import.meta.url)
@@ -729,18 +735,60 @@ function getDailySeed(str: string): number {
   return Math.abs(hash)
 }
 
+async function uploadToCloudinary(imageBuffer: ArrayBuffer, publicId: string) {
+  const formData = new FormData()
+  formData.append('file', new Blob([imageBuffer]))
+  formData.append('public_id', publicId)
+  formData.append('api_key', CLOUDINARY_API_KEY!)
+  formData.append('timestamp', String(Math.round(Date.now() / 1000)))
+  
+  const response = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+    {
+      method: 'POST',
+      body: formData,
+    }
+  )
+  
+  if (!response.ok) {
+    throw new Error('Failed to upload to Cloudinary')
+  }
+  
+  return response.json()
+}
+
 export async function GET(req: NextRequest) {
   try {
-    const [geistRegularData, geistBoldData] = await Promise.all([
-      geistRegular,
-      geistBold,
-    ])
-
     const { searchParams } = new URL(req.url)
     const title = searchParams.get('title')?.slice(0, 150) || 'JoelFit'
     const description = searchParams.get('description')?.slice(0, 250) || 'a personal health & fitness framework'
     
-    // Use daily seed instead of just title hash
+    // Generate a stable public ID for Cloudinary based on the content
+    const publicId = `og-images/${Buffer.from(title + description).toString('base64').slice(0, 50)}`
+    
+    if (USE_CLOUDINARY) {
+      // Try to fetch from Cloudinary first
+      const cloudinaryUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/${publicId}.png`
+      const cloudinaryResponse = await fetch(cloudinaryUrl, { method: 'HEAD' })
+      
+      if (cloudinaryResponse.ok) {
+        // Image exists in Cloudinary, redirect to it
+        return new Response(null, {
+          status: 302,
+          headers: {
+            'Location': cloudinaryUrl,
+            'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=60'
+          }
+        })
+      }
+    }
+    
+    // Generate the image if not found in Cloudinary
+    const [geistRegularData, geistBoldData] = await Promise.all([
+      geistRegular,
+      geistBold,
+    ])
+    
     const seed = getDailySeed(title)
     const rng = new SeededRandom(seed)
     
@@ -774,7 +822,7 @@ export async function GET(req: NextRequest) {
     const technicalRings = generateTechnicalRings(width, height, rng)
     const swooshes = generateSwooshes(width, height, rng)
  
-    return new ImageResponse(
+    const response = new ImageResponse(
       (
         <div
           style={{
@@ -1143,10 +1191,38 @@ export async function GET(req: NextRequest) {
         ],
       },
     )
+    
+    if (USE_CLOUDINARY && CLOUDINARY_API_KEY && CLOUDINARY_API_SECRET) {
+      try {
+        // Convert ImageResponse to buffer and upload to Cloudinary
+        const buffer = await response.arrayBuffer()
+        const cloudinaryResponse = await uploadToCloudinary(buffer, publicId)
+        
+        // Redirect to the Cloudinary URL
+        return new Response(null, {
+          status: 302,
+          headers: {
+            'Location': cloudinaryResponse.secure_url,
+            'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=60'
+          }
+        })
+      } catch (cloudinaryError) {
+        console.error('Cloudinary upload failed:', cloudinaryError)
+        // Fall back to serving the image directly
+      }
+    }
+    
+    // Add cache headers for direct serving
+    response.headers.set('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=60')
+    return response
+    
   } catch (e: any) {
     console.log(`${e.message}`)
     return new Response(`Failed to generate the image`, {
       status: 500,
+      headers: {
+        'Cache-Control': 'no-store'
+      }
     })
   }
 } 
