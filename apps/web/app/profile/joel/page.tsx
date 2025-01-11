@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { PageHeader } from '@/components/page-header'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { NutritionProfile } from '@/components/nutrition-profile'
 
 export const metadata: Metadata = {
   title: "Joel's Profile | JoelFit",
@@ -124,7 +125,7 @@ export default function JoelProfilePage() {
   ]
 
   return (
-    <div className="container max-w-6xl py-6 space-y-6">
+    <div className="container max-w-6xl py-6 space-y-12">
       <PageHeader
         title="Joel's Profile"
         description="Personal metrics and optimization strategies"
@@ -133,66 +134,78 @@ export default function JoelProfilePage() {
         ]}
       />
       
-      <div className="space-y-6 max-w-4xl mx-auto">
-        <Card>
-          <CardHeader>
-            <CardTitle>Current Status & Targets</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {Object.entries(currentMetrics).map(([key, value]) => (
-                <div key={key} className="p-2 bg-muted rounded">
-                  <div className="text-sm text-muted-foreground capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
-                  <div className="text-lg font-semibold">{value}</div>
-                  {key in targets && <div className="text-sm text-primary">{targets[key as TargetKey]}</div>}
+      <div className="space-y-12 max-w-4xl mx-auto">
+        {/* DEXA Analysis Section */}
+        <section>
+          <h2 className="text-2xl font-bold mb-6">DEXA Analysis</h2>
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Current Status & Targets</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {Object.entries(currentMetrics).map(([key, value]) => (
+                    <div key={key} className="p-2 bg-muted rounded">
+                      <div className="text-sm text-muted-foreground capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
+                      <div className="text-lg font-semibold">{value}</div>
+                      {key in targets && <div className="text-sm text-primary">{targets[key as TargetKey]}</div>}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
 
-        {actionPlan.map((section) => (
-          <Card key={section.category}>
-            <CardHeader>
-              <CardTitle>{section.category} Strategy</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {section.items.map((item) => (
-                  <div key={item.title} className="border-b pb-2">
-                    <div className="font-medium">{item.title}</div>
-                    <div className="text-sm text-muted-foreground">{item.description}</div>
-                    <div className="text-xs text-muted-foreground mt-1">{item.detail}</div>
+            {actionPlan.map((section) => (
+              <Card key={section.category}>
+                <CardHeader>
+                  <CardTitle>{section.category} Strategy</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {section.items.map((item) => (
+                      <div key={item.title} className="border-b pb-2">
+                        <div className="font-medium">{item.title}</div>
+                        <div className="text-sm text-muted-foreground">{item.description}</div>
+                        <div className="text-xs text-muted-foreground mt-1">{item.detail}</div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                </CardContent>
+              </Card>
+            ))}
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Progress Monitoring</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <p className="text-sm">Key metrics to track weekly:</p>
-              <ul className="list-disc pl-4 space-y-1">
-                <li>Waist circumference (morning, relaxed)</li>
-                <li>Body weight (3x/week, same conditions)</li>
-                <li>Progress photos (weekly, same conditions)</li>
-                <li>Training performance metrics</li>
-                <li>Sleep quality score</li>
-              </ul>
-              <p className="text-sm mt-4">Target rate of change:</p>
-              <ul className="list-disc pl-4 space-y-1">
-                <li>0.5-1% body weight per week</li>
-                <li>Maintain or increase lifting numbers</li>
-                <li>Reduce waist circumference while maintaining other measurements</li>
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Progress Monitoring</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <p className="text-sm">Key metrics to track weekly:</p>
+                  <ul className="list-disc pl-4 space-y-1">
+                    <li>Waist circumference (morning, relaxed)</li>
+                    <li>Body weight (3x/week, same conditions)</li>
+                    <li>Progress photos (weekly, same conditions)</li>
+                    <li>Training performance metrics</li>
+                    <li>Sleep quality score</li>
+                  </ul>
+                  <p className="text-sm mt-4">Target rate of change:</p>
+                  <ul className="list-disc pl-4 space-y-1">
+                    <li>0.5-1% body weight per week</li>
+                    <li>Maintain or increase lifting numbers</li>
+                    <li>Reduce waist circumference while maintaining other measurements</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        {/* Nutrition Section */}
+        <section>
+          <h2 className="text-2xl font-bold mb-6">Nutrition Profile</h2>
+          <NutritionProfile />
+        </section>
       </div>
     </div>
   )

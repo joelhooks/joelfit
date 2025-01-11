@@ -28,7 +28,7 @@ const sections: Section[] = [
       {
         title: "5-Meal Structure",
         description: "2250-2500 cal, 200-220g protein",
-        href: "/eat/profile"
+        href: "/profile/joel"
       },
       {
         title: "2-3 Hour Sunday Prep",
@@ -95,13 +95,13 @@ export function HomeContent() {
             <div key={section.title} className="space-y-6">
               <Link 
                 href={section.href}
-                className="cyberpunk-card block p-6"
+                className="cyberpunk-card block p-4 sm:p-6"
               >
                 <div className="cyberpunk-card-gradient" />
                 
                 <div className="flex items-start justify-between relative">
-                  <div className="flex items-start gap-4">
-                    <section.icon className="cyberpunk-icon h-6 w-6 mt-1" />
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <section.icon className="h-6 w-6 mt-0.5 flex-shrink-0 text-primary" />
                     <div>
                       <h2 className="cyberpunk-subtitle mb-2">
                         <Balancer>{section.title}</Balancer>
@@ -111,17 +111,17 @@ export function HomeContent() {
                       </p>
                     </div>
                   </div>
-                  <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-all group-hover:translate-x-1" />
+                  <ArrowRight className="h-5 w-5 mt-0.5 text-muted-foreground flex-shrink-0 group-hover:text-primary transition-all group-hover:translate-x-1" />
                 </div>
               </Link>
 
-              <div className="grid gap-6 md:grid-cols-3 pl-10">
+              <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 pl-4 sm:pl-10">
                 {section.features.map((feature) => (
                   feature.href ? (
                     <Link
                       key={feature.title}
                       href={feature.href}
-                      className="cyberpunk-feature"
+                      className="cyberpunk-feature p-4 sm:p-6"
                     >
                       <div className="cyberpunk-feature-gradient" />
                       <div className="relative">
@@ -136,7 +136,7 @@ export function HomeContent() {
                   ) : (
                     <div 
                       key={feature.title} 
-                      className="cyberpunk-feature"
+                      className="cyberpunk-feature p-4 sm:p-6"
                     >
                       <div className="cyberpunk-feature-gradient" />
                       <div className="relative">

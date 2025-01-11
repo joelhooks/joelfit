@@ -33,7 +33,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
-      <body className="min-h-screen bg-background font-sans antialiased">
+      <body className="min-h-screen bg-background font-sans">
         <div className="relative flex min-h-screen flex-col">
           <div className="cyberpunk-scanlines" />
           <div className="cyberpunk-noise" />

@@ -65,7 +65,7 @@ const features = [
     title: "Profile & Targets",
     description: "Personal nutrition profile and targets",
     icon: User,
-    href: "/eat/profile"
+    href: "/profile/joel"
   },
   {
     title: "Progress & QC",
