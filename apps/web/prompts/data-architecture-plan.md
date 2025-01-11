@@ -138,11 +138,13 @@
     - [x] Add back shadcn Card components ✅
     - [x] Fix container borders and spacing ✅
     - [x] Restore consistent section layouts ✅
-- [ ] Update Meal Plan page
-  - Use MealPlanRepository for all data
-  - Remove hardcoded wife's meal plan
-  - Add loading states
-  - Add error handling
+    - [x] Fix link styling and spacing ✅
+- [ ] Update Meal Plan page 🚧
+  - [ ] Convert to server component
+  - [ ] Use MealPlanRepository for all data
+  - [ ] Remove hardcoded wife's meal plan
+  - [ ] Add error handling
+  - [ ] Ensure consistent styling with Framework page
 - [ ] Update Shopping page
   - Use ShoppingRepository for all data
   - Add loading states
