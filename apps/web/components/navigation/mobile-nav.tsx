@@ -36,7 +36,7 @@ export function MobileNav() {
             <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="bottom" className="h-72 rounded-t-xl px-2">
+        <SheetContent side="bottom" className="h-[min(75vh,480px)] rounded-t-xl px-2">
           <nav className="mt-2 space-y-1">
             {sections.map(({ id, title }) => (
               <a

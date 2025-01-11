@@ -5,7 +5,9 @@ import { ScrollArea } from '@repo/ui'
 export const sections = [
   { id: 'metrics', title: 'Key Metrics' },
   { id: 'strength', title: 'Strength Foundation' },
-  { id: 'action-plan', title: 'Action Plan' }
+  { id: 'action-plan', title: 'Action Plan' },
+  { id: 'progress-tracking', title: 'Progress Tracking' },
+  { id: 'nutrition', title: 'Nutrition Details' }
 ] as const
 
 export type SectionId = typeof sections[number]['id']
@@ -19,7 +21,9 @@ export function ProfileNav({ className }: ProfileNavProps) {
   const [sectionProgress, setSectionProgress] = useState<Record<SectionId, number>>({
     metrics: 0,
     strength: 0,
-    'action-plan': 0
+    'action-plan': 0,
+    'progress-tracking': 0,
+    nutrition: 0
   })
 
   useEffect(() => {

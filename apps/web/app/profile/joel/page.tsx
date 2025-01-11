@@ -6,6 +6,8 @@ import { StrengthAreas } from '@/components/strength/strength-areas'
 import { ProfileNav, sections } from '@/components/navigation/profile-nav'
 import { MobileNav } from '@/components/navigation/mobile-nav'
 import { ActionPlan } from '@/components/action/action-plan'
+import { ProgressTracking } from '@/components/progress/progress-tracking'
+import { NutritionProfile } from '@/components/nutrition-profile'
 
 export default function JoelProfilePage() {
   return (
@@ -39,6 +41,16 @@ export default function JoelProfilePage() {
           <section id="action-plan">
             <h2 className="text-2xl font-bold mb-6">Action Plan</h2>
             <ActionPlan />
+          </section>
+
+          <section id="progress-tracking">
+            <h2 className="text-2xl font-bold mb-6">Progress Tracking</h2>
+            <ProgressTracking />
+          </section>
+
+          <section id="nutrition">
+            <h2 className="text-2xl font-bold mb-6">Nutrition Details</h2>
+            <NutritionProfile />
           </section>
         </div>
       </div>
