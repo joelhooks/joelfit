@@ -5,6 +5,22 @@ import { ShoppingBag, Package, Archive } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'Shopping List | High-Protein Meal Prep OS',
   description: 'Weekly shopping list and pantry staples for the meal prep system',
+  openGraph: {
+    title: 'Shopping List | High-Protein Meal Prep OS',
+    description: 'Weekly shopping list and pantry staples for the meal prep system',
+    images: [{
+      url: `https://www.joelfit.app/api/og?title=${encodeURIComponent('Shopping List')}&description=${encodeURIComponent('Weekly shopping list and pantry staples for the meal prep system')}`,
+      width: 1200,
+      height: 630,
+      alt: 'Shopping List'
+    }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Shopping List | High-Protein Meal Prep OS',
+    description: 'Weekly shopping list and pantry staples for the meal prep system',
+    images: [`https://www.joelfit.app/api/og?title=${encodeURIComponent('Shopping List')}&description=${encodeURIComponent('Weekly shopping list and pantry staples for the meal prep system')}`],
+  }
 }
 
 const shoppingData = {

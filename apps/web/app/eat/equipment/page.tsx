@@ -7,6 +7,22 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Container System | High-Protein Meal Prep OS',
   description: 'Essential equipment and storage solutions for meal prep',
+  openGraph: {
+    title: 'Container System | High-Protein Meal Prep OS',
+    description: 'Essential equipment and storage solutions for meal prep',
+    images: [{
+      url: `https://www.joelfit.app/api/og?title=${encodeURIComponent('Container System')}&description=${encodeURIComponent('Essential equipment and storage solutions for meal prep')}`,
+      width: 1200,
+      height: 630,
+      alt: 'Container System'
+    }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Container System | High-Protein Meal Prep OS',
+    description: 'Essential equipment and storage solutions for meal prep',
+    images: [`https://www.joelfit.app/api/og?title=${encodeURIComponent('Container System')}&description=${encodeURIComponent('Essential equipment and storage solutions for meal prep')}`],
+  }
 }
 
 interface EquipmentItem {

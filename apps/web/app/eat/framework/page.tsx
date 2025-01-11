@@ -5,6 +5,22 @@ import { Clock, Thermometer, Scale, AlertCircle } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'Core Framework | High-Protein Meal Prep OS',
   description: 'Systematic approach to high-protein meal preparation',
+  openGraph: {
+    title: 'Core Framework | High-Protein Meal Prep OS',
+    description: 'Systematic approach to high-protein meal preparation',
+    images: [{
+      url: `https://www.joelfit.app/api/og?title=${encodeURIComponent('Core Framework')}&description=${encodeURIComponent('Systematic approach to high-protein meal preparation')}`,
+      width: 1200,
+      height: 630,
+      alt: 'Core Framework'
+    }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Core Framework | High-Protein Meal Prep OS',
+    description: 'Systematic approach to high-protein meal preparation',
+    images: [`https://www.joelfit.app/api/og?title=${encodeURIComponent('Core Framework')}&description=${encodeURIComponent('Systematic approach to high-protein meal preparation')}`],
+  }
 }
 
 const framework = {

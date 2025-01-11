@@ -5,6 +5,22 @@ import { Timeline } from '@/components/timeline'
 export const metadata: Metadata = {
   title: 'Prep Workflow | High-Protein Meal Prep OS',
   description: 'Weekly meal prep workflow and timeline',
+  openGraph: {
+    title: 'Prep Workflow | High-Protein Meal Prep OS',
+    description: 'Weekly meal prep workflow and timeline',
+    images: [{
+      url: `https://www.joelfit.app/api/og?title=${encodeURIComponent('Prep Workflow')}&description=${encodeURIComponent('Weekly meal prep workflow and timeline')}`,
+      width: 1200,
+      height: 630,
+      alt: 'Prep Workflow'
+    }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Prep Workflow | High-Protein Meal Prep OS',
+    description: 'Weekly meal prep workflow and timeline',
+    images: [`https://www.joelfit.app/api/og?title=${encodeURIComponent('Prep Workflow')}&description=${encodeURIComponent('Weekly meal prep workflow and timeline')}`],
+  }
 }
 
 const weeklyTimeline = [

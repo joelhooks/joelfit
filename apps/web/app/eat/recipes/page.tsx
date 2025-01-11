@@ -6,6 +6,22 @@ import { ArrowRight, UtensilsCrossed, Droplets, Leaf } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'Base Recipes | High-Protein Meal Prep OS',
   description: 'Core recipes and variations for meal prep',
+  openGraph: {
+    title: 'Base Recipes | High-Protein Meal Prep OS',
+    description: 'Core recipes and variations for meal prep',
+    images: [{
+      url: `https://www.joelfit.app/api/og?title=${encodeURIComponent('Base Recipes')}&description=${encodeURIComponent('Core recipes and variations for meal prep')}`,
+      width: 1200,
+      height: 630,
+      alt: 'Base Recipes'
+    }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Base Recipes | High-Protein Meal Prep OS',
+    description: 'Core recipes and variations for meal prep',
+    images: [`https://www.joelfit.app/api/og?title=${encodeURIComponent('Base Recipes')}&description=${encodeURIComponent('Core recipes and variations for meal prep')}`],
+  }
 }
 
 const recipeCategories = [
