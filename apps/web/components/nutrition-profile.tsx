@@ -1,3 +1,5 @@
+'use client'
+
 import { Profile } from '@/lib/repositories/profile/schema'
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
 import { SectionHeader } from '@/components/ui/section-header'
@@ -21,62 +23,26 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <MetricCard
             title="CALORIES"
-            value={
-              <div className="flex flex-col space-y-2">
-                <div className="text-[32px] font-bold tracking-tight">
-                  {nutritionProfile.targets.calories}
-                </div>
-                <div className="text-base text-muted-foreground">
-                  Daily Target Range
-                </div>
-              </div>
-            }
+            value={nutritionProfile.targets.calories}
             subtitle="Kilocalories Per Day"
             className="h-[180px]"
           />
           <MetricCard
             title="PROTEIN"
-            value={
-              <div className="flex flex-col space-y-2">
-                <div className="text-[32px] font-bold tracking-tight">
-                  {nutritionProfile.targets.protein}
-                </div>
-                <div className="text-base text-muted-foreground">
-                  35-40% of Total Calories
-                </div>
-              </div>
-            }
-            subtitle="Grams Per Day"
+            value={nutritionProfile.targets.protein}
+            subtitle="35-40% of Total Calories"
             className="h-[180px]"
           />
           <MetricCard
             title="CARBOHYDRATES"
-            value={
-              <div className="flex flex-col space-y-2">
-                <div className="text-[32px] font-bold tracking-tight">
-                  {nutritionProfile.targets.carbs}
-                </div>
-                <div className="text-base text-muted-foreground">
-                  40-45% of Total Calories
-                </div>
-              </div>
-            }
-            subtitle="Grams Per Day"
+            value={nutritionProfile.targets.carbs}
+            subtitle="40-45% of Total Calories"
             className="h-[180px]"
           />
           <MetricCard
             title="FATS"
-            value={
-              <div className="flex flex-col space-y-2">
-                <div className="text-[32px] font-bold tracking-tight">
-                  {nutritionProfile.targets.fat}
-                </div>
-                <div className="text-base text-muted-foreground">
-                  25-30% of Total Calories
-                </div>
-              </div>
-            }
-            subtitle="Grams Per Day"
+            value={nutritionProfile.targets.fat}
+            subtitle="25-30% of Total Calories"
             className="h-[180px]"
           />
         </div>
