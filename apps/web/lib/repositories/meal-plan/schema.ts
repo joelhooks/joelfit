@@ -21,9 +21,12 @@ export const mealItemSchema = z.object({
 
 export const mealStructureSchema = z.object({
   breakfast: mealItemSchema,
-  lunch: mealItemSchema,
-  midDay: mealItemSchema,
-  dinner: mealItemSchema,
+  smoothie: mealItemSchema.optional(),
+  meal1: mealItemSchema.optional(),
+  meal2: mealItemSchema.optional(),
+  lunch: mealItemSchema.optional(),
+  midDay: mealItemSchema.optional(),
+  dinner: mealItemSchema.optional(),
   nightSnack: mealItemSchema
 })
 
