@@ -113,4 +113,84 @@ export type Meal = z.infer<typeof mealSchema>
 export type NutritionTargets = z.infer<typeof nutritionTargetsSchema>
 export type Portions = z.infer<typeof portionsSchema>
 export type WeeklyPrep = z.infer<typeof weeklyPrepSchema>
-export type NutritionProfile = z.infer<typeof nutritionProfileSchema> 
+export type NutritionProfile = z.infer<typeof nutritionProfileSchema>
+
+export const shoppingItemsSchema = z.object({
+  meat: z.array(z.string()),
+  dairy: z.array(z.string()),
+  produce: z.array(z.string()),
+  frozen: z.array(z.string()),
+  bulk: z.array(z.string())
+})
+
+export const pantryStaplesSchema = z.object({
+  oils: z.array(z.string()),
+  seasonings: z.array(z.string()),
+  sauces: z.array(z.string()),
+  dryGoods: z.array(z.string())
+})
+
+export const shoppingTipsSchema = z.object({
+  buying: z.array(z.string()),
+  storage: z.array(z.string())
+})
+
+export const shoppingListSchema = z.object({
+  weeklyItems: shoppingItemsSchema,
+  pantryStaples: pantryStaplesSchema,
+  tips: shoppingTipsSchema
+})
+
+export type ShoppingItems = z.infer<typeof shoppingItemsSchema>
+export type PantryStaples = z.infer<typeof pantryStaplesSchema>
+export type ShoppingTips = z.infer<typeof shoppingTipsSchema>
+export type ShoppingList = z.infer<typeof shoppingListSchema>
+
+export const mealTimelineSchema = z.object({
+  time: z.string(),
+  slot: z.string(),
+  meal: z.string(),
+  calories: z.number(),
+  protein: z.number(),
+  carbs: z.number(),
+  fat: z.number(),
+  container: z.string()
+})
+
+export const mealStructureItemSchema = z.object({
+  title: z.string(),
+  items: z.array(z.string())
+})
+
+export const mealStructureSchema = z.object({
+  breakfast: mealStructureItemSchema,
+  lunch: mealStructureItemSchema,
+  midDay: mealStructureItemSchema,
+  dinner: mealStructureItemSchema,
+  nightSnack: mealStructureItemSchema
+})
+
+export const pantryStaplesForMealSchema = z.object({
+  oils: z.array(z.string()),
+  sauces: z.array(z.string()),
+  seasonings: z.array(z.string()),
+  spreads: z.array(z.string())
+})
+
+export const emergencyBackupSchema = z.object({
+  items: z.array(z.string())
+})
+
+export const mealPlanSchema = z.object({
+  calories: z.number(),
+  timeline: z.array(mealTimelineSchema),
+  mealStructure: mealStructureSchema,
+  emergencyBackup: emergencyBackupSchema
+})
+
+export type MealTimeline = z.infer<typeof mealTimelineSchema>
+export type MealStructureItem = z.infer<typeof mealStructureItemSchema>
+export type MealStructure = z.infer<typeof mealStructureSchema>
+export type PantryStaplesForMeal = z.infer<typeof pantryStaplesForMealSchema>
+export type EmergencyBackup = z.infer<typeof emergencyBackupSchema>
+export type MealPlan = z.infer<typeof mealPlanSchema> 

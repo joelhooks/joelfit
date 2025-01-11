@@ -175,10 +175,7 @@ export function MealMixer() {
     try {
       setError(null)
       
-      let attempts = 0
-      const maxAttempts = 100 // Increased from 50 to 100
-      
-      while (attempts < maxAttempts) {
+      while (true) { // Keep trying until we find a valid mix
         // Generate fish meals first to align them
         const baseStarches: StarchType[] = ['rice', 'potato', 'quinoa']
         const fishStarches = shuffleArray([...baseStarches]) as StarchType[]
@@ -188,17 +185,17 @@ export function MealMixer() {
         const shuffledCombos = distributeProteinEvenly(availableCombos)
         
         if (shuffledCombos.length < 17) {
-          throw new Error('Insufficient meal combinations generated')
+          continue // Try again if we don't have enough combos
         }
         
         if (fishStarches.length < 3) {
-          throw new Error('Insufficient starch options available')
+          continue // Try again if we don't have enough starches
         }
         
         const [starch1, starch2, starch3] = fishStarches
         
         if (!starch1 || !starch2 || !starch3) {
-          throw new Error('Invalid starch rotation')
+          continue // Try again if any starch is undefined
         }
         
         const yourMeals = shuffledCombos.slice(0, 10) as [
@@ -233,11 +230,7 @@ export function MealMixer() {
           setRotation(newRotation)
           return
         }
-        
-        attempts++
       }
-      
-      throw new Error('Could not generate valid meal plan without repeats')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to shuffle meals')
     }
