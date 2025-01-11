@@ -30,9 +30,9 @@ const sections: Section[] = [
         href: "/eat/framework"
       },
       {
-        title: "Meal Plan",
-        description: "5 meals, 2250-2500 cal, 200g+ protein",
-        href: "/eat/meal-plan"
+        title: "Shopping List",
+        description: "Weekly ingredients & pantry staples",
+        href: "/eat/shopping"
       },
       {
         title: "Prep Guide",
@@ -42,7 +42,7 @@ const sections: Section[] = [
     ]
   },
   {
-    title: "Shoulder Protocol",
+    title: "Shoulder Rehab",
     description: "Progressive rehab routine focusing on mobility, stability, and strength.",
     icon: Dumbbell,
     href: "/shoulder",
