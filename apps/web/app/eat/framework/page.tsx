@@ -1,6 +1,8 @@
 import { Metadata } from 'next'
 import { PageHeader } from '@/components/page-header'
 import { Clock, Thermometer, Scale, AlertCircle, Package } from 'lucide-react'
+import { equipmentRepo } from '@/config/equipment'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Core Framework | High-Protein Meal Prep OS',
@@ -116,7 +118,8 @@ const framework = {
   },
   containers: {
     mainMeals: {
-      type: "PrepNaturals 3-Section 34oz Glass Containers",
+      type: equipmentRepo.get('meal-containers').description,
+      link: equipmentRepo.get('meal-containers').link,
       sections: [
         { name: "Protein", capacity: "8oz" },
         { name: "Carb", capacity: "2 cups" },
@@ -124,12 +127,14 @@ const framework = {
       ]
     },
     breakfast: {
-      type: "16oz Wide Mouth Mason Jars",
+      type: equipmentRepo.get('mason-jars').description,
+      link: equipmentRepo.get('mason-jars').link,
       quantity: "5 jars per person",
       note: "Use plastic mason jar lids"
     },
     smoothies: {
-      type: "OXO Good Grips Silicone Reusable Bags",
+      type: equipmentRepo.get('smoothie-bags').description,
+      link: equipmentRepo.get('smoothie-bags').link,
       features: [
         "Flat bottom design",
         "Freezer-safe construction"
@@ -347,29 +352,67 @@ export default function FrameworkPage() {
             <div className="grid gap-4">
               <div className="bg-card border rounded-lg p-4 sm:p-6">
                 <h3 className="font-medium mb-4">Main Meals</h3>
-                <p className="text-sm text-muted-foreground mb-4">{framework.containers.mainMeals.type}</p>
-                <div className="grid gap-4 sm:grid-cols-3">
-                  {framework.containers.mainMeals.sections.map((section, index) => (
-                    <div key={index} className="bg-muted/50 rounded p-3">
-                      <h4 className="text-sm font-medium mb-1">{section.name}</h4>
-                      <p className="text-sm text-muted-foreground">{section.capacity}</p>
-                    </div>
-                  ))}
+                <div className="space-y-4">
+                  <Link 
+                    href={framework.containers.mainMeals.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-sm"
+                  >
+                    <span className="font-medium text-primary hover:text-primary/80 transition-colors">
+                      {equipmentRepo.get('meal-containers').title}
+                    </span>
+                    <p className="text-muted-foreground mt-1">
+                      {framework.containers.mainMeals.type}
+                    </p>
+                  </Link>
+                  <div className="grid gap-4 sm:grid-cols-3">
+                    {framework.containers.mainMeals.sections.map((section, index) => (
+                      <div key={index} className="bg-muted/50 rounded p-3">
+                        <h4 className="text-sm font-medium mb-1">{section.name}</h4>
+                        <p className="text-sm text-muted-foreground">{section.capacity}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="bg-card border rounded-lg p-4 sm:p-6">
-                  <h3 className="font-medium mb-2">Breakfast</h3>
-                  <p className="text-sm text-muted-foreground mb-2">{framework.containers.breakfast.type}</p>
-                  <p className="text-sm text-muted-foreground">{framework.containers.breakfast.quantity}</p>
+                  <h3 className="font-medium mb-4">Breakfast</h3>
+                  <Link 
+                    href={framework.containers.breakfast.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-sm"
+                  >
+                    <span className="font-medium text-primary hover:text-primary/80 transition-colors">
+                      {equipmentRepo.get('mason-jars').title}
+                    </span>
+                    <p className="text-muted-foreground mt-1">
+                      {framework.containers.breakfast.type}
+                    </p>
+                  </Link>
+                  <p className="text-sm text-muted-foreground mt-4">{framework.containers.breakfast.quantity}</p>
                   <p className="text-xs text-muted-foreground mt-2">{framework.containers.breakfast.note}</p>
                 </div>
 
                 <div className="bg-card border rounded-lg p-4 sm:p-6">
-                  <h3 className="font-medium mb-2">Smoothies</h3>
-                  <p className="text-sm text-muted-foreground mb-2">{framework.containers.smoothies.type}</p>
-                  <ul className="text-sm text-muted-foreground space-y-1">
+                  <h3 className="font-medium mb-4">Smoothies</h3>
+                  <Link 
+                    href={framework.containers.smoothies.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-sm"
+                  >
+                    <span className="font-medium text-primary hover:text-primary/80 transition-colors">
+                      {equipmentRepo.get('smoothie-bags').title}
+                    </span>
+                    <p className="text-muted-foreground mt-1">
+                      {framework.containers.smoothies.type}
+                    </p>
+                  </Link>
+                  <ul className="text-sm text-muted-foreground space-y-1 mt-4">
                     {framework.containers.smoothies.features.map((feature, index) => (
                       <li key={index} className="flex items-start gap-2">
                         <span className="flex-shrink-0">•</span>
