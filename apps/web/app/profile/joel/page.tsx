@@ -1,5 +1,3 @@
-'use client'
-
 import { ProfileHeader } from '@/components/profile/profile-header'
 import { MetricsGrid } from '@/components/metrics/metrics-grid'
 import { StrengthAreas } from '@/components/strength/strength-areas'
