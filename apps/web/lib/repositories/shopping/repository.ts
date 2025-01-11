@@ -1,51 +1,74 @@
-import { BaseRepository } from '../base'
-import { shoppingListSchema, type ShoppingList } from './schema'
-import { slugify } from '@/lib/utils'
+import { BaseRepository, NotFoundError, SlugGenerationError } from '../base'
+import { ShoppingList, shoppingListSchema } from './schema'
+import { initialShoppingList } from './data'
+import { randomUUID } from 'crypto'
 
-export class ShoppingRepository extends BaseRepository<
-  ShoppingList,
-  typeof shoppingListSchema
-> {
+export class ShoppingRepository extends BaseRepository<ShoppingList, typeof shoppingListSchema> {
+  private initialized = false
+  protected items: ShoppingList[] = []
+
   constructor() {
-    super(shoppingListSchema, 'ShoppingList')
+    super(shoppingListSchema, 'shopping list')
+  }
+
+  private async ensureInitialized() {
+    if (!this.initialized) {
+      if (this.items.length === 0) {
+        const now = new Date()
+        const id = randomUUID()
+        this.items = [{
+          ...initialShoppingList,
+          id,
+          slug: this.generateSlug({ id, name: initialShoppingList.name }),
+          createdAt: now,
+          updatedAt: now
+        }]
+      }
+      this.initialized = true
+    }
   }
 
   protected async getData(): Promise<ShoppingList[]> {
-    // TODO: Replace with actual storage implementation
+    await this.ensureInitialized()
     return this.items
   }
 
   protected async setData(data: ShoppingList[]): Promise<void> {
-    // TODO: Replace with actual storage implementation
     this.items = data
+    this.initialized = true
   }
 
   protected generateSlug(data: Partial<ShoppingList>): string {
-    if (!data.name) {
-      throw new Error('Name is required for slug generation')
-    }
-    return slugify(data.name)
+    if (!data.name) throw new SlugGenerationError('Name is required for shopping list slug generation')
+    return data.name.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-')
   }
 
-  async markItemPurchased(
-    listId: string,
-    itemName: string,
-    purchased: boolean = true
-  ): Promise<ShoppingList> {
-    const list = await this.findById(listId)
-    const updatedItems = list.items.map(item =>
-      item.name === itemName ? { ...item, purchased } : item
-    )
-    return this.update(listId, { items: updatedItems })
+  // Helper method for tests
+  getDefaultShoppingListId(): string {
+    return this.items[0]?.id ?? ''
   }
 
-  async markListCompleted(
-    listId: string,
-    completed: boolean = true
-  ): Promise<ShoppingList> {
-    return this.update(listId, {
-      completed,
-      endDate: completed ? new Date().toISOString() : undefined
-    })
+  // Override base methods to ensure initialization
+  async findById(id: string): Promise<ShoppingList> {
+    await this.ensureInitialized()
+    return super.findById(id)
+  }
+
+  async findBySlug(slug: string): Promise<ShoppingList> {
+    await this.ensureInitialized()
+    return super.findBySlug(slug)
+  }
+
+  async findAll(): Promise<ShoppingList[]> {
+    await this.ensureInitialized()
+    return super.findAll()
+  }
+
+  // Get the default shopping list
+  async getShoppingList(): Promise<ShoppingList> {
+    await this.ensureInitialized()
+    const shoppingLists = await this.findAll()
+    if (!shoppingLists[0]) throw new NotFoundError('shopping list', 'default')
+    return shoppingLists[0]
   }
 } 
