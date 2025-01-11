@@ -40,6 +40,9 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
                 <div className="text-[32px] font-bold tracking-tight">
                   {nutritionProfile.targets.protein}g
                 </div>
+                <div className="text-base text-muted-foreground">
+                  35-40% of Total Calories
+                </div>
               </div>
             }
             subtitle="Grams Per Day"
@@ -52,6 +55,9 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
                 <div className="text-[32px] font-bold tracking-tight">
                   {nutritionProfile.targets.carbs}g
                 </div>
+                <div className="text-base text-muted-foreground">
+                  40-45% of Total Calories
+                </div>
               </div>
             }
             subtitle="Grams Per Day"
@@ -63,6 +69,9 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
               <div className="flex flex-col space-y-2">
                 <div className="text-[32px] font-bold tracking-tight">
                   {nutritionProfile.targets.fat}g
+                </div>
+                <div className="text-base text-muted-foreground">
+                  25-30% of Total Calories
                 </div>
               </div>
             }
