@@ -1,6 +1,6 @@
 import { BaseRepository, NotFoundError, SlugGenerationError } from '../base'
 import { MealPlan, mealPlanSchema } from './schema'
-import { initialMealPlan } from './data'
+import { initialMealPlan, wifeMealPlan } from './data'
 import { randomUUID } from 'crypto'
 
 export class MealPlanRepository extends BaseRepository<MealPlan, typeof mealPlanSchema> {
@@ -15,14 +15,24 @@ export class MealPlanRepository extends BaseRepository<MealPlan, typeof mealPlan
     if (!this.initialized) {
       if (this.items.length === 0) {
         const now = new Date()
-        const id = randomUUID()
-        this.items = [{
-          ...initialMealPlan,
-          id,
-          slug: this.generateSlug({ id, name: initialMealPlan.name }),
-          createdAt: now,
-          updatedAt: now
-        }]
+        const id1 = randomUUID()
+        const id2 = randomUUID()
+        this.items = [
+          {
+            ...initialMealPlan,
+            id: id1,
+            slug: this.generateSlug({ id: id1, name: initialMealPlan.name }),
+            createdAt: now,
+            updatedAt: now
+          },
+          {
+            ...wifeMealPlan,
+            id: id2,
+            slug: this.generateSlug({ id: id2, name: wifeMealPlan.name }),
+            createdAt: now,
+            updatedAt: now
+          }
+        ]
       }
       this.initialized = true
     }
@@ -70,5 +80,11 @@ export class MealPlanRepository extends BaseRepository<MealPlan, typeof mealPlan
     const mealPlans = await this.findAll()
     if (!mealPlans[0]) throw new NotFoundError('meal plan', 'default')
     return mealPlans[0]
+  }
+
+  // Get all meal plans
+  async getMealPlans(): Promise<MealPlan[]> {
+    await this.ensureInitialized()
+    return this.findAll()
   }
 } 
