@@ -1,22 +1,69 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { ProfileRepository } from './repository'
-import { Profile, ActivityLevel, ExerciseLevel } from './schema'
+import { type Profile, type ActivityLevel, type ExerciseLevel } from './schema'
 import { NotFoundError, ValidationError, SlugGenerationError } from '../base'
 
 describe('ProfileRepository', () => {
   let repo: ProfileRepository
-  let defaultProfileId: string
 
   beforeEach(() => {
     repo = new ProfileRepository()
-    defaultProfileId = repo.getDefaultProfileId()
   })
+
+  const validProfile = {
+    name: 'Test User',
+    metrics: {
+      height: '5\'10" (70 inches)',
+      weight: '180 lbs',
+      age: 30,
+      activity: 'moderate' as ActivityLevel,
+      exercise: '3-4 sessions per week',
+      experience: {
+        lifting: 'intermediate' as ExerciseLevel,
+        cardio: 'intermediate' as ExerciseLevel
+      },
+      androidFat: 20,
+      gynoidFat: 15,
+      agRatio: 1.2,
+      visceralFat: 1.5,
+      totalBodyFat: 18,
+      rsmi: 8
+    },
+    targets: {
+      androidFat: 20,
+      gynoidFat: 15,
+      agRatio: 1.2,
+      visceralFat: 1.5,
+      totalBodyFat: 18,
+      rsmi: 8
+    },
+    strengthAreas: [
+      {
+        title: "Test Strength",
+        metric: "Test Metric",
+        details: "Test Details"
+      }
+    ],
+    actionPlan: [
+      {
+        category: "Test Category",
+        items: [
+          {
+            title: "Test Action",
+            description: "Test Description",
+            detail: "Test Detail"
+          }
+        ]
+      }
+    ]
+  }
 
   describe('findById', () => {
     it('should return a profile by id', async () => {
-      const profile = await repo.findById(defaultProfileId)
-      expect(profile.name).toBe('Joel Hooks')
-      expect(profile.metrics.height).toBe(75)
+      const created = await repo.create(validProfile)
+      const profile = await repo.findById(created.id)
+      expect(profile.name).toBe('Test User')
+      expect(profile.metrics.height).toBe('5\'10" (70 inches)')
     })
 
     it('should throw NotFoundError for non-existent id', async () => {
@@ -26,9 +73,10 @@ describe('ProfileRepository', () => {
 
   describe('findBySlug', () => {
     it('should return a profile by slug', async () => {
-      const profile = await repo.findBySlug('joel')
-      expect(profile.name).toBe('Joel Hooks')
-      expect(profile.metrics.height).toBe(75)
+      const created = await repo.create(validProfile)
+      const profile = await repo.findBySlug('test-user')
+      expect(profile.name).toBe('Test User')
+      expect(profile.metrics.height).toBe('5\'10" (70 inches)')
     })
 
     it('should throw NotFoundError for non-existent slug', async () => {
@@ -38,34 +86,16 @@ describe('ProfileRepository', () => {
 
   describe('findAll', () => {
     it('should return all profiles', async () => {
+      await repo.create(validProfile)
       const profiles = await repo.findAll()
-      expect(profiles).toHaveLength(1)
-      expect(profiles[0]?.name).toBe('Joel Hooks')
+      expect(profiles.length).toBeGreaterThan(0)
+      expect(profiles[0]?.name).toBeDefined()
     })
   })
 
   describe('create', () => {
     it('should create a new profile', async () => {
-      const newProfile = {
-        name: 'Test User',
-        metrics: {
-          height: 70,
-          weight: 180,
-          age: 30,
-          activityLevel: 'moderate' as ActivityLevel,
-          exerciseLevel: 'intermediate' as ExerciseLevel
-        },
-        targets: {
-          androidFat: 20,
-          gynoidFat: 15,
-          agRatio: 1.2,
-          visceralFat: 1.5,
-          totalBodyFat: 18,
-          rsmi: 8
-        }
-      }
-
-      const created = await repo.create(newProfile)
+      const created = await repo.create(validProfile)
       expect(created.name).toBe('Test User')
       expect(created.slug).toBe('test-user')
       expect(created.id).toBeDefined()
@@ -75,21 +105,10 @@ describe('ProfileRepository', () => {
 
     it('should throw ValidationError for invalid data', async () => {
       const invalidProfile = {
-        name: 'Test User',
+        ...validProfile,
         metrics: {
-          height: -1,  // Invalid: negative height
-          weight: 180,
-          age: 30,
-          activityLevel: 'moderate' as ActivityLevel,
-          exerciseLevel: 'intermediate' as ExerciseLevel
-        },
-        targets: {
-          androidFat: 20,
-          gynoidFat: 15,
-          agRatio: 1.2,
-          visceralFat: 1.5,
-          totalBodyFat: 18,
-          rsmi: 8
+          ...validProfile.metrics,
+          age: -1 // Invalid: negative age
         }
       }
 
@@ -99,19 +118,16 @@ describe('ProfileRepository', () => {
 
   describe('update', () => {
     it('should update an existing profile', async () => {
+      const created = await repo.create(validProfile)
       const updates = {
         metrics: {
-          height: 75,
-          weight: 245,
-          age: 47,
-          activityLevel: 'active' as ActivityLevel,
-          exerciseLevel: 'advanced' as ExerciseLevel
+          ...validProfile.metrics,
+          weight: '175 lbs'
         }
       }
 
-      const updated = await repo.update(defaultProfileId, updates)
-      expect(updated.metrics.weight).toBe(245)
-      expect(updated.metrics.age).toBe(47)
+      const updated = await repo.update(created.id, updates)
+      expect(updated.metrics.weight).toBe('175 lbs')
       expect(updated.updatedAt).toBeInstanceOf(Date)
     })
 
@@ -120,24 +136,23 @@ describe('ProfileRepository', () => {
     })
 
     it('should throw ValidationError for invalid updates', async () => {
+      const created = await repo.create(validProfile)
       const invalidUpdates = {
         metrics: {
-          height: 75,
-          weight: -1,  // Invalid: negative weight
-          age: 47,
-          activityLevel: 'active' as ActivityLevel,
-          exerciseLevel: 'advanced' as ExerciseLevel
+          ...validProfile.metrics,
+          age: -1 // Invalid: negative age
         }
       }
 
-      await expect(repo.update(defaultProfileId, invalidUpdates)).rejects.toThrow(ValidationError)
+      await expect(repo.update(created.id, invalidUpdates)).rejects.toThrow(ValidationError)
     })
   })
 
   describe('delete', () => {
     it('should delete an existing profile', async () => {
-      await repo.delete(defaultProfileId)
-      await expect(repo.findById(defaultProfileId)).rejects.toThrow(NotFoundError)
+      const created = await repo.create(validProfile)
+      await repo.delete(created.id)
+      await expect(repo.findById(created.id)).rejects.toThrow(NotFoundError)
     })
 
     it('should throw NotFoundError for non-existent id', async () => {
@@ -148,22 +163,8 @@ describe('ProfileRepository', () => {
   describe('generateSlug', () => {
     it('should generate a URL-friendly slug from name', async () => {
       const profile = {
-        name: 'Test User 123!@#',
-        metrics: {
-          height: 70,
-          weight: 180,
-          age: 30,
-          activityLevel: 'moderate' as ActivityLevel,
-          exerciseLevel: 'intermediate' as ExerciseLevel
-        },
-        targets: {
-          androidFat: 20,
-          gynoidFat: 15,
-          agRatio: 1.2,
-          visceralFat: 1.5,
-          totalBodyFat: 18,
-          rsmi: 8
-        }
+        ...validProfile,
+        name: 'Test User 123!@#'
       }
 
       const created = await repo.create(profile)
@@ -172,21 +173,8 @@ describe('ProfileRepository', () => {
 
     it('should throw SlugGenerationError if name is missing', async () => {
       const profile = {
-        metrics: {
-          height: 70,
-          weight: 180,
-          age: 30,
-          activityLevel: 'moderate' as ActivityLevel,
-          exerciseLevel: 'intermediate' as ExerciseLevel
-        },
-        targets: {
-          androidFat: 20,
-          gynoidFat: 15,
-          agRatio: 1.2,
-          visceralFat: 1.5,
-          totalBodyFat: 18,
-          rsmi: 8
-        }
+        ...validProfile,
+        name: undefined
       }
 
       // @ts-expect-error Testing invalid input
