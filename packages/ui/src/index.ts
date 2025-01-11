@@ -6,3 +6,7 @@ export * from './components/ui/navigation-menu.js'
 export * from './components/ui/avatar.js'
 
 export { cn } from './lib/utils.js' 
+
+// Loading components
+export * from './components/loading/index.js'
+export * from './components/ui/skeleton.js' 
