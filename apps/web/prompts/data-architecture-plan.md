@@ -126,11 +126,12 @@
   - AsyncData: wrapper for loading/error states ✅
   - RepositoryProvider: context for repository instances ✅
   - useRepository: hook for accessing repositories ✅
+  - REMOVED: Using server components with direct data loading instead
 
 #### 3.2.2 Page Updates
 - [x] Update Framework page ✅
-  - Use FrameworkRepository for schedule/tasks ✅
-  - Use EquipmentRepository for containers ✅
+  - Use FrameworkRepository in server component ✅
+  - Pass data as props to client components ✅
   - Add loading states ✅
   - Add error handling ✅
 - [ ] Update Meal Plan page

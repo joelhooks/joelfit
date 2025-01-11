@@ -77,11 +77,11 @@ This Turborepo has some additional tools already setup:
 - `nuqs` for URL state management
 
 ### State Management
-- Server state > Client state
-- URL state > Local state
-- Minimize client-side state
-- React Query for async state
-- URL params for shareable state
+- Server Components load their own data
+- Pass data down as props
+- No global state
+- No unnecessary contexts
+- URL state for navigation
 
 ### Styling
 - Tailwind first
