@@ -3,10 +3,12 @@
 import { useQueryState } from 'nuqs'
 import { useEffect, useState } from 'react'
 import { scrapeUrl } from './actions'
+import { Button } from '@repo/ui'
 
 export default function ScrapePage() {
-  const [url] = useQueryState('url')
+  const [url, setUrl] = useQueryState('url')
   const [chunks, setChunks] = useState<string[]>([])
+  const [inputUrl, setInputUrl] = useState('')
 
   useEffect(() => {
     if (!url) return
@@ -45,19 +47,52 @@ export default function ScrapePage() {
     scrape()
   }, [url])
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (inputUrl) {
+      setUrl(inputUrl)
+    }
+  }
+
   if (!url) {
     return (
       <div className="p-8">
         <h1 className="text-2xl font-bold mb-4">URL Scraper</h1>
-        <p>Add ?url=YOUR_URL to scrape content</p>
-        <p className="text-sm text-muted-foreground mt-2">Example: <code>?url=https://upstash.com/blog/degree-guru</code></p>
+        <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl">
+          <div className="flex gap-4">
+            <input
+              type="url"
+              value={inputUrl}
+              onChange={(e) => setInputUrl(e.target.value)}
+              placeholder="Enter URL to scrape..."
+              className="flex-1 rounded-md border bg-background px-4 py-2"
+              required
+            />
+            <Button type="submit">Scrape</Button>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Example: <code>https://upstash.com/blog/degree-guru</code>
+          </p>
+        </form>
       </div>
     )
   }
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Scraping URL</h1>
+      <div className="flex items-center gap-4 mb-4">
+        <h1 className="text-2xl font-bold">Scraping URL</h1>
+        <Button 
+          variant="outline" 
+          onClick={() => {
+            setUrl(null)
+            setInputUrl('')
+            setChunks([])
+          }}
+        >
+          New Scrape
+        </Button>
+      </div>
       <p className="font-mono text-sm mb-4">{url}</p>
       <div className="font-mono text-sm whitespace-pre-wrap border rounded-lg p-4 bg-muted/50 min-h-[200px]">
         {chunks.map((chunk, i) => (
