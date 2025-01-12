@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle, H3, Text } from '@repo/ui'
+import { Card, CardContent, CardHeader, H3, Text } from '@repo/ui'
 import { SectionHeader } from '@/components/ui/section-header'
 import type { ActionCategory } from '@/lib/repositories/profile/schema'
 import { ListTodo } from 'lucide-react'

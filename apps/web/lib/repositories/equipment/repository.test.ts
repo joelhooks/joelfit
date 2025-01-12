@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { EquipmentRepository } from './repository'
-import { type Equipment, type EquipmentCategory } from './schema'
+import { type EquipmentCategory } from './schema'
 import { NotFoundError, ValidationError, SlugGenerationError } from '../base'
 
 describe('EquipmentRepository', () => {
@@ -22,12 +22,13 @@ describe('EquipmentRepository', () => {
 
   describe('create', () => {
     it('should create new equipment', async () => {
-      const created = await repo.create(validEquipment)
-      expect(created.title).toBe('Test Container')
-      expect(created.slug).toBe('test-container')
-      expect(created.id).toBeDefined()
-      expect(created.createdAt).toBeInstanceOf(Date)
-      expect(created.updatedAt).toBeInstanceOf(Date)
+      await repo.create(validEquipment)
+      const equipment = await repo.findAll()
+      expect(equipment[0]?.title).toBe('Test Container')
+      expect(equipment[0]?.slug).toBe('test-container')
+      expect(equipment[0]?.id).toBeDefined()
+      expect(equipment[0]?.createdAt).toBeInstanceOf(Date)
+      expect(equipment[0]?.updatedAt).toBeInstanceOf(Date)
     })
 
     it('should throw SlugGenerationError if title is missing', async () => {
@@ -48,8 +49,9 @@ describe('EquipmentRepository', () => {
 
   describe('findById', () => {
     it('should find equipment by id', async () => {
-      const created = await repo.create(validEquipment)
-      const found = await repo.findById(created.id)
+      await repo.create(validEquipment)
+      const equipment = await repo.findAll()
+      const found = await repo.findById(equipment[0]!.id)
       expect(found.title).toBe('Test Container')
     })
 
@@ -60,7 +62,7 @@ describe('EquipmentRepository', () => {
 
   describe('findBySlug', () => {
     it('should find equipment by slug', async () => {
-      const created = await repo.create(validEquipment)
+      await repo.create(validEquipment)
       const found = await repo.findBySlug('test-container')
       expect(found.title).toBe('Test Container')
     })

@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import { PageHeader } from '@/components/page-header'
-import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Sauce Recipes | High-Protein Meal Prep OS',
@@ -8,8 +7,8 @@ export const metadata: Metadata = {
 }
 
 const dillYogurtSauce = {
-  title: "Dill & Za'atar Yogurt Sauce",
-  description: "A savory yogurt sauce that combines fresh dill and za'atar with MSG for a versatile, macro-friendly sauce perfect for meal prep proteins.",
+  title: "Dill & Za&apos;atar Yogurt Sauce",
+  description: "A savory yogurt sauce that combines fresh dill and za&apos;atar with MSG for a versatile, macro-friendly sauce perfect for meal prep proteins.",
   prepTime: "10 minutes",
   restTime: "30 minutes",
   yield: "1 cup (8 servings of 2 tbsp each)",
@@ -112,7 +111,7 @@ export default function SaucesPage() {
 
         <div className="space-y-8">
           <section>
-            <h2 className="text-xl font-semibold mb-4">Dill & Za'atar Yogurt Sauce</h2>
+            <h2 className="text-xl font-semibold mb-4">Dill & Za&apos;atar Yogurt Sauce</h2>
             <div className="bg-card border rounded-lg p-6">
               <div className="aspect-video relative bg-accent rounded mb-6">
                 {/* Image placeholder for recipe photo */}

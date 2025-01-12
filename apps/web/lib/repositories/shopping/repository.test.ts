@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { ShoppingRepository } from './repository'
-import { type ShoppingList } from './schema'
 import { NotFoundError, ValidationError } from '../base'
 
 describe('ShoppingRepository', () => {

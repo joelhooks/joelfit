@@ -1,10 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
-import { type Metrics, type Targets } from '../../types/metrics'
 import { cn } from '@/lib/utils'
 
 interface MetricCardProps {
   title: string
-  metricKey: keyof Metrics
   currentValue: number
   targetValue?: number
   unit?: string
@@ -17,7 +15,6 @@ interface MetricCardProps {
 
 export function MetricCard({
   title,
-  metricKey,
   currentValue,
   targetValue,
   unit = '%',

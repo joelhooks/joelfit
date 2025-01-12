@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { ProfileRepository } from './repository'
-import { type Profile, type ActivityLevel, type ExerciseLevel } from './schema'
+import { type ActivityLevel, type ExerciseLevel } from './schema'
 import { NotFoundError, ValidationError, SlugGenerationError } from '../base'
 
 describe('ProfileRepository', () => {
@@ -104,7 +104,7 @@ describe('ProfileRepository', () => {
 
   describe('findBySlug', () => {
     it('should return a profile by slug', async () => {
-      const created = await repo.create(validProfile)
+      await repo.create(validProfile)
       const profile = await repo.findBySlug('test-user')
       expect(profile.name).toBe('Test User')
       expect(profile.metrics.height).toBe('5\'10" (70 inches)')
@@ -126,12 +126,13 @@ describe('ProfileRepository', () => {
 
   describe('create', () => {
     it('should create a new profile', async () => {
-      const created = await repo.create(validProfile)
-      expect(created.name).toBe('Test User')
-      expect(created.slug).toBe('test-user')
-      expect(created.id).toBeDefined()
-      expect(created.createdAt).toBeInstanceOf(Date)
-      expect(created.updatedAt).toBeInstanceOf(Date)
+      await repo.create(validProfile)
+      const profiles = await repo.findAll()
+      expect(profiles[0]?.name).toBe('Test User')
+      expect(profiles[0]?.slug).toBe('test-user')
+      expect(profiles[0]?.id).toBeDefined()
+      expect(profiles[0]?.createdAt).toBeInstanceOf(Date)
+      expect(profiles[0]?.updatedAt).toBeInstanceOf(Date)
     })
 
     it('should throw ValidationError for invalid data', async () => {
@@ -198,8 +199,9 @@ describe('ProfileRepository', () => {
         name: 'Test User 123!@#'
       }
 
-      const created = await repo.create(profile)
-      expect(created.slug).toBe('test-user-123')
+      await repo.create(profile)
+      const profiles = await repo.findAll()
+      expect(profiles[0]?.slug).toBe('test-user-123')
     })
 
     it('should throw SlugGenerationError if name is missing', async () => {

@@ -1,7 +1,6 @@
 import { type Metadata } from 'next'
 import { PageHeader } from '@/components/page-header'
 import { MealPlanRepository } from '@/lib/repositories/meal-plan'
-import { type MealPlan } from '@/lib/repositories/meal-plan/schema'
 import { ClientTabs } from './client-tabs'
 
 export const metadata: Metadata = {

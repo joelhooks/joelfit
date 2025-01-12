@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import { PageHeader } from '@/components/page-header'
-import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Protein Recipes | High-Protein Meal Prep OS',

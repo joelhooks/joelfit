@@ -75,7 +75,7 @@ export default async function ShoulderRehabProgram() {
         </div>
 
         <p className="mt-8 text-sm text-muted-foreground leading-relaxed italic">
-          Note: Do this shit under supervision until you're confident. Adjust as needed.
+          Note: Do this shit under supervision until you&apos;re confident. Adjust as needed.
         </p>
       </div>
     </main>

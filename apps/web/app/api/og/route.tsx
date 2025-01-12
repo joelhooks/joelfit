@@ -96,23 +96,6 @@ function getColors(rng: SeededRandom): ColorPair[] {
   return generateColorPalettes(rng)
 }
 
-interface Point {
-  x: number
-  y: number
-  colors: ColorPair
-  rng: SeededRandom
-}
-
-function hashString(str: string): number {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i)
-    hash = ((hash << 5) - hash) + char
-    hash = hash & hash // Convert to 32bit integer
-  }
-  return Math.abs(hash)
-}
-
 class SeededRandom {
   private seed: number
   
@@ -139,25 +122,6 @@ class SeededRandom {
   // Pick random item from array
   pick<T>(array: T[]): T {
     return array[Math.floor(this.next() * array.length)]!
-  }
-}
-
-function generatePoints(width: number, height: number, count: number, rng: SeededRandom): Point[] {
-  const colors = getColors(rng)
-  return Array.from({ length: count }, () => ({
-    x: rng.next() * width,
-    y: rng.next() * height,
-    colors: rng.pick(colors),
-    rng,
-  }))
-}
-
-function distortPoint(x: number, y: number, intensity: number, rng: SeededRandom) {
-  const angle = rng.next() * Math.PI * 2
-  const distance = rng.next() * intensity
-  return {
-    x: x + Math.cos(angle) * distance,
-    y: y + Math.sin(angle) * distance
   }
 }
 
@@ -215,22 +179,6 @@ function generateVoronoiPath(width: number, height: number, rng: SeededRandom) {
   })
   
   return paths
-}
-
-function generateNoisePattern(width: number, height: number, rng: SeededRandom) {
-  const cellSize = 80 // Larger cells = fewer elements
-  const paths: string[] = []
-  
-  for (let x = -width; x < width; x += cellSize) {
-    for (let y = -height; y < height; y += cellSize) {
-      if (rng.next() > 0.8) { // Reduce density
-        const size = cellSize * 0.3
-        paths.push(`M${x},${y}h${size}v${size}h-${size}Z`)
-      }
-    }
-  }
-  
-  return paths.join(' ')
 }
 
 function generateShatteredLines(width: number, height: number, rng: SeededRandom) {
@@ -429,29 +377,7 @@ function getDailySeed(str: string): number {
   return Math.abs(hash)
 }
 
-async function uploadToCloudinary(imageBuffer: ArrayBuffer, publicId: string) {
-  const formData = new FormData()
-  formData.append('file', new Blob([imageBuffer]))
-  formData.append('public_id', publicId)
-  formData.append('api_key', CLOUDINARY_API_KEY!)
-  formData.append('timestamp', String(Math.round(Date.now() / 1000)))
-  
-  const response = await fetch(
-    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-    {
-      method: 'POST',
-      body: formData,
-    }
-  )
-  
-  if (!response.ok) {
-    throw new Error('Failed to upload to Cloudinary')
-  }
-  
-  return response.json()
-}
-
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest): Promise<ImageResponse> {
   try {
     const { searchParams } = new URL(req.url)
     const title = searchParams.get('title')?.slice(0, 150) || 'JoelFit'
@@ -506,7 +432,6 @@ export async function GET(req: NextRequest) {
     const width = 1200
     const height = 630
     const voronoiPaths = generateVoronoiPath(width, height, rng)
-    const noisePath = generateNoisePattern(width, height, rng)
     const shatteredLines = generateShatteredLines(width, height, rng)
     const gridPaths = generateDistortedGrid(width, height, rng)
     const starfield = generateStarfield(width, height, rng)
@@ -902,8 +827,12 @@ export async function GET(req: NextRequest) {
       }
     })
     
-  } catch (e: any) {
-    console.log(`${e.message}`)
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.log(`${e.message}`)
+    } else {
+      console.log('An unknown error occurred')
+    }
     return new Response(`Failed to generate the image`, {
       status: 500,
       headers: {

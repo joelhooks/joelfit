@@ -55,10 +55,8 @@ export interface Repository<T extends Entity> {
 // Base repository implementation with common functionality
 export abstract class BaseRepository<
   T extends Entity,
-  TSchema extends z.ZodObject<any>
+  TSchema extends z.ZodObject<z.ZodRawShape>
 > implements Repository<T> {
-  protected items: T[] = []
-
   constructor(
     protected readonly schema: TSchema,
     protected readonly entityName: string
@@ -157,8 +155,8 @@ export abstract class BaseRepository<
     await this.setData(items)
   }
 
-  public generateSlug(data: any): string {
-    // Subclasses should implement their own slug generation logic
+  public generateSlug(_data: Omit<T, keyof Entity>): string {
+    // Parameter is used by subclasses for slug generation
     throw new Error('generateSlug not implemented')
   }
 } 

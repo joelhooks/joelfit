@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { PageHeader } from '@/components/page-header'
-import { Clock, UtensilsCrossed, Lightbulb } from 'lucide-react'
+import { Clock, Lightbulb } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Prep Workflow | High-Protein Meal Prep OS',

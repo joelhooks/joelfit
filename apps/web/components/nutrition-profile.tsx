@@ -1,7 +1,7 @@
 'use client'
 
 import { Profile } from '@/lib/repositories/profile/schema'
-import { Card, CardContent, CardHeader, CardTitle, H3, Text } from '@repo/ui'
+import { Card, CardContent, CardHeader, H3, Text } from '@repo/ui'
 import { SectionHeader } from '@/components/ui/section-header'
 import { MetricCard } from '@/components/ui/metric-card'
 import { Apple, Calendar, ListChecks } from 'lucide-react'

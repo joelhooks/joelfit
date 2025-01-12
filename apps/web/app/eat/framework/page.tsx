@@ -100,8 +100,8 @@ export default async function FrameworkPage() {
                 icon={<Clock className="h-4 w-4 text-primary" />}
               >
                 <FrameworkList
-                  items={framework.weeklySchedule.saturday.tasks.map(task => (
-                    <span>
+                  items={framework.weeklySchedule.saturday.tasks.map((task, index) => (
+                    <span key={`saturday-task-${index}`}>
                       {task.task}
                       <span className="text-xs ml-1">({task.time})</span>
                     </span>

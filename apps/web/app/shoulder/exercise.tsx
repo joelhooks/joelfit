@@ -7,7 +7,7 @@ import type { Exercise as ExerciseType } from '@/lib/repositories/exercise/schem
 
 type ExerciseProps = ExerciseType
 
-export function Exercise({ title, sets, frequency, execution, keyPoints, category }: ExerciseProps) {
+export function Exercise({ title, sets, frequency, execution, keyPoints }: ExerciseProps) {
   const [isOpen, setIsOpen] = useState(true)
   
   const setsDisplay = sets.hold 

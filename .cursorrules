@@ -69,6 +69,7 @@ Keep that in mind at all times.
 - Clean, focused PRs
 - Automate everything possible
 - Monitor what you ship
+- when you commit, commit everything 
 
 ## Dependencies
 - Use pnpm

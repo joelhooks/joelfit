@@ -1,5 +1,5 @@
 import { type StrengthArea } from '@/lib/repositories/profile/schema'
-import { Card, CardContent, CardHeader, CardTitle, Text } from '@repo/ui'
+import { Text } from '@repo/ui'
 import { SectionHeader } from '@/components/ui/section-header'
 import { MetricCard } from '@/components/ui/metric-card'
 import { Dumbbell } from 'lucide-react'

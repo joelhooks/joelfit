@@ -36,7 +36,8 @@ export class FrameworkRepository extends BaseRepository<Framework, typeof framew
     this.initialized = true
   }
 
-  public generateSlug(framework: Framework): string {
+  public generateSlug(_framework: Framework): string {
+    // Framework parameter is unused since we always return the same slug
     return 'core-framework'
   }
 

@@ -19,7 +19,7 @@ type TimelineProps = {
 export function Timeline({ days, className = "" }: TimelineProps) {
   return (
     <div className={`space-y-6 ${className}`}>
-      {days.map((day, dayIndex) => (
+      {days.map((day) => (
         <div key={day.day} className="relative">
           {/* Day Header */}
           <div className="flex items-center gap-2 mb-3">
@@ -29,7 +29,7 @@ export function Timeline({ days, className = "" }: TimelineProps) {
 
           {/* Tasks */}
           <div className="space-y-3 pl-6 border-l border-border">
-            {day.tasks.map((task, taskIndex) => (
+            {day.tasks.map((task) => (
               <div 
                 key={task.name}
                 className="relative pl-6"

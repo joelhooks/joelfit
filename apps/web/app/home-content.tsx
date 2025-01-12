@@ -1,13 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, UtensilsCrossed, Dumbbell, Activity, Scale, Brain, Target } from 'lucide-react'
+import { ArrowRight, UtensilsCrossed, Dumbbell, Activity } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import Balancer from 'react-wrap-balancer'
 
 interface Section {
   title: string
   description: string
-  icon: any // TODO: improve this type
+  icon: LucideIcon
   href: string
   status?: string
   features?: {
