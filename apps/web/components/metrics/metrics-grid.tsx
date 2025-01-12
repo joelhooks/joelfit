@@ -2,6 +2,7 @@ import { SectionHeader } from '@/components/ui/section-header'
 import { MetricCard } from '@/components/ui/metric-card'
 import type { Metrics, Targets } from '@/lib/repositories/profile/schema'
 import { Activity } from 'lucide-react'
+import { Text } from '@repo/ui'
 
 interface MetricsGridProps {
   data: Metrics
@@ -29,12 +30,12 @@ export function MetricsGrid({ data, targets }: MetricsGridProps) {
           title="Android Fat"
           value={
             <div className="flex flex-col space-y-2">
-              <div className="text-[32px] font-bold tracking-tight">
+              <Text as="div" weight="bold" className="text-3xl lg:text-4xl tracking-tight">
                 {data.androidFat}%
-              </div>
-              <div className="text-base text-muted-foreground">
+              </Text>
+              <Text variant="meta">
                 Upper Body Fat
-              </div>
+              </Text>
             </div>
           }
           subtitle={`Target: ${targets.androidFat}%`}
@@ -45,12 +46,12 @@ export function MetricsGrid({ data, targets }: MetricsGridProps) {
           title="Gynoid Fat"
           value={
             <div className="flex flex-col space-y-2">
-              <div className="text-[32px] font-bold tracking-tight">
+              <Text as="div" weight="bold" className="text-3xl lg:text-4xl tracking-tight">
                 {data.gynoidFat}%
-              </div>
-              <div className="text-base text-muted-foreground">
+              </Text>
+              <Text variant="meta">
                 Lower Body Fat
-              </div>
+              </Text>
             </div>
           }
           subtitle={`Target: ${targets.gynoidFat}%`}
@@ -61,12 +62,12 @@ export function MetricsGrid({ data, targets }: MetricsGridProps) {
           title="A/G Ratio"
           value={
             <div className="flex flex-col space-y-2">
-              <div className="text-[32px] font-bold tracking-tight">
+              <Text as="div" weight="bold" className="text-3xl lg:text-4xl tracking-tight">
                 {data.agRatio}
-              </div>
-              <div className="text-base text-muted-foreground">
+              </Text>
+              <Text variant="meta">
                 Fat Distribution Balance
-              </div>
+              </Text>
             </div>
           }
           subtitle={`Target: ${targets.agRatio}`}
@@ -79,12 +80,12 @@ export function MetricsGrid({ data, targets }: MetricsGridProps) {
           title="Total Body Fat"
           value={
             <div className="flex flex-col space-y-2">
-              <div className="text-[32px] font-bold tracking-tight">
+              <Text as="div" weight="bold" className="text-3xl lg:text-4xl tracking-tight">
                 {data.totalBodyFat}%
-              </div>
-              <div className="text-base text-muted-foreground">
+              </Text>
+              <Text variant="meta">
                 Overall Body Fat
-              </div>
+              </Text>
             </div>
           }
           subtitle={`Target: ${targets.totalBodyFat}%`}
@@ -95,12 +96,12 @@ export function MetricsGrid({ data, targets }: MetricsGridProps) {
           title="Visceral Fat"
           value={
             <div className="flex flex-col space-y-2">
-              <div className="text-[32px] font-bold tracking-tight">
+              <Text as="div" weight="bold" className="text-3xl lg:text-4xl tracking-tight">
                 {data.visceralFat}
-              </div>
-              <div className="text-base text-muted-foreground">
+              </Text>
+              <Text variant="meta">
                 Internal Fat Level
-              </div>
+              </Text>
             </div>
           }
           subtitle={`Target: ${targets.visceralFat}`}
@@ -111,12 +112,12 @@ export function MetricsGrid({ data, targets }: MetricsGridProps) {
           title="RSMI"
           value={
             <div className="flex flex-col space-y-2">
-              <div className="text-[32px] font-bold tracking-tight">
+              <Text as="div" weight="bold" className="text-3xl lg:text-4xl tracking-tight">
                 {data.rsmi}
-              </div>
-              <div className="text-base text-muted-foreground">
+              </Text>
+              <Text variant="meta">
                 Relative Skeletal Muscle
-              </div>
+              </Text>
             </div>
           }
           subtitle={`Target: ${targets.rsmi}`}
