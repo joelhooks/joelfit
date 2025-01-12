@@ -1,5 +1,4 @@
 import { type Metadata } from 'next'
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
 import { Clock, Thermometer, Scale, AlertCircle, Package } from 'lucide-react'
 import Link from 'next/link'
 import { type Entity } from '@repo/core'
@@ -7,6 +6,9 @@ import { ErrorFallback } from '@repo/ui'
 import { FrameworkRepository } from '@/lib/repositories/framework/repository'
 import { EquipmentRepository } from '@/lib/repositories/equipment'
 import { PageHeader } from '@/components/page-header'
+import { FrameworkCard } from '@/components/eat/framework-card'
+import { FrameworkList } from '@/components/eat/framework-list'
+import { SectionHeader } from '@/components/eat/section-header'
 
 export const metadata: Metadata = {
   title: 'Framework',
@@ -73,191 +75,171 @@ export default async function FrameworkPage() {
   }
 
   return (
-    <div className="container py-6 space-y-12">
-      <PageHeader
-        title="Core Framework"
-        description="Systematic approach to high-protein meal preparation"
-      />
+    <div className="container py-6">
+      <div className="max-w-4xl">
+        <PageHeader
+          title="Core Framework"
+          description="Systematic approach to high-protein meal preparation"
+          breadcrumbs={[
+            { title: "Eat", href: "/eat" },
+            { title: "Framework", href: "/eat/framework" }
+          ]}
+        />
 
-      {/* Weekly Schedule */}
-      <section>
-        <h2 className="text-2xl font-semibold mb-6">Weekly Schedule</h2>
-        <div className="grid gap-6">
-          {/* Saturday */}
-          <Card>
-            <CardHeader className="flex flex-row items-center gap-2">
-              <Clock className="w-5 h-5" />
-              <CardTitle>{framework.weeklySchedule.saturday.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {framework.weeklySchedule.saturday.tasks.map((task, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <Clock className="w-4 h-4" />
-                  <span>{task.task}</span>
-                  <span className="text-muted-foreground">({task.time})</span>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Sunday */}
-          <Card>
-            <CardHeader className="flex flex-row items-center gap-2">
-              <Clock className="w-5 h-5" />
-              <CardTitle>
-                {framework.weeklySchedule.sunday.title}
-                <span className="text-sm font-normal text-muted-foreground ml-2">
-                  (Total: {framework.weeklySchedule.sunday.totalTime})
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {framework.weeklySchedule.sunday.waves.map((wave, i) => (
-                <div key={i}>
-                  <h4 className="font-medium mb-2">
-                    {wave.title}
-                    <span className="text-sm font-normal text-muted-foreground ml-2">
-                      ({wave.time})
-                    </span>
-                  </h4>
-                  <ul className="list-disc list-inside space-y-1">
-                    {wave.tasks.map((task, j) => (
-                      <li key={j}>{task}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Wednesday */}
-          <Card>
-            <CardHeader className="flex flex-row items-center gap-2">
-              <Clock className="w-5 h-5" />
-              <CardTitle>{framework.weeklySchedule.wednesday.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {framework.weeklySchedule.wednesday.tasks.map((task, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <Clock className="w-4 h-4" />
-                  <span>{task}</span>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Container System */}
-      <section>
-        <h2 className="text-2xl font-semibold mb-6">Container System</h2>
-        <div className="grid gap-6 md:grid-cols-2">
-          {Object.entries(containers).map(([type, container]) => (
-            <Card key={type}>
-              <CardHeader className="flex flex-row items-center gap-2">
-                <Package className="w-5 h-5" />
-                <CardTitle className="capitalize">{type}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div>{container.equipment}</div>
-                <div className="text-sm text-muted-foreground">
-                  Quantity: {container.quantity}
-                </div>
-                <div className="text-sm">{container.note}</div>
-                <div className="flex flex-wrap gap-2">
-                  {container.features.map((feature, i) => (
-                    <span key={i} className="text-xs bg-muted px-2 py-1 rounded">
-                      {feature}
+        <div className="space-y-12">
+          {/* Weekly Schedule */}
+          <section className="space-y-6">
+            <SectionHeader
+              title="Weekly Schedule"
+              icon={<Clock className="h-5 w-5 text-primary" />}
+            />
+            <div className="space-y-4">
+              {/* Saturday */}
+              <FrameworkCard
+                title={framework.weeklySchedule.saturday.title}
+                icon={<Clock className="h-4 w-4 text-primary" />}
+              >
+                <FrameworkList
+                  items={framework.weeklySchedule.saturday.tasks.map(task => (
+                    <span>
+                      {task.task}
+                      <span className="text-xs ml-1">({task.time})</span>
                     </span>
                   ))}
+                  icon={<Clock className="h-3.5 w-3.5 mt-0.5 text-primary" />}
+                />
+              </FrameworkCard>
+
+              {/* Sunday */}
+              <FrameworkCard
+                title={framework.weeklySchedule.sunday.title}
+                subtitle={`Total: ${framework.weeklySchedule.sunday.totalTime}`}
+                icon={<Clock className="h-4 w-4 text-primary" />}
+              >
+                <div className="space-y-3">
+                  {framework.weeklySchedule.sunday.waves.map((wave, i) => (
+                    <div key={i}>
+                      <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                        {wave.title}
+                        <span className="text-xs font-normal text-muted-foreground">
+                          ({wave.time})
+                        </span>
+                      </h4>
+                      <FrameworkList items={wave.tasks} />
+                    </div>
+                  ))}
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
+              </FrameworkCard>
 
-      {/* Storage Layout */}
-      <section>
-        <h2 className="text-2xl font-semibold mb-6">Storage Layout</h2>
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* Fridge */}
-          <Card>
-            <CardHeader className="flex flex-row items-center gap-2">
-              <Thermometer className="w-5 h-5" />
-              <CardTitle>Fridge Organization</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="list-disc list-inside space-y-2">
-                {framework.storage.fridge.map((item, i) => (
-                  <li key={i}>{item}</li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+              {/* Wednesday */}
+              <FrameworkCard
+                title={framework.weeklySchedule.wednesday.title}
+                icon={<Clock className="h-4 w-4 text-primary" />}
+              >
+                <FrameworkList
+                  items={framework.weeklySchedule.wednesday.tasks}
+                  icon={<Clock className="h-3.5 w-3.5 mt-0.5 text-primary" />}
+                />
+              </FrameworkCard>
+            </div>
+          </section>
 
-          {/* Freezer */}
-          <Card>
-            <CardHeader className="flex flex-row items-center gap-2">
-              <Thermometer className="w-5 h-5" />
-              <CardTitle>Freezer Organization</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="list-disc list-inside space-y-2">
-                {framework.storage.freezer.map((item, i) => (
-                  <li key={i}>{item}</li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+          {/* Container System */}
+          <section className="space-y-6">
+            <SectionHeader
+              title="Container System"
+              icon={<Package className="h-5 w-5 text-primary" />}
+            />
+            <div className="grid gap-6 md:grid-cols-2">
+              {Object.entries(containers).map(([type, container]) => (
+                <FrameworkCard
+                  key={type}
+                  title={type}
+                  icon={<Package className="h-4 w-4 text-primary" />}
+                >
+                  <div className="space-y-2">
+                    <div className="text-sm">{container.equipment}</div>
+                    <div className="text-xs text-muted-foreground">
+                      Quantity: {container.quantity}
+                    </div>
+                    <div className="text-sm text-muted-foreground">{container.note}</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {container.features.map((feature, i) => (
+                        <span key={i} className="text-xs bg-muted px-2 py-0.5 rounded">
+                          {feature}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </FrameworkCard>
+              ))}
+            </div>
+          </section>
 
-      {/* Scaling */}
-      <section>
-        <h2 className="text-2xl font-semibold mb-6">Scaling</h2>
-        <div className="grid gap-6 md:grid-cols-2">
-          {Object.entries(framework.scaling).map(([servings, details]) => (
-            <Card key={servings}>
-              <CardHeader className="flex flex-row items-center gap-2">
-                <Scale className="w-5 h-5" />
-                <CardTitle>{servings} Servings</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="list-disc list-inside space-y-2">
-                  {details.map((detail, i) => (
-                    <li key={i}>{detail}</li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
+          {/* Storage Layout */}
+          <section className="space-y-6">
+            <SectionHeader
+              title="Storage Layout"
+              icon={<Thermometer className="h-5 w-5 text-primary" />}
+            />
+            <div className="grid gap-6 md:grid-cols-2">
+              {/* Fridge */}
+              <FrameworkCard
+                title="Fridge Organization"
+                icon={<Thermometer className="h-4 w-4 text-primary" />}
+              >
+                <FrameworkList items={framework.storage.fridge} />
+              </FrameworkCard>
 
-      {/* Troubleshooting */}
-      <section>
-        <h2 className="text-2xl font-semibold mb-6">Troubleshooting</h2>
-        <div className="grid gap-6 md:grid-cols-2">
-          {Object.entries(framework.troubleshooting).map(([category, items]) => (
-            <Card key={category}>
-              <CardHeader className="flex flex-row items-center gap-2">
-                <AlertCircle className="w-5 h-5" />
-                <CardTitle className="capitalize">
-                  {category.replace(/-/g, ' ')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="list-disc list-inside space-y-2">
-                  {items.map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          ))}
+              {/* Freezer */}
+              <FrameworkCard
+                title="Freezer Organization"
+                icon={<Thermometer className="h-4 w-4 text-primary" />}
+              >
+                <FrameworkList items={framework.storage.freezer} />
+              </FrameworkCard>
+            </div>
+          </section>
+
+          {/* Scaling */}
+          <section className="space-y-6">
+            <SectionHeader
+              title="Scaling"
+              icon={<Scale className="h-5 w-5 text-primary" />}
+            />
+            <div className="grid gap-6 md:grid-cols-2">
+              {Object.entries(framework.scaling).map(([servings, details]) => (
+                <FrameworkCard
+                  key={servings}
+                  title={`${servings} Servings`}
+                  icon={<Scale className="h-4 w-4 text-primary" />}
+                >
+                  <FrameworkList items={details} />
+                </FrameworkCard>
+              ))}
+            </div>
+          </section>
+
+          {/* Troubleshooting */}
+          <section className="space-y-6">
+            <SectionHeader
+              title="Troubleshooting"
+              icon={<AlertCircle className="h-5 w-5 text-primary" />}
+            />
+            <div className="grid gap-6 md:grid-cols-2">
+              {Object.entries(framework.troubleshooting).map(([category, items]) => (
+                <FrameworkCard
+                  key={category}
+                  title={category.replace(/-/g, ' ')}
+                  icon={<AlertCircle className="h-4 w-4 text-primary" />}
+                >
+                  <FrameworkList items={items} />
+                </FrameworkCard>
+              ))}
+            </div>
+          </section>
         </div>
-      </section>
+      </div>
     </div>
   )
 } 
