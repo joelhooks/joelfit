@@ -91,3 +91,8 @@ Keep that in mind at all times.
 - No circular dependencies
 - Most dependencies aren't added to the root package.json
 - our components are in @repo/ui and are shared across apps
+- do NOT add with pnpm -w unless strictly required
+
+## AI
+- Use claude-3-sonnet-20240229 for chat AI
+- Use gpt-4o-mini-2024-07-18 for scraping
