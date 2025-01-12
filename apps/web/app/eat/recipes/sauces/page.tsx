@@ -4,6 +4,22 @@ import { PageHeader } from '@/components/page-header'
 export const metadata: Metadata = {
   title: 'Sauce Recipes | High-Protein Meal Prep OS',
   description: 'Sauce recipes and variations for meal prep',
+  openGraph: {
+    title: 'Sauce Recipes | High-Protein Meal Prep OS',
+    description: 'Sauce recipes and variations for meal prep',
+    images: [{
+      url: `https://www.joelfit.app/api/og?title=${encodeURIComponent('Sauce Recipes')}&description=${encodeURIComponent('Sauce recipes and variations for meal prep')}`,
+      width: 1200,
+      height: 630,
+      alt: 'Sauce Recipes'
+    }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Sauce Recipes | High-Protein Meal Prep OS',
+    description: 'Sauce recipes and variations for meal prep',
+    images: [`https://www.joelfit.app/api/og?title=${encodeURIComponent('Sauce Recipes')}&description=${encodeURIComponent('Sauce recipes and variations for meal prep')}`],
+  }
 }
 
 const dillYogurtSauce = {

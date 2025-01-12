@@ -5,6 +5,22 @@ import { Thermometer, Timer, Scale, CheckCircle } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'Progress & Quality Control | High-Protein Meal Prep OS',
   description: 'Track progress and maintain quality standards in your meal prep system',
+  openGraph: {
+    title: 'Progress & Quality Control | High-Protein Meal Prep OS',
+    description: 'Track progress and maintain quality standards in your meal prep system',
+    images: [{
+      url: `https://www.joelfit.app/api/og?title=${encodeURIComponent('Progress & Quality Control')}&description=${encodeURIComponent('Track progress and maintain quality standards in your meal prep system')}`,
+      width: 1200,
+      height: 630,
+      alt: 'Progress & Quality Control'
+    }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Progress & Quality Control | High-Protein Meal Prep OS',
+    description: 'Track progress and maintain quality standards in your meal prep system',
+    images: [`https://www.joelfit.app/api/og?title=${encodeURIComponent('Progress & Quality Control')}&description=${encodeURIComponent('Track progress and maintain quality standards in your meal prep system')}`],
+  }
 }
 
 const qualityChecks = {

@@ -11,8 +11,24 @@ import { FrameworkList } from '@/components/eat/framework-list'
 import { SectionHeader } from '@/components/eat/section-header'
 
 export const metadata: Metadata = {
-  title: 'Framework',
-  description: 'The JoelFit meal prep framework'
+  title: 'Core Framework | High-Protein Meal Prep OS',
+  description: 'The 1-2-3 rotation system for daily meal variety and efficient meal prep',
+  openGraph: {
+    title: 'Core Framework | High-Protein Meal Prep OS',
+    description: 'The 1-2-3 rotation system for daily meal variety and efficient meal prep',
+    images: [{
+      url: `https://www.joelfit.app/api/og?title=${encodeURIComponent('Core Framework')}&description=${encodeURIComponent('The 1-2-3 rotation system for daily meal variety and efficient meal prep')}`,
+      width: 1200,
+      height: 630,
+      alt: 'Core Framework'
+    }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Core Framework | High-Protein Meal Prep OS',
+    description: 'The 1-2-3 rotation system for daily meal variety and efficient meal prep',
+    images: [`https://www.joelfit.app/api/og?title=${encodeURIComponent('Core Framework')}&description=${encodeURIComponent('The 1-2-3 rotation system for daily meal variety and efficient meal prep')}`],
+  }
 }
 
 interface Equipment extends Entity {

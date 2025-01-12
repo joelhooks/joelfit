@@ -5,6 +5,22 @@ import { Check } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'Vegetable Prep | High-Protein Meal Prep OS',
   description: 'Using frozen vegetables for efficient meal prep',
+  openGraph: {
+    title: 'Vegetable Prep | High-Protein Meal Prep OS',
+    description: 'Using frozen vegetables for efficient meal prep',
+    images: [{
+      url: `https://www.joelfit.app/api/og?title=${encodeURIComponent('Vegetable Prep')}&description=${encodeURIComponent('Using frozen vegetables for efficient meal prep')}`,
+      width: 1200,
+      height: 630,
+      alt: 'Vegetable Prep'
+    }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Vegetable Prep | High-Protein Meal Prep OS',
+    description: 'Using frozen vegetables for efficient meal prep',
+    images: [`https://www.joelfit.app/api/og?title=${encodeURIComponent('Vegetable Prep')}&description=${encodeURIComponent('Using frozen vegetables for efficient meal prep')}`],
+  }
 }
 
 const frozenVegGuide = {

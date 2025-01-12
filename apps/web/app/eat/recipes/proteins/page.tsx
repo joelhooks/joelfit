@@ -4,6 +4,22 @@ import { PageHeader } from '@/components/page-header'
 export const metadata: Metadata = {
   title: 'Protein Recipes | High-Protein Meal Prep OS',
   description: 'Core protein recipes for meal prep',
+  openGraph: {
+    title: 'Protein Recipes | High-Protein Meal Prep OS',
+    description: 'Core protein recipes for meal prep',
+    images: [{
+      url: `https://www.joelfit.app/api/og?title=${encodeURIComponent('Protein Recipes')}&description=${encodeURIComponent('Core protein recipes for meal prep')}`,
+      width: 1200,
+      height: 630,
+      alt: 'Protein Recipes'
+    }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Protein Recipes | High-Protein Meal Prep OS',
+    description: 'Core protein recipes for meal prep',
+    images: [`https://www.joelfit.app/api/og?title=${encodeURIComponent('Protein Recipes')}&description=${encodeURIComponent('Core protein recipes for meal prep')}`],
+  }
 }
 
 const turkeyMeatballs = {

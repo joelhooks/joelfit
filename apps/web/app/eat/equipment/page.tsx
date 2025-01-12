@@ -7,7 +7,23 @@ import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
 
 export const metadata: Metadata = {
   title: 'Container System | High-Protein Meal Prep OS',
-  description: 'The container system and equipment used for meal prep'
+  description: 'The container system and equipment used for meal prep',
+  openGraph: {
+    title: 'Container System | High-Protein Meal Prep OS',
+    description: 'The container system and equipment used for meal prep',
+    images: [{
+      url: `https://www.joelfit.app/api/og?title=${encodeURIComponent('Container System')}&description=${encodeURIComponent('The container system and equipment used for meal prep')}`,
+      width: 1200,
+      height: 630,
+      alt: 'Container System'
+    }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Container System | High-Protein Meal Prep OS',
+    description: 'The container system and equipment used for meal prep',
+    images: [`https://www.joelfit.app/api/og?title=${encodeURIComponent('Container System')}&description=${encodeURIComponent('The container system and equipment used for meal prep')}`],
+  }
 }
 
 export default async function EquipmentPage() {
