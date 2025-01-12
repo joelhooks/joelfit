@@ -1,5 +1,5 @@
 import { type StrengthArea } from '@/lib/repositories/profile/schema'
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
+import { Card, CardContent, CardHeader, CardTitle, Text } from '@repo/ui'
 import { SectionHeader } from '@/components/ui/section-header'
 import { MetricCard } from '@/components/ui/metric-card'
 import { Dumbbell } from 'lucide-react'
@@ -22,9 +22,9 @@ export function StrengthAreas({ data }: StrengthAreasProps) {
             title={area.title}
             value={
               <div className="flex flex-col space-y-2">
-                <div className="text-[32px] font-bold tracking-tight">
+                <Text className="text-3xl lg:text-4xl font-bold tracking-tight">
                   {area.metric}
-                </div>
+                </Text>
               </div>
             }
             subtitle={area.details}
