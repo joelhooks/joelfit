@@ -5,13 +5,16 @@ import { openai } from '@ai-sdk/openai'
 import { LoadingState, ErrorState, ScrapedContent } from './components'
 import { contentSchema } from './schema'
 import * as React from 'react'
+import { streamUI } from 'ai/rsc'
 import { generateObject } from 'ai'
 
 const SCRAPER_MODEL = 'gpt-4-turbo-preview'
 
 type MessageRole = 'system' | 'user' | 'assistant'
 
-export async function scrapeUrl(url: string): Promise<React.ReactNode> {
+export async function scrapeUrl(url: string) {
+  console.log('Starting scrape for URL:', url)
+  
   const messages = [
     {
       role: 'system' as MessageRole,
@@ -19,47 +22,65 @@ export async function scrapeUrl(url: string): Promise<React.ReactNode> {
     }
   ]
 
-  try {
-    // Launch browser
-    const browser = await chromium.launch()
-    const page = await browser.newPage()
+  return streamUI({
+    model: openai(SCRAPER_MODEL),
+    initial: <LoadingState />,
+    text: async ({ content, done }) => {
+      if (!done) {
+        return <LoadingState />
+      }
 
-    // Navigate to URL
-    await page.goto(url)
+      try {
+        // Launch browser
+        console.log('Launching browser...')
+        const browser = await chromium.launch()
+        const page = await browser.newPage()
 
-    // Extract content
-    const pageContent = await page.evaluate(() => document.body.innerText)
-    const codeBlocks = await page.evaluate(() => {
-      const blocks = Array.from(document.querySelectorAll('pre code'))
-      return blocks.map(block => ({
-        language: block.className.replace('language-', ''),
-        code: block.textContent || ''
-      }))
-    })
+        // Navigate to URL
+        console.log('Navigating to URL...')
+        await page.goto(url, { waitUntil: 'networkidle' })
 
-    // Close browser
-    await browser.close()
+        // Extract content
+        console.log('Extracting content...')
+        const pageContent = await page.evaluate(() => document.body.innerText)
+        const codeBlocks = await page.evaluate(() => {
+          const blocks = Array.from(document.querySelectorAll('pre code'))
+          return blocks.map(block => ({
+            language: block.className.replace('language-', ''),
+            code: block.textContent || ''
+          }))
+        })
 
-    // Add user message with content
-    messages.push({
-      role: 'user' as MessageRole,
-      content: `URL: ${url}\n\nContent: ${pageContent}\n\nCode Blocks: ${JSON.stringify(codeBlocks, null, 2)}`
-    })
+        // Close browser
+        console.log('Closing browser...')
+        await browser.close()
 
-    // Get completion from OpenAI
-    const data = await generateObject({
-      model: openai(SCRAPER_MODEL),
-      schema: contentSchema,
-      messages,
-      schemaDescription: 'Extract structured information from the content'
-    })
+        // Add user message with content
+        console.log('Preparing content for analysis...')
+        messages.push({
+          role: 'user' as MessageRole,
+          content: `URL: ${url}\n\nContent: ${pageContent}\n\nCode Blocks: ${JSON.stringify(codeBlocks, null, 2)}`
+        })
 
-    return React.createElement(ScrapedContent, { content: data })
+        // Get completion from OpenAI
+        console.log('Generating structured content...')
+        const data = await generateObject({
+          model: openai(SCRAPER_MODEL),
+          schema: contentSchema,
+          messages,
+          schemaDescription: 'Extract structured information from the content'
+        })
 
-  } catch (error) {
-    console.error('Scraping error:', error)
-    return React.createElement(ErrorState, {
-      error: error instanceof Error ? error.message : 'An unknown error occurred'
-    })
-  }
+        console.log('Successfully generated content')
+        return <ScrapedContent content={data} />
+
+      } catch (error) {
+        console.error('Scraping error:', error)
+        if (error instanceof Error) {
+          console.error('Error stack:', error.stack)
+        }
+        return <ErrorState error={error instanceof Error ? error.message : 'An unknown error occurred'} />
+      }
+    }
+  })
 } 
