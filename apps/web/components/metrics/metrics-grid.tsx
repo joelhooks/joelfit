@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
 import { SectionHeader } from '@/components/ui/section-header'
 import { MetricCard } from '@/components/ui/metric-card'
 import type { Metrics, Targets } from '@/lib/repositories/profile/schema'

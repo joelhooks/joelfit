@@ -1,9 +1,9 @@
 import { type Metadata } from 'next'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
 import { Clock, Thermometer, Scale, AlertCircle, Package } from 'lucide-react'
 import Link from 'next/link'
 import { type Entity } from '@repo/core'
-import { PageSkeleton, ErrorFallback } from '@repo/ui'
+import { ErrorFallback } from '@repo/ui'
 import { FrameworkRepository } from '@/lib/repositories/framework/repository'
 import { EquipmentRepository } from '@/lib/repositories/equipment'
 import { PageHeader } from '@/components/page-header'
@@ -11,34 +11,6 @@ import { PageHeader } from '@/components/page-header'
 export const metadata: Metadata = {
   title: 'Framework',
   description: 'The JoelFit meal prep framework'
-}
-
-interface Framework extends Entity {
-  weeklySchedule: {
-    saturday: {
-      title: string
-      tasks: Array<{ task: string; time: string }>
-    }
-    sunday: {
-      title: string
-      totalTime: string
-      waves: Array<{
-        title: string
-        time: string
-        tasks: string[]
-      }>
-    }
-    wednesday: {
-      title: string
-      tasks: string[]
-    }
-  }
-  storage: {
-    fridge: string[]
-    freezer: string[]
-  }
-  scaling: Record<string, string[]>
-  troubleshooting: Record<string, string[]>
 }
 
 interface Equipment extends Entity {
