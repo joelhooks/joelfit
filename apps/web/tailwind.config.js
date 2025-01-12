@@ -61,8 +61,44 @@ export default {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
+  		},
+  		typography: {
+  			DEFAULT: {
+  				css: {
+  					color: 'hsl(var(--foreground))',
+  					maxWidth: 'none',
+  					a: {
+  						color: 'hsl(var(--primary))',
+  						'&:hover': {
+  							color: 'hsl(var(--primary))',
+  						},
+  					},
+  					'code::before': {
+  						content: '""',
+  					},
+  					'code::after': {
+  						content: '""',
+  					},
+  					code: {
+  						color: 'hsl(var(--foreground))',
+  						backgroundColor: 'hsl(var(--muted))',
+  						fontWeight: '500',
+  						borderRadius: '0.25rem',
+  					},
+  					'ul > li::marker': {
+  						color: 'hsl(var(--foreground))',
+  					},
+  					strong: {
+  						color: 'hsl(var(--foreground))',
+  						fontWeight: '600',
+  					},
+  				},
+  			},
+  		},
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+  	require("tailwindcss-animate"),
+  	require("@tailwindcss/typography"),
+  ],
 } 
