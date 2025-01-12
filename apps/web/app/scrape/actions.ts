@@ -73,20 +73,28 @@ Follow these guidelines:
 If certain fields are not present in the content, use empty arrays or omit optional fields rather than making up information.`
 
 function toSerializable(obj: any): any {
-  if (obj === undefined || obj === null) {
+  if (obj === null || obj === undefined) {
     return null
   }
+
+  if (typeof obj !== 'object') {
+    return obj
+  }
+
   if (Array.isArray(obj)) {
     return obj.map(toSerializable)
   }
-  if (typeof obj === 'object') {
-    const result: Record<string, any> = {}
-    for (const [key, value] of Object.entries(obj)) {
-      result[key] = toSerializable(value)
+
+  const plainObj: Record<string, any> = {}
+  
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const value = obj[key]
+      plainObj[key] = toSerializable(value)
     }
-    return result
   }
-  return obj
+
+  return plainObj
 }
 
 export async function scrapeUrl(url: string) {
@@ -119,7 +127,7 @@ export async function scrapeUrl(url: string) {
         await browser.close()
         console.log('Browser closed')
 
-        dataStream.writeData('Analyzing content...')
+        dataStream.writeData({ type: 'status', message: 'Analyzing content...' })
 
         const { partialObjectStream } = await streamObject({
           model: openai(process.env.SCRAPER_MODEL || SCRAPER_MODEL),
@@ -131,14 +139,15 @@ export async function scrapeUrl(url: string) {
         })
 
         for await (const partial of partialObjectStream) {
-          dataStream.writeData(toSerializable(partial))
+          dataStream.writeData({ type: 'partial', data: toSerializable(partial) })
         }
 
         console.log('Stream completed')
-        dataStream.writeData('Analysis complete')
+        dataStream.writeData({ type: 'status', message: 'Analysis complete' })
 
       } catch (error) {
         console.error('Stream error:', error)
+        dataStream.writeData({ type: 'error', message: error instanceof Error ? error.message : 'Unknown error' })
         throw error
       }
     },
