@@ -73,22 +73,29 @@ Follow these guidelines:
 If certain fields are not present in the content, use empty arrays or omit optional fields rather than making up information.`
 
 function toSerializable(obj: any): any {
+  console.log('Converting to serializable:', typeof obj, obj === null ? 'null' : Array.isArray(obj) ? 'array' : typeof obj)
+  
   if (obj === null || obj === undefined) {
+    console.log('Handling null/undefined')
     return null
   }
 
   if (typeof obj !== 'object') {
+    console.log('Handling primitive:', typeof obj)
     return obj
   }
 
   if (Array.isArray(obj)) {
+    console.log('Handling array of length:', obj.length)
     return obj.map(toSerializable)
   }
 
+  console.log('Converting object with keys:', Object.keys(obj))
   const plainObj: Record<string, any> = {}
   
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      console.log('Processing key:', key)
       const value = obj[key]
       plainObj[key] = toSerializable(value)
     }
@@ -127,8 +134,12 @@ export async function scrapeUrl(url: string) {
         await browser.close()
         console.log('Browser closed')
 
-        dataStream.writeData({ type: 'status', message: 'Analyzing content...' })
+        console.log('Writing initial status')
+        const statusMsg = { type: 'status', message: 'Analyzing content...' }
+        console.log('Status message:', JSON.stringify(statusMsg))
+        dataStream.writeData(statusMsg)
 
+        console.log('Starting streamObject')
         const { partialObjectStream } = await streamObject({
           model: openai(process.env.SCRAPER_MODEL || SCRAPER_MODEL),
           messages: [
@@ -138,21 +149,33 @@ export async function scrapeUrl(url: string) {
           schema: contentSchema
         })
 
+        console.log('Processing stream')
         for await (const partial of partialObjectStream) {
-          dataStream.writeData({ type: 'partial', data: toSerializable(partial) })
+          console.log('Received partial object with keys:', Object.keys(partial))
+          const serialized = toSerializable(partial)
+          console.log('Serialized partial:', JSON.stringify({ type: 'partial', data: serialized }))
+          dataStream.writeData({ type: 'partial', data: serialized })
         }
 
         console.log('Stream completed')
-        dataStream.writeData({ type: 'status', message: 'Analysis complete' })
+        const completeMsg = { type: 'status', message: 'Analysis complete' }
+        console.log('Complete message:', JSON.stringify(completeMsg))
+        dataStream.writeData(completeMsg)
 
       } catch (error) {
         console.error('Stream error:', error)
-        dataStream.writeData({ type: 'error', message: error instanceof Error ? error.message : 'Unknown error' })
+        console.log('Error type:', error?.constructor?.name)
+        console.log('Error properties:', Object.keys(error || {}))
+        const errorMsg = { type: 'error', message: error instanceof Error ? error.message : 'Unknown error' }
+        console.log('Error message:', JSON.stringify(errorMsg))
+        dataStream.writeData(errorMsg)
         throw error
       }
     },
     onError: (error) => {
-      console.error('Stream error:', error)
+      console.error('Stream error in onError:', error)
+      console.log('Error type in onError:', error?.constructor?.name)
+      console.log('Error properties in onError:', Object.keys(error || {}))
       throw error
     }
   })
