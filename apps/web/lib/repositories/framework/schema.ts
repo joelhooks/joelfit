@@ -33,9 +33,16 @@ const storageSchema = z.object({
   freezer: z.array(z.string())
 })
 
+const containerSchema = z.object({
+  mainMeals: z.object({
+    sections: z.array(z.string())
+  })
+})
+
 export const frameworkSchema = baseSchema.extend({
   weeklySchedule: weeklyScheduleSchema,
   storage: storageSchema,
+  containers: containerSchema,
   scaling: z.record(z.string(), z.array(z.string())),
   troubleshooting: z.record(z.string(), z.array(z.string()))
 })

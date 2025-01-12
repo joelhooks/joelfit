@@ -18,7 +18,7 @@ describe('MealPlanRepository', () => {
       expect(mealPlan.name).toBe("Joel's Meal Plan")
       expect(mealPlan.calories).toBe(2400)
       expect(mealPlan.timeline).toHaveLength(5)
-      expect(mealPlan.mealStructure.breakfast.items).toHaveLength(4)
+      expect(mealPlan.mealStructure!.breakfast!.items).toHaveLength(4)
     })
 
     it('should throw NotFoundError for non-existent id', async () => {
@@ -32,7 +32,7 @@ describe('MealPlanRepository', () => {
       expect(mealPlan.name).toBe("Joel's Meal Plan")
       expect(mealPlan.calories).toBe(2400)
       expect(mealPlan.timeline).toHaveLength(5)
-      expect(mealPlan.mealStructure.breakfast.items).toHaveLength(4)
+      expect(mealPlan.mealStructure!.breakfast!.items).toHaveLength(4)
     })
 
     it('should throw NotFoundError for non-existent slug', async () => {
@@ -43,8 +43,9 @@ describe('MealPlanRepository', () => {
   describe('findAll', () => {
     it('should return all meal plans', async () => {
       const mealPlans = await repo.findAll()
-      expect(mealPlans).toHaveLength(1)
+      expect(mealPlans).toHaveLength(2)
       expect(mealPlans[0]?.name).toBe("Joel's Meal Plan")
+      expect(mealPlans[1]?.name).toBe("Kristina's Meal Plan")
     })
   })
 
@@ -54,7 +55,7 @@ describe('MealPlanRepository', () => {
       expect(mealPlan.name).toBe("Joel's Meal Plan")
       expect(mealPlan.calories).toBe(2400)
       expect(mealPlan.timeline).toHaveLength(5)
-      expect(mealPlan.mealStructure.breakfast.items).toHaveLength(4)
+      expect(mealPlan.mealStructure!.breakfast!.items).toHaveLength(4)
     })
   })
 
@@ -116,7 +117,7 @@ describe('MealPlanRepository', () => {
       expect(updated.name).toBe("Updated Meal Plan")
       expect(updated.calories).toBe(2500)
       expect(updated.timeline).toHaveLength(1)
-      expect(updated.mealStructure.breakfast.items[0]).toBe("1 cup oats (200 cal, 35g C)")
+      expect(updated.mealStructure!.breakfast!.items[0]).toBe("1 cup oats (200 cal, 35g C)")
       expect(updated.portions.protein).toBe("7-9 oz per main meal")
       expect(updated.weeklyPrep.proteins[0]).toBe("2 lbs chicken")
       expect(updated.emergencyBackup.items[0]).toBe("Updated backup item")

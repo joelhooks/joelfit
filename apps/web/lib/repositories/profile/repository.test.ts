@@ -55,7 +55,38 @@ describe('ProfileRepository', () => {
           }
         ]
       }
-    ]
+    ],
+    nutritionProfile: {
+      targets: {
+        calories: "2000-2200",
+        protein: "180g",
+        carbs: "220g",
+        fat: "60g"
+      },
+      meals: [
+        {
+          name: "Breakfast",
+          time: "8:00 AM",
+          calories: 500,
+          protein: 40,
+          carbs: 60,
+          fat: 15,
+          container: "1A"
+        }
+      ],
+      portions: {
+        protein: "6-8oz",
+        carbs: "1 cup",
+        vegetables: "2 cups",
+        fats: "1 tbsp"
+      },
+      weeklyPrep: {
+        proteins: ["Chicken", "Fish"],
+        carbs: ["Rice", "Sweet Potato"],
+        vegetables: ["Broccoli", "Spinach"],
+        sauces: ["Teriyaki", "Lemon Herb"]
+      }
+    }
   }
 
   describe('findById', () => {

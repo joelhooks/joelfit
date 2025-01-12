@@ -16,7 +16,7 @@ export class FrameworkRepository extends BaseRepository<Framework, typeof framew
       this.items = [
         {
           id: crypto.randomUUID(),
-          slug: 'default-framework',
+          slug: 'core-framework',
           ...initialFramework,
           createdAt: now,
           updatedAt: now
@@ -37,7 +37,7 @@ export class FrameworkRepository extends BaseRepository<Framework, typeof framew
   }
 
   public generateSlug(framework: Framework): string {
-    return 'default-framework'
+    return 'core-framework'
   }
 
   async findById(id: string): Promise<Framework> {
@@ -54,6 +54,15 @@ export class FrameworkRepository extends BaseRepository<Framework, typeof framew
     const framework = this.items.find(f => f.slug === slug)
     if (!framework) {
       throw new NotFoundError('Framework', `slug:${slug}`)
+    }
+    return framework
+  }
+
+  async getFramework(): Promise<Framework> {
+    this.ensureInitialized()
+    const framework = this.items[0]
+    if (!framework) {
+      throw new NotFoundError('Framework', 'default')
     }
     return framework
   }

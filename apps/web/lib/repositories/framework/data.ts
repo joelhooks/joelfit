@@ -72,6 +72,15 @@ export const initialFramework: Omit<Framework, 'id' | 'slug' | 'createdAt' | 'up
       "Door: Ice packs and frozen vegetables"
     ]
   },
+  containers: {
+    mainMeals: {
+      sections: [
+        "Proteins",
+        "Carbs",
+        "Vegetables"
+      ]
+    }
+  },
   scaling: {
     "Single Person": [
       "Base recipe quantities",
