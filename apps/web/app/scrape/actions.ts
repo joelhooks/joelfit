@@ -3,7 +3,9 @@
 import { chromium } from 'playwright'
 import { z } from 'zod'
 import { anthropic } from '@ai-sdk/anthropic'
-import LLMScraper from 'llm-scraper'
+import { generateObject } from 'ai'
+import { Readability } from '@mozilla/readability'
+import { JSDOM } from 'jsdom'
 
 const defaultSchema = z.object({
   title: z.string().describe('The main title or heading of the page'),
@@ -26,17 +28,36 @@ export async function scrapeUrl(url: string) {
     const page = await browser.newPage()
     await page.goto(url)
 
-    // Initialize scraper with Claude
-    const llm = anthropic('claude-3-sonnet-20240229')
-    const scraper = new LLMScraper(llm)
-
-    // Run the scraper
-    const { data } = await scraper.run(page, defaultSchema, {
-      format: 'text',
-      temperature: 0.7,
-    })
+    // Get page content
+    const html = await page.content()
+    const dom = new JSDOM(html)
+    const reader = new Readability(dom.window.document)
+    const article = reader.parse()
+    const content = article ? article.textContent : dom.window.document.body.textContent
 
     await browser.close()
+
+    // Use Claude to extract structured data
+    const llm = anthropic('claude-3-sonnet-20240229')
+    const { object: data } = await generateObject({
+      model: llm,
+      schema: defaultSchema,
+      messages: [
+        {
+          role: 'system',
+          content: 'Extract structured data from the webpage content.',
+        },
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: `URL: ${url}\n\nContent: ${content}`,
+            },
+          ],
+        },
+      ],
+    })
 
     return { success: true, data }
   } catch (error) {
