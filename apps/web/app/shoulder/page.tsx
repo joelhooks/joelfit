@@ -6,10 +6,10 @@ import { PageHeader } from '@/components/page-header'
 import type { Exercise as ExerciseType } from '@/lib/repositories/exercise/schema'
 
 export const metadata: Metadata = {
-  title: 'Shoulder Program | JoelFit',
+  title: 'Shoulder Program',
   description: 'My shoulder rehab routine',
   openGraph: {
-    title: 'Shoulder Program | JoelFit',
+    title: 'Shoulder Program',
     description: 'My shoulder rehab routine',
     images: [{
       url: `https://www.joelfit.app/api/og?title=${encodeURIComponent('Shoulder Program')}&description=${encodeURIComponent('Progressive rehab routine focusing on mobility, stability, and strength')}`,
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Shoulder Program | JoelFit',
+    title: 'Shoulder Program',
     description: 'My shoulder rehab routine',
     images: [`https://www.joelfit.app/api/og?title=${encodeURIComponent('Shoulder Program')}&description=${encodeURIComponent('Progressive rehab routine focusing on mobility, stability, and strength')}`],
   }

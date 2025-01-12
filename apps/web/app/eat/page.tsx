@@ -4,10 +4,10 @@ import { ArrowRight, UtensilsCrossed, Container, Clock, BookOpen, CalendarDays, 
 import { PageHeader } from '@/components/page-header'
 
 export const metadata: Metadata = {
-  title: 'High-Protein Meal Prep OS | JoelFit',
+  title: 'High-Protein Meal Prep OS',
   description: 'My 5-day high-protein meal prep system with 1-2-3 rotation',
   openGraph: {
-    title: 'High-Protein Meal Prep OS | JoelFit',
+    title: 'High-Protein Meal Prep OS',
     description: 'My 5-day high-protein meal prep system with 1-2-3 rotation',
     images: [{
       url: `https://www.joelfit.app/api/og?title=${encodeURIComponent('High-Protein Meal Prep OS')}&description=${encodeURIComponent('My 5-day high-protein meal prep system with 1-2-3 rotation')}`,
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'High-Protein Meal Prep OS | JoelFit',
+    title: 'High-Protein Meal Prep OS',
     description: 'My 5-day high-protein meal prep system with 1-2-3 rotation',
     images: [`https://www.joelfit.app/api/og?title=${encodeURIComponent('High-Protein Meal Prep OS')}&description=${encodeURIComponent('My 5-day high-protein meal prep system with 1-2-3 rotation')}`],
   }
