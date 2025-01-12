@@ -1,7 +1,7 @@
 'use client'
 
 import { Profile } from '@/lib/repositories/profile/schema'
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
+import { Card, CardContent, CardHeader, CardTitle, H3, Text } from '@repo/ui'
 import { SectionHeader } from '@/components/ui/section-header'
 import { MetricCard } from '@/components/ui/metric-card'
 import { Apple, Calendar, ListChecks } from 'lucide-react'
@@ -25,9 +25,9 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             title="CALORIES"
             value={
               <div className="flex flex-col space-y-2">
-                <div className="text-[32px] font-bold tracking-tight">
+                <Text className="text-3xl lg:text-4xl font-bold tracking-tight">
                   {nutritionProfile.targets.calories}
-                </div>
+                </Text>
               </div>
             }
             subtitle="Kilocalories Per Day"
@@ -37,12 +37,12 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             title="PROTEIN"
             value={
               <div className="flex flex-col space-y-2">
-                <div className="text-[32px] font-bold tracking-tight">
+                <Text className="text-3xl lg:text-4xl font-bold tracking-tight">
                   200-220
-                </div>
-                <div className="text-base text-muted-foreground">
+                </Text>
+                <Text variant="meta">
                   35-40%
-                </div>
+                </Text>
               </div>
             }
             subtitle="Grams Per Day"
@@ -52,12 +52,12 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             title="CARBOHYDRATES"
             value={
               <div className="flex flex-col space-y-2">
-                <div className="text-[32px] font-bold tracking-tight">
+                <Text className="text-3xl lg:text-4xl font-bold tracking-tight">
                   225-250
-                </div>
-                <div className="text-base text-muted-foreground">
+                </Text>
+                <Text variant="meta">
                   40-45%
-                </div>
+                </Text>
               </div>
             }
             subtitle="Grams Per Day"
@@ -67,12 +67,12 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             title="FATS"
             value={
               <div className="flex flex-col space-y-2">
-                <div className="text-[32px] font-bold tracking-tight">
+                <Text className="text-3xl lg:text-4xl font-bold tracking-tight">
                   65-75
-                </div>
-                <div className="text-base text-muted-foreground">
+                </Text>
+                <Text variant="meta">
                   25-30%
-                </div>
+                </Text>
               </div>
             }
             subtitle="Grams Per Day"
@@ -87,34 +87,34 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
           {nutritionProfile.meals.map((meal) => (
             <Card key={meal.name} className="h-full">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold">
+                <H3>
                   {meal.name}
-                  <span className="ml-2 text-sm font-normal text-muted-foreground">
+                  <Text variant="meta" className="ml-2 font-normal">
                     {meal.time}
-                  </span>
-                </CardTitle>
+                  </Text>
+                </H3>
               </CardHeader>
               <CardContent>
                 <dl className="space-y-2">
                   <div className="flex justify-between">
-                    <dt className="text-sm text-muted-foreground">Calories:</dt>
-                    <dd className="text-sm font-medium">{meal.calories} kcal</dd>
+                    <Text variant="meta">Calories:</Text>
+                    <Text className="font-medium">{meal.calories} kcal</Text>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-sm text-muted-foreground">Protein:</dt>
-                    <dd className="text-sm font-medium">{meal.protein}g</dd>
+                    <Text variant="meta">Protein:</Text>
+                    <Text className="font-medium">{meal.protein}g</Text>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-sm text-muted-foreground">Carbs:</dt>
-                    <dd className="text-sm font-medium">{meal.carbs}g</dd>
+                    <Text variant="meta">Carbs:</Text>
+                    <Text className="font-medium">{meal.carbs}g</Text>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-sm text-muted-foreground">Fat:</dt>
-                    <dd className="text-sm font-medium">{meal.fat}g</dd>
+                    <Text variant="meta">Fat:</Text>
+                    <Text className="font-medium">{meal.fat}g</Text>
                   </div>
-                  <div className="mt-4 text-sm text-muted-foreground">
+                  <Text variant="meta" className="mt-4">
                     Container: {meal.container}
-                  </div>
+                  </Text>
                 </dl>
               </CardContent>
             </Card>
@@ -127,48 +127,56 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <Card className="h-full">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">Proteins</CardTitle>
+              <H3>Proteins</H3>
             </CardHeader>
             <CardContent>
-              <ul className="list-inside list-disc space-y-2 text-sm">
+              <ul className="list-inside list-disc space-y-2">
                 {nutritionProfile.weeklyPrep.proteins.map((item) => (
-                  <li key={item}>{item}</li>
+                  <li key={item}>
+                    <Text variant="meta" className="inline">{item}</Text>
+                  </li>
                 ))}
               </ul>
             </CardContent>
           </Card>
           <Card className="h-full">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">Carbs</CardTitle>
+              <H3>Carbs</H3>
             </CardHeader>
             <CardContent>
-              <ul className="list-inside list-disc space-y-2 text-sm">
+              <ul className="list-inside list-disc space-y-2">
                 {nutritionProfile.weeklyPrep.carbs.map((item) => (
-                  <li key={item}>{item}</li>
+                  <li key={item}>
+                    <Text variant="meta" className="inline">{item}</Text>
+                  </li>
                 ))}
               </ul>
             </CardContent>
           </Card>
           <Card className="h-full">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">Vegetables</CardTitle>
+              <H3>Vegetables</H3>
             </CardHeader>
             <CardContent>
-              <ul className="list-inside list-disc space-y-2 text-sm">
+              <ul className="list-inside list-disc space-y-2">
                 {nutritionProfile.weeklyPrep.vegetables.map((item) => (
-                  <li key={item}>{item}</li>
+                  <li key={item}>
+                    <Text variant="meta" className="inline">{item}</Text>
+                  </li>
                 ))}
               </ul>
             </CardContent>
           </Card>
           <Card className="h-full">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">Sauces</CardTitle>
+              <H3>Sauces</H3>
             </CardHeader>
             <CardContent>
-              <ul className="list-inside list-disc space-y-2 text-sm">
+              <ul className="list-inside list-disc space-y-2">
                 {nutritionProfile.weeklyPrep.sauces.map((item) => (
-                  <li key={item}>{item}</li>
+                  <li key={item}>
+                    <Text variant="meta" className="inline">{item}</Text>
+                  </li>
                 ))}
               </ul>
             </CardContent>
