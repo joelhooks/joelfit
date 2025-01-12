@@ -15,13 +15,13 @@
 ### High Priority Updates
 - [x] Page Header
   - [x] Update with new typography system
-  - [ ] Test in routes:
-    - [ ] /eat
-    - [ ] /eat/recipes
-    - [ ] /eat/framework
-    - [ ] /eat/shopping
-  - [ ] Document any responsive issues
-  - [ ] Verify vertical rhythm
+  - [x] Test in routes:
+    - [x] /eat
+    - [x] /eat/recipes
+    - [x] /eat/framework
+    - [x] /eat/shopping
+  - [x] Document any responsive issues
+  - [x] Verify vertical rhythm
 
 - [ ] Metrics Grid
   - [ ] Replace hard-coded pixel values
