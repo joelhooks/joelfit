@@ -126,9 +126,9 @@ export default function ShoulderRehabProgram() {
           ]}
         />
 
-        <div className="bg-card border border-border rounded-lg p-4 mb-6">
-          <h3 className="font-medium mb-2">Form Tips:</h3>
-          <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+        <div className="bg-card border border-border rounded-lg p-4 mb-8">
+          <h3 className="text-lg font-medium tracking-tight mb-3">Form Tips:</h3>
+          <ul className="list-disc pl-5 space-y-1.5 text-sm text-muted-foreground leading-relaxed">
             <li>Smooth and controlled movements</li>
             <li>Steady breathing</li>
             <li>Squeeze shoulder blades</li>
@@ -138,23 +138,25 @@ export default function ShoulderRehabProgram() {
           </ul>
         </div>
 
-        <Section title="Warm-Up">
-          <div className="space-y-4">
-            {warmUpExercises.map((exercise, index) => (
-              <Exercise key={index} {...exercise} />
-            ))}
-          </div>
-        </Section>
+        <div className="space-y-8">
+          <Section title="Warm-Up">
+            <div className="space-y-4">
+              {warmUpExercises.map((exercise, index) => (
+                <Exercise key={index} {...exercise} />
+              ))}
+            </div>
+          </Section>
 
-        <Section title="Strength">
-          <div className="space-y-4">
-            {strengthExercises.map((exercise, index) => (
-              <Exercise key={index} {...exercise} />
-            ))}
-          </div>
-        </Section>
+          <Section title="Strength">
+            <div className="space-y-4">
+              {strengthExercises.map((exercise, index) => (
+                <Exercise key={index} {...exercise} />
+              ))}
+            </div>
+          </Section>
+        </div>
 
-        <p className="mt-8 text-sm text-muted-foreground italic">
+        <p className="mt-8 text-sm text-muted-foreground leading-relaxed italic">
           Note: Do this shit under supervision until you're confident. Adjust as needed.
         </p>
       </div>

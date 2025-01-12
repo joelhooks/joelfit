@@ -17,7 +17,7 @@ export function Section({ title, children }: SectionProps) {
         className="flex items-center cursor-pointer mb-4"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <h2 className="text-xl font-semibold">{title}</h2>
+        <h2 className="text-2xl font-semibold tracking-tight leading-none">{title}</h2>
         <ChevronDown 
           className={`w-5 h-5 ml-2 transition-transform ${isOpen ? 'rotate-180' : ''}`}
         />

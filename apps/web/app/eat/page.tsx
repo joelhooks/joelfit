@@ -87,17 +87,17 @@ export default function EatPage() {
           ]}
         />
 
-        <div className="space-y-12">
+        <div className="space-y-8">
           {/* Core System Overview */}
           <section>
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Clock className="h-5 w-5 text-primary flex-shrink-0" />
+            <h2 className="text-2xl font-semibold tracking-tight mb-4 flex items-center gap-2">
+              <Clock className="h-5 w-5 text-primary" />
               The 1-2-3 System
             </h2>
-            <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 mb-6">
-              <div className="bg-card border rounded-lg p-4">
-                <h3 className="font-medium mb-3">What It Does</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
+              <div className="p-3 rounded-lg border bg-card">
+                <h3 className="text-lg font-medium mb-3">What It Does</h3>
+                <ul className="space-y-1.5 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <ArrowRight className="h-4 w-4 mt-0.5 flex-shrink-0 text-primary" />
                     <span>Creates 15 unique meal combinations per week</span>
@@ -116,28 +116,28 @@ export default function EatPage() {
                   </li>
                 </ul>
               </div>
-              <div className="bg-card border rounded-lg p-4">
-                <h3 className="font-medium mb-3">Core Components</h3>
-                <div className="grid grid-cols-3 gap-3 sm:gap-4 text-sm">
-                  <div className="bg-muted/50 rounded p-3">
-                    <p className="font-medium mb-2">Proteins</p>
-                    <div className="space-y-1 text-muted-foreground">
+              <div className="p-3 rounded-lg border bg-card">
+                <h3 className="text-lg font-medium mb-3">Core Components</h3>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="p-2 rounded bg-muted/50">
+                    <p className="text-sm font-medium mb-2">Proteins</p>
+                    <div className="space-y-1 text-xs text-muted-foreground">
                       <p>🍗 Chicken</p>
                       <p>🦃 Turkey</p>
                       <p>🐟 Fish</p>
                     </div>
                   </div>
-                  <div className="bg-muted/50 rounded p-3">
-                    <p className="font-medium mb-2">Starches</p>
-                    <div className="space-y-1 text-muted-foreground">
+                  <div className="p-2 rounded bg-muted/50">
+                    <p className="text-sm font-medium mb-2">Starches</p>
+                    <div className="space-y-1 text-xs text-muted-foreground">
                       <p>🍚 Rice</p>
                       <p>🥔 Potato</p>
                       <p>🌱 Quinoa</p>
                     </div>
                   </div>
-                  <div className="bg-muted/50 rounded p-3">
-                    <p className="font-medium mb-2">Veggies</p>
-                    <div className="space-y-1 text-muted-foreground">
+                  <div className="p-2 rounded bg-muted/50">
+                    <p className="text-sm font-medium mb-2">Veggies</p>
+                    <div className="space-y-1 text-xs text-muted-foreground">
                       <p>❄️ Broccoli & Cauliflower</p>
                       <p>❄️ Mixed Vegetables</p>
                     </div>
@@ -149,28 +149,28 @@ export default function EatPage() {
 
           {/* Quick Actions */}
           <section>
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <UtensilsCrossed className="h-5 w-5 text-primary flex-shrink-0" />
+            <h2 className="text-2xl font-semibold tracking-tight mb-4 flex items-center gap-2">
+              <UtensilsCrossed className="h-5 w-5 text-primary" />
               Quick Actions
             </h2>
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
               <Link 
                 href="/eat/meal-plan"
-                className="flex items-start gap-3 sm:gap-4 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+                className="flex items-start gap-3 p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
               >
-                <CalendarDays className="h-6 w-6 mt-0.5 flex-shrink-0 text-primary" />
+                <CalendarDays className="h-5 w-5 mt-0.5 text-primary" />
                 <div>
-                  <h3 className="font-medium mb-1">View Meal Plan</h3>
+                  <h3 className="text-lg font-medium mb-1">View Meal Plan</h3>
                   <p className="text-sm text-muted-foreground">Check portions and mix meals for the week</p>
                 </div>
               </Link>
               <Link 
                 href="/eat/shopping"
-                className="flex items-start gap-3 sm:gap-4 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+                className="flex items-start gap-3 p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
               >
-                <ShoppingBag className="h-6 w-6 mt-0.5 flex-shrink-0 text-primary" />
+                <ShoppingBag className="h-5 w-5 mt-0.5 text-primary" />
                 <div>
-                  <h3 className="font-medium mb-1">Shopping List</h3>
+                  <h3 className="text-lg font-medium mb-1">Shopping List</h3>
                   <p className="text-sm text-muted-foreground">Get ingredients for your weekly prep</p>
                 </div>
               </Link>
@@ -179,27 +179,27 @@ export default function EatPage() {
 
           {/* All Features */}
           <section>
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-primary flex-shrink-0" />
+            <h2 className="text-2xl font-semibold tracking-tight mb-4 flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-primary" />
               System Components
             </h2>
-            <div className="grid gap-4">
+            <div className="space-y-3">
               {features.map((feature) => (
                 <Link 
                   key={feature.title}
                   href={feature.href}
-                  className="flex items-start gap-3 sm:gap-4 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+                  className="flex items-start gap-3 p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
                 >
-                  <feature.icon className="h-6 w-6 mt-0.5 flex-shrink-0 text-primary" />
+                  <feature.icon className="h-5 w-5 mt-0.5 text-primary" />
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium mb-1">
+                    <h3 className="text-lg font-medium mb-1">
                       {feature.title}
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       {feature.description}
                     </p>
                   </div>
-                  <ArrowRight className="h-5 w-5 mt-0.5 flex-shrink-0 text-muted-foreground group-hover:text-primary transition-all" />
+                  <ArrowRight className="h-4 w-4 mt-1 text-muted-foreground" />
                 </Link>
               ))}
             </div>
