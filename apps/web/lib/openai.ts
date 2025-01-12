@@ -1,6 +1,3 @@
-import OpenAI from 'openai'
+import { openai } from '@ai-sdk/openai'
 
-export const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-  organization: process.env.OPENAI_ORG_ID,
-}) 
+export { openai } 

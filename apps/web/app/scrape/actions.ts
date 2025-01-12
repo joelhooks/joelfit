@@ -3,6 +3,7 @@
 import { chromium } from 'playwright'
 import { z } from 'zod'
 import { openai } from '@/lib/openai'
+import { generateObject } from 'ai'
 import { Readability } from '@mozilla/readability'
 import { JSDOM } from 'jsdom'
 
@@ -18,7 +19,7 @@ const technicalDetailSchema = z.object({
   explanation: z.string().optional(),
 })
 
-const defaultSchema = z.object({
+const contentSchema = z.object({
   metadata: z.object({
     title: z.string(),
     description: z.string(),
@@ -96,9 +97,12 @@ export async function scrapeUrl(url: string) {
 
     await browser.close()
 
-    // Use OpenAI to extract structured data
-    const completion = await openai.chat.completions.create({
-      model: process.env.AI_MODEL || 'gpt-4-turbo-preview',
+    // Use AI SDK to extract structured data
+    const { object: data } = await generateObject({
+      model: openai(process.env.AI_MODEL || 'gpt-4-turbo-preview'),
+      schema: contentSchema,
+      schemaName: 'TechnicalContent',
+      schemaDescription: 'Structured representation of technical content from a webpage',
       messages: [
         {
           role: 'system',
@@ -109,18 +113,8 @@ export async function scrapeUrl(url: string) {
           content: `URL: ${url}\n\nContent: ${content}\n\nCode Blocks: ${JSON.stringify(codeBlocks, null, 2)}`,
         },
       ],
-      response_format: { type: 'json_object' },
     })
 
-    if (completion.choices[0].finish_reason === 'length') {
-      throw new Error('Response was truncated due to length')
-    }
-
-    if (completion.choices[0].message.content === null) {
-      throw new Error('No content in response')
-    }
-
-    const data = defaultSchema.parse(JSON.parse(completion.choices[0].message.content))
     return { success: true, data }
   } catch (error) {
     console.error('Scraping failed:', error)
