@@ -1,0 +1,938 @@
+Okay, here's the revised guide for an AI coding assistant, now with code examples to illustrate key concepts:
+
+**AI Assistant Instructions: Vercel AI Chatbot Feature Implementation Guide**
+
+This guide outlines key features from the Vercel AI Chatbot, designed for implementation in a similar chat UI environment utilizing tools such as Next.js, the AI SDK, and similar component libraries.
+
+**I. Real-Time Conversational UI & Streaming**
+
+*   **Objective:** Implement a core chat experience that provides a low-latency, real-time text generation. Messages should appear incrementally as they are generated.
+*   **Technical Approach:**
+    *   Leverage `ai/react`'s `useChat` hook for chat state and API call management.
+    *   Utilize Server-Sent Events (SSE) via the `ai` library for server-side response streaming.
+    *   Implement a `DataStreamHandler` component to manage the SSE data, update component states, and render new data in the UI.
+*   **Implementation Details:**
+    *   **Client:**
+        ```typescript
+        import { useChat } from 'ai/react';
+
+        function ChatComponent({ chatId }) {
+          const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+            api: '/api/chat',
+            body: { id: chatId },
+          });
+
+          return (
+            
+              {messages.map((message) => (
+                
+                  {message.content}
+                
+              ))}
+             
+               <input
+                  value={input}
+                  onChange={handleInputChange}
+               />
+               <button onClick={handleSubmit} disabled={isLoading}>Send</button>
+             
+          );
+        }
+        ```
+    *   **Server (Next.js API Route):**
+        ```typescript
+        import { createDataStreamResponse, streamText } from 'ai';
+        import { customModel } from '@/lib/ai';
+
+        export async function POST(req: Request) {
+          const { messages } = await req.json();
+
+          return createDataStreamResponse({
+            execute: (dataStream) => {
+              const result = streamText({
+                model: customModel('gpt-4o-mini'),
+                messages,
+                onFinish: ({ response }) => {
+                  console.log('finish', response);
+                }
+              });
+
+              result.mergeIntoDataStream(dataStream);
+            },
+          });
+        }
+
+        ```
+    *   **`DataStreamHandler` Component:** (This is a custom component)
+        ```typescript
+        import { useChat } from 'ai/react';
+        import { useEffect, useRef } from 'react';
+
+        interface DataStreamDelta {
+          type: 'text-delta' | 'code-delta'
+          content: string;
+        }
+
+        export function DataStreamHandler({ id }: { id: string }) {
+          const { data: dataStream } = useChat({ id });
+          const lastProcessedIndex = useRef(-1);
+
+           useEffect(() => {
+            if (!dataStream?.length) return;
+
+            const newDeltas = dataStream.slice(lastProcessedIndex.current + 1);
+            lastProcessedIndex.current = dataStream.length - 1;
+
+            (newDeltas as DataStreamDelta[]).forEach((delta: DataStreamDelta) => {
+               // Handle delta and update state
+             console.log('delta', delta);
+            });
+         }, [dataStream]);
+
+          return null;
+        }
+
+        ```
+*   **Priorities:** Create a seamless, real-time chat that enhances user engagement and is highly performant. Track the id of each user message to maintain context.
+
+**II. Blocks - Interactive Content & Side Panel**
+
+*   **Objective:** Create interactive "blocks" that can display text or code alongside the primary chat interface.
+*   **Technical Approach:**
+    *   Implement state management for block properties, including document content, type, and visibility using a dedicated store, or hook similar to `useBlock`.
+    *   Integrate custom editor components: `components/editor.tsx` and `components/code-editor.tsx`, using libraries like CodeMirror and ProseMirror.
+    *   Implement API calls to create and update documents, and fetch a list of documents with an API route similar to `app/(chat)/api/document/route.ts`
+    *   Build document preview components, similar to `components/document-preview.tsx`, to render summaries of saved documents
+*   **Implementation Details:**
+    *   **`useBlock` Hook:**
+        ```typescript
+        import { useState } from 'react';
+
+        export function useBlock() {
+          const [block, setBlock] = useState({
+            documentId: 'init',
+            content: '',
+            kind: 'text',
+            title: '',
+            status: 'idle',
+            isVisible: false,
+            boundingBox: { top: 0, left: 0, width: 0, height: 0 },
+          });
+
+            return { block, setBlock }
+        }
+        ```
+    *   **API Route:**
+         ```typescript
+         import { saveDocument } from '@/lib/db/queries';
+        export async function POST(request: Request) {
+          const { content, title, kind } = await request.json();
+
+          if (session.user?.id) {
+              const document = await saveDocument({
+                 id: generateUUID(),
+                  content,
+                  title,
+                  kind,
+                  userId: session.user.id,
+                });
+              return Response.json(document, { status: 200 });
+          }
+
+         return new Response('Unauthorized', { status: 401 });
+        }
+         ```
+    *   **CodeMirror implementation:**
+         ```typescript
+        import { EditorView } from '@codemirror/view';
+        import { EditorState, Transaction } from '@codemirror/state';
+        import { python } from '@codemirror/lang-python';
+        import { oneDark } from '@codemirror/theme-one-dark';
+        import { basicSetup } from 'codemirror';
+        import React, { memo, useEffect, useRef } from 'react';
+
+        function PureCodeEditor({ content, saveContent }: EditorProps) {
+         const containerRef = useRef<HTMLDivElement>(null);
+         const editorRef = useRef<EditorView | null>(null);
+
+            useEffect(() => {
+                if (containerRef.current && !editorRef.current) {
+                const startState = EditorState.create({
+                    doc: content,
+                    extensions: [basicSetup, python(), oneDark],
+                });
+
+                editorRef.current = new EditorView({
+                    state: startState,
+                    parent: containerRef.current,
+                });
+                }
+                return () => {
+                if (editorRef.current) {
+                    editorRef.current.destroy();
+                    editorRef.current = null;
+                }
+                };
+            }, []);
+
+            useEffect(() => {
+                 if (editorRef.current) {
+                    const updateListener = EditorView.updateListener.of((update) => {
+                    if (update.docChanged) {
+                      const transaction = update.transactions.find(
+                        (tr) => !tr.annotation(Transaction.remote),
+                      );
+
+                      if (transaction) {
+                        const newContent = update.state.doc.toString();
+                        saveContent(newContent, true);
+                      }
+                    }
+                  });
+
+                 const currentSelection = editorRef.current.state.selection;
+
+                    const newState = EditorState.create({
+                    doc: editorRef.current.state.doc,
+                    extensions: [basicSetup, python(), oneDark, updateListener],
+                    selection: currentSelection,
+                    });
+
+                    editorRef.current.setState(newState);
+                }
+                }, [saveContent]);
+
+            useEffect(() => {
+                if (editorRef.current && content) {
+                    const currentContent = editorRef.current.state.doc.toString();
+                    const transaction = editorRef.current.state.tr.replaceWith(
+                      0,
+                      currentContent.length,
+                      content,
+                    );
+                    transaction.setMeta(Transaction.remote.of(true));
+                    editorRef.current.dispatch(transaction);
+                }
+                }, [content]);
+         return (
+                
+                    {/* CodeMirror container */}
+                
+         );
+        }
+         ```
+*   **Priorities:** Ensure interactive, and user-friendly content creation, allowing for the ability to break complex content into more manageable, tangible pieces.
+
+**III. Tool Calling**
+
+*   **Objective:** Utilize the AI SDK's tool-calling to extend the chatbot's capabilities
+*   **Technical Approach:**
+    *   Use `experimental_activeTools` of the `ai` library, to provide a definition and handler for each tool.
+    *   Utilize the response from the stream to trigger UI changes
+*   **Implementation Details:**
+    *   **Example Usage:**
+        ```typescript
+          import { customModel } from '@/lib/ai';
+          import { z } from 'zod';
+
+          export async function POST(req: Request) {
+                const { messages } = await req.json();
+
+                return createDataStreamResponse({
+                     execute: (dataStream) => {
+                         const result = streamText({
+                            model: customModel('gpt-4o-mini'),
+                            messages,
+                             maxSteps: 5,
+                           experimental_activeTools: ['createDocument'],
+                           tools: {
+                               createDocument: {
+                                description:
+                                    'Create a document for a writing activity. This tool will call other functions that will generate the contents of the document based on the title and kind.',
+                                parameters: z.object({
+                                    title: z.string(),
+                                    kind: z.enum(['text', 'code']),
+                                }),
+                                execute: async ({ title, kind }) => {
+                                   dataStream.writeData({
+                                     type: 'id',
+                                     content: generateUUID(),
+                                   });
+                                   return {
+                                    id: generateUUID(),
+                                      title,
+                                      kind,
+                                      content:
+                                        'A document was created and is now visible to the user.',
+                                  };
+                                },
+                            },
+                           },
+                          onFinish: ({ response }) => {
+                            console.log('finish', response);
+                           }
+                        });
+                     result.mergeIntoDataStream(dataStream);
+                  },
+                });
+            }
+        ```
+    *   Return JSON objects from tool calls to be used in the UI to display the results.
+*   **Priorities:** Deliver a robust, flexible architecture for integrating external functionalities. Ensure all types are handled correctly to avoid rendering errors.
+
+**IV. Contextualized Suggestions**
+
+*   **Objective:** Enable inline suggestions within text editors.
+*   **Technical Approach:**
+    *   Implement inline editor suggestions by leveraging ProseMirror and CodeMirror for rendering decorations within the editor
+    *   Implement actions to add suggestions
+*   **Implementation Details:**
+    *   **ProseMirror Decorations:**
+        ```typescript
+        import { Decoration, DecorationSet } from 'prosemirror-view';
+         import { Plugin, PluginKey } from 'prosemirror-state';
+
+         export const createDecorations = (
+            suggestions: Array<UISuggestion>,
+            view: EditorView,
+            ) => {
+             const decorations: Array<Decoration> = [];
+
+             for (const suggestion of suggestions) {
+               decorations.push(
+                 Decoration.inline(
+                   suggestion.selectionStart,
+                   suggestion.selectionEnd,
+                   {
+                     class: 'suggestion-highlight',
+                    },
+                   {
+                    suggestionId: suggestion.id,
+                    type: 'highlight',
+                    },
+                 ),
+               );
+
+               decorations.push(
+                 Decoration.widget(
+                  suggestion.selectionStart,
+                    (view) => {
+                    const { dom } = createSuggestionWidget(suggestion, view);
+                     return dom;
+                  },
+                    {
+                    suggestionId: suggestion.id,
+                     type: 'widget',
+                   },
+                 ),
+               );
+              }
+
+            return DecorationSet.create(view.state.doc, decorations);
+           };
+
+          export const suggestionsPluginKey = new PluginKey('suggestions');
+         export const suggestionsPlugin = new Plugin({
+            key: suggestionsPluginKey,
+            state: {
+             init() {
+                  return { decorations: DecorationSet.empty, selected: null };
+                },
+                apply(tr, state) {
+                 const newDecorations = tr.getMeta(suggestionsPluginKey);
+                  if (newDecorations) return newDecorations;
+
+                 return {
+                      decorations: state.decorations.map(tr.mapping, tr.doc),
+                      selected: state.selected,
+                    };
+                },
+            },
+              props: {
+                decorations(state) {
+                    return this.getState(state)?.decorations ?? DecorationSet.empty;
+                },
+                },
+        });
+        ```
+    *   When saving a document, generate suggestions that can be implemented in the editor
+    *   Make sure that the suggestion id's are correct when rendered, in order to remove the suggestion once it's been applied
+*   **Priorities:**  Immediate, relevant suggestions to improve writing, focus on seamless UI interaction, and non re-rendering components.
+
+**V. Persistence & Authentication**
+
+*   **Objective:** Save chat history persistently and implement user authentication.
+*   **Technical Approach:**
+    *   Integrate NextAuth.js for secure authentication.
+    *   Utilize a PostgreSQL database managed by Vercel Postgres, or similar, for data persistence.
+    *   Implement queries with a database ORM such as Drizzle ORM
+*   **Implementation Details:**
+    *   Authentication can be configured with NextAuth as such:
+         ```typescript
+         // app/(auth)/auth.config.ts
+
+         import type { NextAuthConfig } from 'next-auth';
+
+        export const authConfig = {
+            pages: {
+              signIn: '/login',
+                newUser: '/',
+                },
+            providers: [
+                // added later in auth.ts since it requires bcrypt which is only compatible with Node.js
+            // while this file is also used in non-Node.js environments
+        ],
+            callbacks: {
+                authorized({ auth, request: { nextUrl } }) {
+                    const isLoggedIn = !!auth?.user;
+                   const isOnChat = nextUrl.pathname.startsWith('/');
+                  const isOnRegister = nextUrl.pathname.startsWith('/register');
+                  const isOnLogin = nextUrl.pathname.startsWith('/login');
+
+                    if (isLoggedIn && (isOnLogin || isOnRegister)) {
+                        return Response.redirect(new URL('/', nextUrl as unknown as URL));
+                    }
+
+                  if (isOnRegister || isOnLogin) {
+                        return true; // Always allow access to register and login pages
+                    }
+
+                  if (isOnChat) {
+                        if (isLoggedIn) return true;
+                      return false; // Redirect unauthenticated users to login page
+                    }
+
+                    if (isLoggedIn) {
+                     return Response.redirect(new URL('/', nextUrl as unknown as URL));
+                   }
+
+                  return true;
+                },
+            },
+        } satisfies NextAuthConfig;
+         ```
+    *   Set up Drizzle with the correct configurations
+         ```typescript
+         // drizzle.config.ts
+          import { config } from 'dotenv';
+          import { defineConfig } from 'drizzle-kit';
+
+          config({
+            path: '.env.local',
+          });
+
+          export default defineConfig({
+            schema: './lib/db/schema.ts',
+            out: './lib/db/migrations',
+            dialect: 'postgresql',
+            dbCredentials: {
+            // biome-ignore lint: Forbidden non-null assertion.
+              url: process.env.POSTGRES_URL!,
+            },
+          });
+         ```
+         ```typescript
+            // lib/db/schema.ts
+             import type { InferSelectModel } from 'drizzle-orm';
+             import {
+                pgTable,
+                varchar,
+                 timestamp,
+                json,
+                uuid,
+                 text,
+                 primaryKey,
+                  foreignKey,
+                 boolean,
+            } from 'drizzle-orm/pg-core';
+
+           export const user = pgTable('User', {
+               id: uuid('id').primaryKey().notNull().defaultRandom(),
+                email: varchar('email', { length: 64 }).notNull(),
+               password: varchar('password', { length: 64 }),
+           });
+
+         export type User = InferSelectModel<typeof user>;
+
+         export const chat = pgTable('Chat', {
+            id: uuid('id').primaryKey().notNull().defaultRandom(),
+            createdAt: timestamp('createdAt').notNull(),
+            title: text('title').notNull(),
+             userId: uuid('userId')
+               .notNull()
+                .references(() => user.id),
+            visibility: varchar('visibility', { enum: ['public', 'private'] })
+               .notNull()
+              .default('private'),
+        });
+
+         export type Chat = InferSelectModel<typeof chat>;
+         ```
+*   **Priorities:** Maintain chat history and user data for long term use. Keep all queries secure and performant.
+
+**VI. Themeing and Accessibility**
+
+*   **Objective:** Build an accessible UI with flexible theming capabilities.
+*   **Technical Approach:**
+    *   Construct reusable components via a tool such as Radix.
+    *   Implement Tailwind CSS for visual styling and a library such as `next-themes` for easy theme toggling.
+    *   All components should adhere to accessibility guidelines.
+*   **Implementation Details:**
+    *   Use composable components such as the Button, and Input in this example:
+    ```typescript
+    import * as React from 'react';
+    import { Slot } from '@radix-ui/react-slot';
+    import { cva, type VariantProps } from 'class-variance-authority';
+    import { cn } from '@/lib/utils';
+
+    const buttonVariants = cva(
+        'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+        {
+            variants: {
+              variant: {
+                default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+                  destructive:
+                     'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+                    outline:
+                     'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+                secondary:
+                    'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+                  ghost: 'hover:bg-accent hover:text-accent-foreground',
+                    link: 'text-primary underline-offset-4 hover:underline',
+                },
+              size: {
+                    default: 'h-10 px-4 py-2',
+                    sm: 'h-9 rounded-md px-3',
+                    lg: 'h-11 rounded-md px-8',
+                    icon: 'h-10 w-10',
+                },
+             },
+            defaultVariants: {
+                variant: 'default',
+                size: 'default',
+            },
+       },
+    );
+
+    interface ButtonProps
+         extends React.ButtonHTMLAttributes,
+            VariantProps{
+             asChild?: boolean;
+        }
+
+    const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+    ({ className, variant, size, asChild = false, ...props }, ref) => {
+            const Comp = asChild ? Slot : 'button';
+         return (
+                
+                    {/* Button component */}
+                
+            );
+      },
+    );
+    Button.displayName = 'Button';
+    export { Button, buttonVariants };
+    ```
+    *   Set up a `theme-provider` component with `next-themes`
+          ```typescript
+        'use client';
+
+          import { ThemeProvider as NextThemesProvider } from 'next-themes';
+          import type { ThemeProviderProps } from 'next-themes/dist/types';
+
+        export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+            return  {children};
+          }
+         ```
+    *   Implement screen reader labels and ensure keyboard navigation for all components.
+*   **Priorities:** Consistent visual styling, accessibility with screen readers and keyboard navigation
+
+**VII. File Uploads**
+
+*   **Objective:** Implement the ability to upload files, and display them in the chat.
+*   **Technical Approach:**
+    *   Vercel Blob for storage: `app/(chat)/api/files/upload/route.ts`
+    *   Form data processing
+    *   `PreviewAttachment` component for rendering the attachment
+*   **Implementation Details:**
+     *   **API Route:**
+        ```typescript
+        import { put } from '@vercel/blob';
+        import { NextResponse } from 'next/server';
+        import { z } from 'zod';
+        import { auth } from '@/app/(auth)/auth';
+
+         const FileSchema = z.object({
+          file: z
+              .instanceof(Blob)
+              .refine((file) => file.size <= 5 * 1024 * 1024, {
+                  message: 'File size should be less than 5MB',
+              })
+                .refine((file) => ['image/jpeg', 'image/png'].includes(file.type), {
+                  message: 'File type should be JPEG or PNG',
+                }),
+            });
+
+        export async function POST(request: Request) {
+          const session = await auth();
+
+            if (!session) {
+                return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+          }
+
+         if (request.body === null) {
+            return new Response('Request body is empty', { status: 400 });
+        }
+
+        try {
+              const formData = await request.formData();
+              const file = formData.get('file') as Blob;
+
+              if (!file) {
+                  return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+              }
+
+              const validatedFile = FileSchema.safeParse({ file });
+
+             if (!validatedFile.success) {
+                const errorMessage = validatedFile.error.errors
+                    .map((error) => error.message)
+                    .join(', ');
+
+               return NextResponse.json({ error: errorMessage }, { status: 400 });
+            }
+            const filename = (formData.get('file') as File).name;
+            const fileBuffer = await file.arrayBuffer();
+
+            try {
+               const data = await put(`${filename}`, fileBuffer, {
+                    access: 'public',
+                });
+
+               return NextResponse.json(data);
+           } catch (error) {
+                return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+           }
+          } catch (error) {
+              return NextResponse.json(
+                  { error: 'Failed to process request' },
+                  { status: 500 },
+               );
+        }
+        }
+       ```
+    *  Ensure that the preview of the document is rendered
+*   **Priorities:** Ensure data integrity, correct handling of file types, and rendering attachments in the UI.
+
+**VIII. Code Execution**
+
+*   **Objective:** Implement the ability to execute Python code snippets
+*   **Technical Approach:**
+    *   Pyodide for in-browser Python execution: `components/code-block.tsx` `components/run-code-button.tsx`
+    *   `components/console.tsx` for rendering the console output
+    *   Logic to handle stdio from Pyodide
+*    **Implementation Details:**
+        ```typescript
+         // run-code-button.tsx
+        import { generateUUID } from '@/lib/utils';
+        import {
+           type Dispatch,
+            type SetStateAction,
+            startTransition,
+             useCallback,
+             useState,
+            useEffect,
+           memo,
+            } from 'react';
+        import type { ConsoleOutput, ConsoleOutputContent, UIBlock } from './block';
+        import { Button } from './ui/button';
+        import { PlayIcon } from './icons';
+        import { useBlockSelector } from '@/hooks/use-block';
+
+       function PureRunCodeButton({
+           setConsoleOutputs,
+        }: {
+          block: UIBlock;
+         setConsoleOutputs: Dispatch<SetStateAction>;
+        }) {
+         const isPython = true;
+         const [pyodide, setPyodide] = useState(null);
+
+           const codeContent = useBlockSelector((state) => state.content);
+         const isBlockStreaming = useBlockSelector(
+                (state) => state.status === 'streaming',
+            );
+
+        const loadAndRunPython = useCallback(async () => {
+           const runId = generateUUID();
+          const stdOutputs: Array = [];
+
+            setConsoleOutputs((outputs) => [
+              ...outputs,
+             {
+                   id: runId,
+                    contents: [],
+                   status: 'in_progress',
+               },
+            ]);
+
+            let currentPyodideInstance = pyodide;
+
+            if (isPython) {
+              try {
+                  if (!currentPyodideInstance) {
+                    // @ts-expect-error - loadPyodide is not defined
+                   const newPyodideInstance = await globalThis.loadPyodide({
+                        indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.23.4/full/',
+                    });
+
+                  setPyodide(null);
+                   setPyodide(newPyodideInstance);
+                   currentPyodideInstance = newPyodideInstance;
+                }
+
+             currentPyodideInstance.setStdout({
+               batched: (output: string) => {
+                    stdOutputs.push({
+                         type: output.startsWith('data:image/png;base64')
+                          ? 'image'
+                        : 'text',
+                        value: output,
+                    });
+               },
+                 });
+
+            await currentPyodideInstance.loadPackagesFromImports(codeContent, {
+                    messageCallback: (message: string) => {
+                     setConsoleOutputs((outputs) => [
+                            ...outputs.filter((output) => output.id !== runId),
+                           {
+                                id: runId,
+                                 contents: [{ type: 'text', value: message }],
+                                 status: 'loading_packages',
+                             },
+                      ]);
+                   },
+                  });
+
+                    const requiredHandlers = detectRequiredHandlers(codeContent);
+                 for (const handler of requiredHandlers) {
+                    if (OUTPUT_HANDLERS[handler as keyof typeof OUTPUT_HANDLERS]) {
+                         await currentPyodideInstance.runPythonAsync(
+                           OUTPUT_HANDLERS[handler as keyof typeof OUTPUT_HANDLERS],
+                      );
+
+                    if (handler === 'matplotlib') {
+                            await currentPyodideInstance.runPythonAsync(
+                                'setup_matplotlib_output()',
+                            );
+                        }
+                  }
+                }
+
+             await currentPyodideInstance.runPythonAsync(codeContent);
+
+                    setConsoleOutputs((outputs) => [
+                   ...outputs.filter((output) => output.id !== runId),
+                       {
+                        id: generateUUID(),
+                           contents: stdOutputs.filter((output) => output.value.trim().length),
+                         status: 'completed',
+                    },
+                  ]);
+              } catch (error: any) {
+                 setConsoleOutputs((outputs) => [
+                   ...outputs.filter((output) => output.id !== runId),
+                  {
+                        id: runId,
+                         contents: [{ type: 'text', value: error.message }],
+                        status: 'failed',
+                    },
+                    ]);
+              }
+            }
+        }, [pyodide, codeContent, isPython, setConsoleOutputs]);
+
+      useEffect(() => {
+          return () => {
+                if (pyodide) {
+                 try {
+                    pyodide.runPythonAsync(`
+                    import sys
+                    import gc
+
+                   has_plt = 'matplotlib.pyplot' in sys.modules
+
+                if has_plt:
+                        import matplotlib.pyplot as plt
+                      plt.clf()
+                       plt.close('all')
+
+                    gc.collect()
+                     `);
+                 } catch (error) {
+                   console.warn('Cleanup failed:', error);
+                  }
+               }
+            };
+        }, [pyodide]);
+
+        return (
+                
+                     Run
+                 
+         );
+        }
+        ```
+    *   **`components/console.tsx`**
+        ```typescript
+         import { TerminalWindowIcon, LoaderIcon, CrossSmallIcon } from './icons';
+           import { Button } from './ui/button';
+         import {
+           Dispatch,
+            SetStateAction,
+            useCallback,
+             useEffect,
+             useRef,
+              useState,
+         } from 'react';
+          import { ConsoleOutput } from './block';
+          import { cn } from '@/lib/utils';
+          import { useBlockSelector } from '@/hooks/use-block';
+
+          interface ConsoleProps {
+                consoleOutputs: Array;
+               setConsoleOutputs: Dispatch>;
+          }
+
+           export function Console({ consoleOutputs, setConsoleOutputs }: ConsoleProps) {
+                const [height, setHeight] = useState(300);
+                const [isResizing, setIsResizing] = useState(false);
+                const consoleEndRef = useRef(null);
+
+               const isBlockVisible = useBlockSelector((state) => state.isVisible);
+
+              const minHeight = 100;
+              const maxHeight = 800;
+
+            const startResizing = useCallback(() => {
+               setIsResizing(true);
+           }, []);
+
+            const stopResizing = useCallback(() => {
+               setIsResizing(false);
+            }, []);
+
+         const resize = useCallback(
+                (e: MouseEvent) => {
+                    if (isResizing) {
+                      const newHeight = window.innerHeight - e.clientY;
+                        if (newHeight >= minHeight && newHeight <= maxHeight) {
+                          setHeight(newHeight);
+                       }
+                  }
+                },
+            [isResizing],
+        );
+             useEffect(() => {
+            window.addEventListener('mousemove', resize);
+            window.addEventListener('mouseup', stopResizing);
+              return () => {
+                window.removeEventListener('mousemove', resize);
+                window.removeEventListener('mouseup', stopResizing);
+             };
+           }, [resize, stopResizing]);
+
+         useEffect(() => {
+                consoleEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }, [consoleOutputs]);
+
+             useEffect(() => {
+                if (!isBlockVisible) {
+                   setConsoleOutputs([]);
+               }
+            }, [isBlockVisible, setConsoleOutputs]);
+
+           return consoleOutputs.length > 0 ? (
+             
+               <div
+                    className="h-2 w-full fixed cursor-ns-resize z-50"
+                    onMouseDown={startResizing}
+                    style={{ bottom: height - 4 }}
+                  role="slider"
+                 aria-valuenow={minHeight}
+                />
+
+             
+                 
+                  
+                      
+                     
+                        
+                           
+                               
+                                 
+                                      
+                                  
+                                  Console
+                             
+                            
+                              
+                               
+                             
+                           
+                     
+                      
+                           {consoleOutputs.map((consoleOutput, index) => (
+                                 
+                                 
+                                     {index + 1}
+                                
+                               {['in_progress', 'loading_packages'].includes(
+                                 consoleOutput.status,
+                                   ) ? (
+                                
+                                       
+                                          
+                                          
+                                         {consoleOutput.status === 'in_progress'
+                                          ? 'Initializing...'
+                                            : consoleOutput.status === 'loading_packages'
+                                                ? consoleOutput.contents.map((content) =>
+                                                   content.type === 'text' ? content.value : null,
+                                                 )
+                                          : null}
+                                    
+                             
+                                ) : (
+                                 
+                                      {consoleOutput.contents.map((content, index) =>
+                                       content.type === 'image' ? (
+                                       
+                                             
+                                             <img
+                                               src={content.value}
+                                                 alt="output"
+                                                  className="rounded-md max-w-[600px] w-full"
+                                                />
+                                        
+                                       ) : (
+                                      
+                                         {content.value}
+                                      
+                                  ),
+                                 )}
+                             
+                             )}
+                           
+                       
+                   ))}
+                    
+                 
+             
+             ) : null;
+        }
+        ```
+*   **Priorities:** Allows for code generation and execution for a full code editing experience
+
+This structure provides a comprehensive guide for an AI assistant. By focusing on the implementation details, it should aid the development of robust features. Let me know if you need any further modifications or clarifications!
