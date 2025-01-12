@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
+import { Card, CardContent, CardHeader, CardTitle, H3, Text } from '@repo/ui'
 import { SectionHeader } from '@/components/ui/section-header'
 import type { ActionCategory } from '@/lib/repositories/profile/schema'
 import { ListTodo } from 'lucide-react'
@@ -21,9 +21,9 @@ export function ActionPlan({ data }: ActionPlanProps) {
             className="flex flex-col overflow-hidden"
           >
             <CardHeader className="border-b bg-muted/50 pb-4">
-              <CardTitle className="text-xl font-semibold tracking-tight">
+              <H3 className="tracking-tight">
                 {category.category}
-              </CardTitle>
+              </H3>
             </CardHeader>
             <CardContent className="flex-1 space-y-6 p-6">
               {category.items.map((item) => (
@@ -31,16 +31,16 @@ export function ActionPlan({ data }: ActionPlanProps) {
                   key={item.title} 
                   className="space-y-2"
                 >
-                  <h4 className="font-medium leading-none">
+                  <Text className="font-medium leading-none">
                     {item.title}
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
+                  </Text>
+                  <Text variant="meta">
                     {item.description}
-                  </p>
+                  </Text>
                   {item.detail && (
-                    <p className="text-sm italic text-muted-foreground/80">
+                    <Text variant="meta" className="italic opacity-80">
                       {item.detail}
-                    </p>
+                    </Text>
                   )}
                 </div>
               ))}
