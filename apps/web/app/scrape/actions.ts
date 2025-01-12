@@ -74,36 +74,26 @@ If certain fields are not present in the content, use empty arrays or omit optio
 // Default model for content extraction
 const SCRAPER_MODEL = 'gpt-4o-2024-08-06'
 
-// Helper to ensure objects are serializable
-const toSerializable = (obj: unknown) => {
-  if (obj === null || obj === undefined) return null
-  if (typeof obj === 'string' || typeof obj === 'number' || typeof obj === 'boolean') return obj
-  return JSON.parse(JSON.stringify(obj))
-}
-
 export async function scrapeUrl(url: string) {
   try {
     return createDataStreamResponse({
       execute: async (dataStream) => {
-        dataStream.writeData({ status: 'launching_browser' })
-        
         // Launch browser
+        dataStream.writeData('Launching browser...')
         const browser = await chromium.launch()
         const page = await browser.newPage()
         await page.goto(url)
 
-        dataStream.writeData({ status: 'extracting_content' })
-        
         // Get page content
+        dataStream.writeData('Extracting content...')
         const html = await page.content()
         const dom = new JSDOM(html)
         const reader = new Readability(dom.window.document)
         const article = reader.parse()
         const content = article ? article.textContent : dom.window.document.body.textContent
 
-        dataStream.writeData({ status: 'extracting_code_blocks' })
-        
         // Get code blocks
+        dataStream.writeData('Extracting code blocks...')
         const codeBlocks = await page.evaluate(() => {
           const blocks = Array.from(document.querySelectorAll('pre code, .highlight'))
           return blocks.map(block => ({
@@ -115,7 +105,7 @@ export async function scrapeUrl(url: string) {
 
         await browser.close()
 
-        dataStream.writeData({ status: 'analyzing_content' })
+        dataStream.writeData('Analyzing content...')
 
         // Stream the AI analysis
         const { partialObjectStream } = streamObject({
@@ -137,24 +127,21 @@ export async function scrapeUrl(url: string) {
 
         // Stream partial objects as they're generated
         for await (const partial of partialObjectStream) {
-          dataStream.writeData({ 
-            status: 'generating', 
-            partial: toSerializable(partial)
-          })
+          dataStream.writeData(JSON.stringify(partial))
         }
         
-        dataStream.writeData({ status: 'complete' })
+        dataStream.writeData('Complete!')
       },
       onError: (error) => {
         console.error('Scraping failed:', error)
-        return toSerializable(error instanceof Error ? error.message : 'Unknown error')
+        return error instanceof Error ? error.message : 'Unknown error'
       },
     })
   } catch (error) {
     console.error('Scraping failed:', error)
     return {
       success: false,
-      error: toSerializable(error instanceof Error ? error.message : 'Unknown error'),
+      error: error instanceof Error ? error.message : 'Unknown error',
     }
   }
 } 
