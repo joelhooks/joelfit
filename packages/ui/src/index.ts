@@ -5,6 +5,7 @@ export * from './components/ui/sheet.js'
 export * from './components/ui/navigation-menu.js'
 export * from './components/ui/avatar.js'
 export * from './components/ui/tabs.js'
+export * from './components/ui/checkbox.js'
 
 export { cn } from './lib/utils.js'
 
