@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { Card } from '@repo/ui'
+import { Card, Text } from '@repo/ui'
 import { ReactNode } from 'react'
 
 interface MetricCardProps {
@@ -49,13 +49,13 @@ export function MetricCard({
       styles.border,
       className
     )}>
-      <h3 className={cn(
-        "text-sm font-medium tracking-wide",
+      <Text variant="meta" className={cn(
+        "font-medium tracking-wide",
         styles.text
-      )}>{title}</h3>
+      )}>{title}</Text>
       <div className="mt-4">{value}</div>
       {subtitle && (
-        <div className="mt-2 text-sm text-muted-foreground/80">{subtitle}</div>
+        <Text variant="meta" className="mt-2 text-muted-foreground/80">{subtitle}</Text>
       )}
     </Card>
   )
