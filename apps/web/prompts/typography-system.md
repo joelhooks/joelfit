@@ -49,8 +49,8 @@
   - Breadcrumbs: text-sm + text-muted-foreground
 
 - Metrics:
-  - Values: text-[32px] + font-bold + tracking-tight
-  - Labels: text-base + text-muted-foreground
+  - Values: text-3xl/text-4xl + font-bold + tracking-tight
+  - Labels: text-sm + text-muted-foreground
   - Section Headers: Inherited from shadcn
 
 ## Core Principles
@@ -115,10 +115,10 @@ const lineHeight = {
   - [x] Document any responsive issues
   - [x] Verify vertical rhythm
 
-- [ ] Metrics Grid
-  - [ ] Replace hard-coded pixel values
-  - [ ] Apply responsive typography
-  - [ ] Test in all breakpoints
+- [x] Metrics Grid
+  - [x] Replace hard-coded pixel values
+  - [x] Apply responsive typography
+  - [x] Test in all breakpoints
 
 - [ ] Site Header
   - [ ] Update navigation links
