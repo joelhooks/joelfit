@@ -2,8 +2,7 @@
 
 import { chromium } from 'playwright'
 import { z } from 'zod'
-import { anthropic } from '@ai-sdk/anthropic'
-import { generateObject } from 'ai'
+import { openai } from '@/lib/openai'
 import { Readability } from '@mozilla/readability'
 import { JSDOM } from 'jsdom'
 
@@ -97,11 +96,9 @@ export async function scrapeUrl(url: string) {
 
     await browser.close()
 
-    // Use Claude to extract structured data
-    const llm = anthropic('claude-3-sonnet-20240229')
-    const { object: data } = await generateObject({
-      model: llm,
-      schema: defaultSchema,
+    // Use OpenAI to extract structured data
+    const completion = await openai.chat.completions.create({
+      model: process.env.AI_MODEL || 'gpt-4-turbo-preview',
       messages: [
         {
           role: 'system',
@@ -109,16 +106,21 @@ export async function scrapeUrl(url: string) {
         },
         {
           role: 'user',
-          content: [
-            {
-              type: 'text',
-              text: `URL: ${url}\n\nContent: ${content}\n\nCode Blocks: ${JSON.stringify(codeBlocks, null, 2)}`,
-            },
-          ],
+          content: `URL: ${url}\n\nContent: ${content}\n\nCode Blocks: ${JSON.stringify(codeBlocks, null, 2)}`,
         },
       ],
+      response_format: { type: 'json_object' },
     })
 
+    if (completion.choices[0].finish_reason === 'length') {
+      throw new Error('Response was truncated due to length')
+    }
+
+    if (completion.choices[0].message.content === null) {
+      throw new Error('No content in response')
+    }
+
+    const data = defaultSchema.parse(JSON.parse(completion.choices[0].message.content))
     return { success: true, data }
   } catch (error) {
     console.error('Scraping failed:', error)
