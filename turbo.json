@@ -1,7 +1,23 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
-  "globalEnv": ["CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET", "NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME", "USE_CLOUDINARY"],
+  "globalEnv": [
+    "CLOUDINARY_API_KEY",
+    "CLOUDINARY_API_SECRET", 
+    "NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME",
+    "USE_CLOUDINARY",
+    "OPENAI_API_KEY",
+    "ANTHROPIC_API_KEY",
+    "AI_MODEL",
+    "SCRAPER_MODEL", 
+    "AI_TEMPERATURE",
+    "AI_MAX_TOKENS",
+    "UPSTASH_REDIS_REST_TOKEN",
+    "UPSTASH_REDIS_REST_URL",
+    "UPSTASH_VECTOR_REST_URL",
+    "UPSTASH_VECTOR_REST_TOKEN",
+    "HUGGINGFACE_API_KEY"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
