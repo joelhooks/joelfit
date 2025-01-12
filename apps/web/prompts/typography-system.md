@@ -120,6 +120,24 @@ const lineHeight = {
   - [x] Apply responsive typography
   - [x] Test in all breakpoints
 
+- [ ] Profile Components
+  - [ ] ProfileHeader
+    - [ ] Replace text-2xl with H1
+    - [ ] Update metadata text with Text component
+    - [ ] Add proper spacing
+  - [ ] StrengthAreas
+    - [ ] Replace text-[32px] with Text component
+    - [ ] Update labels with Text variant="meta"
+    - [ ] Ensure consistent spacing
+  - [ ] ActionPlan
+    - [ ] Update category titles with H3
+    - [ ] Use Text for descriptions
+    - [ ] Standardize card typography
+  - [ ] NutritionProfile
+    - [ ] Replace text-[32px] with Text component
+    - [ ] Update percentages with Text variant="meta"
+    - [ ] Standardize meal details typography
+
 - [ ] Site Header
   - [ ] Update navigation links
   - [ ] Adjust logo sizing
