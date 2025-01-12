@@ -13,4 +13,7 @@ export * from './components/loading/index.js'
 export * from './components/ui/skeleton.js'
 
 // Error components
-export * from './components/error/index.js' 
+export * from './components/error/index.js'
+
+// Typography
+export * from './components/typography' 

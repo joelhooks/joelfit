@@ -21,9 +21,9 @@ export function PageHeader({
   className 
 }: PageHeaderProps) {
   return (
-    <div className={cn("mb-8", className)}>
+    <div className={cn("mb-8 space-y-2", className)}>
       {breadcrumbs && (
-        <nav className="flex items-center text-sm text-muted-foreground mb-2">
+        <nav className="flex items-center text-sm text-muted-foreground">
           <ol className="flex items-center gap-1.5">
             <li>
               <Link 
@@ -51,9 +51,9 @@ export function PageHeader({
           </ol>
         </nav>
       )}
-      <h1 className="text-3xl font-bold">{title}</h1>
+      <h1 className="text-3xl font-bold tracking-tight lg:text-4xl">{title}</h1>
       {description && (
-        <p className="text-lg text-muted-foreground mt-2">
+        <p className="text-lg text-muted-foreground leading-relaxed">
           {description}
         </p>
       )}

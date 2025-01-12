@@ -98,11 +98,23 @@
   - [x] Configure responsive variants
   - [x] Add line height scale
   - [x] Define letter spacing
-  - [ ] Test with existing components
+- [ ] Test with existing components
+  - [x] Update page header component with new system
+  - [ ] Test page header in:
+    - [ ] /eat (full header with all elements)
+    - [ ] /eat/recipes (nested breadcrumbs)
+    - [ ] /eat/framework (long title)
+    - [ ] /eat/shopping (short title)
+  - [ ] Document any responsive issues
+  - [ ] Verify vertical rhythm
 
 ### 2. Typography Primitives
 - [ ] Create Base Components
-  - [ ] Heading system (H1-H6)
+  - [x] Heading system (H1-H6)
+    - [x] Create base Heading component
+    - [x] Add responsive variants
+    - [x] Create convenience components (H1-H6)
+    - [x] Export from UI package
   - [ ] Text component with variants
   - [ ] Section header component
   - [ ] Metadata text components
