@@ -6,7 +6,7 @@ export const maxDuration = 30
 
 const DEFAULT_TEMP = 0.7
 const DEFAULT_MAX_TOKENS = 1000
-const DEFAULT_MODEL = 'claude-3-sonnet-20240229'
+const DEFAULT_MODEL = 'claude-3-sonnet-latest'
 
 export async function POST(req: Request) {
   const { messages } = await req.json()
