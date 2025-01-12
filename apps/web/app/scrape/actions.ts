@@ -71,6 +71,9 @@ Follow these guidelines:
 
 If certain fields are not present in the content, use empty arrays or omit optional fields rather than making up information.`
 
+// Default model for content extraction
+const SCRAPER_MODEL = 'gpt-4-turbo-preview'
+
 export async function scrapeUrl(url: string) {
   try {
     // Launch browser
@@ -99,7 +102,7 @@ export async function scrapeUrl(url: string) {
 
     // Use AI SDK to extract structured data
     const { object: data } = await generateObject({
-      model: openai(process.env.AI_MODEL || 'gpt-4-turbo-preview'),
+      model: openai(process.env.SCRAPER_MODEL || SCRAPER_MODEL),
       schema: contentSchema,
       schemaName: 'TechnicalContent',
       schemaDescription: 'Structured representation of technical content from a webpage',
