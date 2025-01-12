@@ -1,75 +1,184 @@
 'use server'
 
-import { chromium } from 'playwright'
-import { openai } from '@ai-sdk/openai'
-import { LoadingState, ErrorState, ScrapedContent } from './components'
+import { z } from 'zod'
 import { contentSchema } from './schema'
-import * as React from 'react'
-import { generateObject } from 'ai'
+import { chromium } from 'playwright'
+import OpenAI from 'openai'
+import { Redis } from '@upstash/redis'
 
-const SCRAPER_MODEL = 'gpt-4-turbo-preview'
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!
+})
 
-type MessageRole = 'system' | 'user' | 'assistant'
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY!
+})
 
-export async function scrapeUrl(url: string): Promise<React.ReactNode> {
-  console.log('Starting scrape for URL:', url)
-  
-  const messages = [
-    {
-      role: 'system' as MessageRole,
-      content: 'You are a technical content analyzer. Extract structured information from the provided content.'
+const CACHE_TTL = 24 * 60 * 60 // 24 hours
+
+export async function scrapeUrl(url: string) {
+  const encoder = new TextEncoder()
+  const stream = new ReadableStream({
+    async start(controller) {
+      const sendProgress = (message: string) => {
+        const data = JSON.stringify({
+          status: 'loading',
+          progress: message
+        })
+        controller.enqueue(encoder.encode(`data: ${data}\n\n`))
+      }
+
+      try {
+        // Check cache first
+        const cacheKey = `scrape:${url}`
+        const cachedContent = await redis.get<z.infer<typeof contentSchema>>(cacheKey)
+        if (cachedContent) {
+          sendProgress('📦 Found cached content')
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({
+                status: 'success',
+                data: cachedContent,
+                fromCache: true,
+                progress: 'Retrieved from cache'
+              })}\n\n`
+            )
+          )
+          return
+        }
+
+        // Launch browser and scrape content
+        sendProgress('🌐 Launching browser...')
+        const browser = await chromium.launch()
+        const page = await browser.newPage()
+
+        // Load page and extract content
+        sendProgress('📄 Loading page...')
+        await page.goto(url)
+        
+        sendProgress('📝 Extracting content...')
+        const content = await page.evaluate(() => document.body.innerText)
+        const codeBlocks = await page.evaluate(() => {
+          return Array.from(document.querySelectorAll('pre code')).map(block => {
+            const language = block.className.replace('language-', '')
+            return {
+              language,
+              code: block.textContent || ''
+            }
+          })
+        })
+
+        sendProgress(`📊 Content length: ${content.length}, found ${codeBlocks.length} code blocks`)
+        
+        // Close browser
+        await browser.close()
+
+        // Generate structured content
+        sendProgress('🧠 Preparing content for analysis...')
+        const response = await openai.chat.completions.create({
+          model: 'gpt-4o-mini-2024-07-18',
+          messages: [
+            {
+              role: 'system',
+              content: `You are a technical content analyzer. Return a JSON response with this exact structure:
+{
+  "metadata": {
+    "title": string,
+    "author": string (optional),
+    "date": string (optional),
+    "summary": string (REQUIRED)
+  },
+  "introduction": string,
+  "mainPoints": string[] (REQUIRED, at least one point),
+  "sections": [{
+    "title": string,
+    "content": string (MUST be a string, not an array),
+    "subsections": [{ "title": string, "content": string }] (optional)
+  }],
+  "codeExamples": [{
+    "language": string,
+    "code": string,
+    "path": string (optional),
+    "explanation": string (optional)
+  }] (optional),
+  "technical": {
+    "details": [{
+      "title": string,
+      "description": string,
+      "examples": [{
+        "language": string,
+        "code": string,
+        "path": string (optional),
+        "explanation": string (optional)
+      }] (optional)
+    }],
+    "implementation": [{
+      "language": string,
+      "code": string,
+      "path": string (optional),
+      "explanation": string (optional)
+    }]
+  } (optional),
+  "references": string[] (optional)
+}
+
+IMPORTANT:
+1. metadata.summary is REQUIRED
+2. mainPoints must be an array of strings and is REQUIRED
+3. section content must be a string, NOT an array
+4. Ensure all required fields are present
+5. Format code blocks with proper indentation`
+            },
+            {
+              role: 'user',
+              content: `Please analyze this content and code blocks:\n\nContent: ${content}\n\nCode Blocks: ${JSON.stringify(codeBlocks, null, 2)}`
+            }
+          ],
+          temperature: 0.7,
+          response_format: { type: 'json_object' }
+        })
+
+        const messageContent = response.choices[0].message.content
+        if (!messageContent) {
+          throw new Error('No content generated')
+        }
+
+        const validatedContent = contentSchema.parse(JSON.parse(messageContent))
+        
+        // Cache the validated content
+        sendProgress('💾 Caching content for future requests')
+        await redis.set(cacheKey, validatedContent, { ex: CACHE_TTL })
+
+        controller.enqueue(
+          encoder.encode(
+            `data: ${JSON.stringify({
+              status: 'success',
+              data: validatedContent,
+              fromCache: false,
+              progress: 'Content generation complete'
+            })}\n\n`
+          )
+        )
+
+      } catch (error) {
+        console.error('Error in scrapeUrl:', error)
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+          status: 'error',
+          error: error instanceof Error ? error.message : 'Unknown error occurred',
+          progress: 'Error occurred during scraping'
+        })}\n\n`))
+      } finally {
+        controller.close()
+      }
     }
-  ]
+  })
 
-  try {
-    // Launch browser
-    console.log('Launching browser...')
-    const browser = await chromium.launch()
-    const page = await browser.newPage()
-
-    // Navigate to URL
-    console.log('Navigating to URL...')
-    await page.goto(url, { waitUntil: 'networkidle' })
-
-    // Extract content
-    console.log('Extracting content...')
-    const pageContent = await page.evaluate(() => document.body.innerText)
-    const codeBlocks = await page.evaluate(() => {
-      const blocks = Array.from(document.querySelectorAll('pre code'))
-      return blocks.map(block => ({
-        language: block.className.replace('language-', ''),
-        code: block.textContent || ''
-      }))
-    })
-
-    // Close browser
-    console.log('Closing browser...')
-    await browser.close()
-
-    // Add user message with content
-    console.log('Preparing content for analysis...')
-    messages.push({
-      role: 'user' as MessageRole,
-      content: `URL: ${url}\n\nContent: ${pageContent}\n\nCode Blocks: ${JSON.stringify(codeBlocks, null, 2)}`
-    })
-
-    // Get completion from OpenAI
-    console.log('Generating structured content...')
-    const data = await generateObject({
-      model: openai(SCRAPER_MODEL),
-      schema: contentSchema,
-      messages,
-      schemaDescription: 'Extract structured information from the content'
-    })
-
-    console.log('Successfully generated content')
-    return <ScrapedContent content={data} />
-
-  } catch (error) {
-    console.error('Scraping error:', error)
-    if (error instanceof Error) {
-      console.error('Error stack:', error.stack)
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive'
     }
-    return <ErrorState error={error instanceof Error ? error.message : 'An unknown error occurred'} />
-  }
+  })
 } 

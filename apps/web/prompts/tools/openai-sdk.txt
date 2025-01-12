@@ -1,0 +1,2809 @@
+Directory structure:
+└── openai-openai-node/
+    ├── api.md
+    └── examples/
+        ├── assistant-stream-raw.ts
+        ├── assistant-stream.ts
+        ├── assistants.ts
+        ├── audio.ts
+        ├── azure.ts
+        ├── chat-params-types.ts
+        ├── demo.ts
+        ├── errors.ts
+        ├── fine-tuning.ts
+        ├── function-call-diy.ts
+        ├── function-call-helpers-zod.ts
+        ├── function-call-helpers.ts
+        ├── function-call-stream-raw.ts
+        ├── function-call-stream.ts
+        ├── function-call.ts
+        ├── logprobs.ts
+        ├── parsing-run-tools.ts
+        ├── parsing-stream.ts
+        ├── parsing-tools-stream.ts
+        ├── parsing-tools.ts
+        ├── parsing.ts
+        ├── raw-response.ts
+        ├── stream-to-client-browser.ts
+        ├── stream-to-client-express.ts
+        ├── stream-to-client-next.ts
+        ├── stream-to-client-raw.ts
+        ├── stream.ts
+        ├── tool-call-helpers-zod.ts
+        ├── tool-call-helpers.ts
+        ├── tool-calls-stream.ts
+        ├── types.ts
+        └── ui-generation.ts
+
+
+Files Content:
+
+================================================
+File: examples/assistant-stream-raw.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import OpenAI from 'openai';
+
+const openai = new OpenAI();
+
+async function main() {
+  const assistant = await openai.beta.assistants.create({
+    model: 'gpt-4-1106-preview',
+    name: 'Math Tutor',
+    instructions: 'You are a personal math tutor. Write and run code to answer math questions.',
+  });
+
+  const thread = await openai.beta.threads.create({
+    messages: [
+      {
+        role: 'user',
+        content: '"I need to solve the equation `3x + 11 = 14`. Can you help me?"',
+      },
+    ],
+  });
+
+  const stream = await openai.beta.threads.runs.create(thread.id, {
+    assistant_id: assistant.id,
+    additional_instructions: 'Please address the user as Jane Doe. The user has a premium account.',
+    stream: true,
+  });
+
+  for await (const event of stream) {
+    if (event.event === 'thread.message.delta') {
+      const chunk = event.data.delta.content?.[0];
+      if (chunk && 'text' in chunk && chunk.text.value) {
+        process.stdout.write(chunk.text.value);
+      }
+    }
+  }
+
+  console.log();
+}
+
+main();
+
+
+================================================
+File: examples/assistant-stream.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import OpenAI from 'openai';
+
+/**
+ * Example of streaming a response from an assistant
+ */
+
+const openai = new OpenAI();
+
+async function main() {
+  const assistant = await openai.beta.assistants.create({
+    model: 'gpt-4-1106-preview',
+    name: 'Math Tutor',
+    instructions: 'You are a personal math tutor. Write and run code to answer math questions.',
+  });
+
+  let assistantId = assistant.id;
+  console.log('Created Assistant with Id: ' + assistantId);
+
+  const thread = await openai.beta.threads.create({
+    messages: [
+      {
+        role: 'user',
+        content: '"I need to solve the equation `3x + 11 = 14`. Can you help me?"',
+      },
+    ],
+  });
+
+  let threadId = thread.id;
+  console.log('Created thread with Id: ' + threadId);
+
+  const run = openai.beta.threads.runs
+    .stream(threadId, {
+      assistant_id: assistantId,
+    })
+    //Subscribe to streaming events and log them
+    .on('event', (event) => console.log(event))
+    .on('textDelta', (delta, snapshot) => console.log(snapshot))
+    .on('messageDelta', (delta, snapshot) => console.log(snapshot))
+    .on('run', (run) => console.log(run))
+    .on('connect', () => console.log());
+  const result = await run.finalRun();
+  console.log('Run Result' + result);
+}
+
+main();
+
+
+================================================
+File: examples/assistants.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import OpenAI from 'openai';
+
+/**
+ * Example of polling for a complete response from an assistant
+ */
+
+const openai = new OpenAI();
+
+async function main() {
+  const assistant = await openai.beta.assistants.create({
+    model: 'gpt-4-1106-preview',
+    name: 'Math Tutor',
+    instructions: 'You are a personal math tutor. Write and run code to answer math questions.',
+    // tools = [],
+  });
+
+  let assistantId = assistant.id;
+  console.log('Created Assistant with Id: ' + assistantId);
+
+  const thread = await openai.beta.threads.create({
+    messages: [
+      {
+        role: 'user',
+        content: '"I need to solve the equation `3x + 11 = 14`. Can you help me?"',
+      },
+    ],
+  });
+
+  let threadId = thread.id;
+  console.log('Created thread with Id: ' + threadId);
+
+  const run = await openai.beta.threads.runs.createAndPoll(thread.id, {
+    assistant_id: assistantId,
+    additional_instructions: 'Please address the user as Jane Doe. The user has a premium account.',
+  });
+
+  console.log('Run finished with status: ' + run.status);
+
+  if (run.status == 'completed') {
+    const messages = await openai.beta.threads.messages.list(thread.id);
+    for (const message of messages.getPaginatedItems()) {
+      console.log(message);
+    }
+  }
+}
+
+main();
+
+
+================================================
+File: examples/audio.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+import 'openai/shims/node';
+
+import OpenAI, { toFile } from 'openai';
+import fs from 'fs';
+import path from 'path';
+
+// gets API Key from environment variable OPENAI_API_KEY
+const openai = new OpenAI();
+
+const speechFile = path.resolve(__dirname, './speech.mp3');
+
+async function main() {
+  await streamingDemoNode();
+  await blockingDemo();
+}
+main();
+
+async function streamingDemoNode() {
+  const response = await openai.audio.speech.create({
+    model: 'tts-1',
+    voice: 'alloy',
+    input: 'the quick brown chicken jumped over the lazy dogs',
+  });
+
+  const stream = response.body;
+
+  console.log(`Streaming response to ${speechFile}`);
+  await streamToFile(stream, speechFile);
+  console.log('Finished streaming');
+}
+
+async function blockingDemo() {
+  const mp3 = await openai.audio.speech.create({
+    model: 'tts-1',
+    voice: 'alloy',
+    input: 'the quick brown fox jumped over the lazy dogs',
+  });
+
+  const buffer = Buffer.from(await mp3.arrayBuffer());
+  await fs.promises.writeFile(speechFile, buffer);
+
+  const transcription = await openai.audio.transcriptions.create({
+    file: await toFile(buffer, 'speech.mp3'),
+    model: 'whisper-1',
+  });
+  console.log(transcription.text);
+
+  const translation = await openai.audio.translations.create({
+    file: await toFile(buffer, 'speech.mp3'),
+    model: 'whisper-1',
+  });
+  console.log(translation.text);
+}
+
+/**
+ * Note, this is Node-specific.
+ *
+ * Other runtimes would need a different `fs`,
+ * and would also use a web ReadableStream,
+ * which is different from a Node ReadableStream.
+ */
+async function streamToFile(stream: NodeJS.ReadableStream, path: fs.PathLike) {
+  return new Promise((resolve, reject) => {
+    const writeStream = fs.createWriteStream(path).on('error', reject).on('finish', resolve);
+
+    // If you don't see a `stream.pipe` method and you're using Node you might need to add `import 'openai/shims/node'` at the top of your entrypoint file.
+    stream.pipe(writeStream).on('error', (error) => {
+      writeStream.close();
+      reject(error);
+    });
+  });
+}
+
+
+================================================
+File: examples/azure.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import { AzureOpenAI } from 'openai';
+import { getBearerTokenProvider, DefaultAzureCredential } from '@azure/identity';
+
+// Corresponds to your Model deployment within your OpenAI resource, e.g. gpt-4-1106-preview
+// Navigate to the Azure OpenAI Studio to deploy a model.
+const deployment = 'gpt-4-1106-preview';
+
+const credential = new DefaultAzureCredential();
+const scope = 'https://cognitiveservices.azure.com/.default';
+const azureADTokenProvider = getBearerTokenProvider(credential, scope);
+
+// Make sure to set AZURE_OPENAI_ENDPOINT with the endpoint of your Azure resource.
+// You can find it in the Azure Portal.
+const openai = new AzureOpenAI({ azureADTokenProvider });
+
+async function main() {
+  console.log('Non-streaming:');
+  const result = await openai.chat.completions.create({
+    model: deployment,
+    messages: [{ role: 'user', content: 'Say hello!' }],
+  });
+  console.log(result.choices[0]!.message?.content);
+
+  console.log();
+  console.log('Streaming:');
+  const stream = await openai.chat.completions.create({
+    model: deployment,
+    messages: [{ role: 'user', content: 'Say hello!' }],
+    stream: true,
+  });
+
+  for await (const part of stream) {
+    process.stdout.write(part.choices[0]?.delta?.content ?? '');
+  }
+  process.stdout.write('\n');
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
+
+
+================================================
+File: examples/chat-params-types.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import OpenAI from 'openai';
+import { Stream } from 'openai/streaming';
+
+// gets API Key from environment variable OPENAI_API_KEY
+const openai = new OpenAI();
+
+async function main() {
+  // ---------------- Explicit non-streaming params ------------
+
+  const params: OpenAI.Chat.ChatCompletionCreateParams = {
+    model: 'gpt-4',
+    messages: [{ role: 'user', content: 'Say this is a test!' }],
+  };
+  const completion = await openai.chat.completions.create(params);
+  console.log(completion.choices[0]?.message?.content);
+
+  // ---------------- Explicit streaming params ----------------
+
+  const streamingParams: OpenAI.Chat.ChatCompletionCreateParams = {
+    model: 'gpt-4',
+    messages: [{ role: 'user', content: 'Say this is a test!' }],
+    stream: true,
+  };
+
+  const stream = await openai.chat.completions.create(streamingParams);
+  for await (const chunk of stream) {
+    process.stdout.write(chunk.choices[0]?.delta?.content || '');
+  }
+  process.stdout.write('\n');
+
+  // ---------------- Explicit (non)streaming types ----------------
+
+  const params1: OpenAI.Chat.ChatCompletionCreateParamsNonStreaming = {
+    model: 'gpt-4',
+    messages: [{ role: 'user', content: 'Say this is a test!' }],
+  };
+
+  const params2: OpenAI.Chat.ChatCompletionCreateParamsStreaming = {
+    model: 'gpt-4',
+    messages: [{ role: 'user', content: 'Say this is a test!' }],
+    stream: true,
+  };
+
+  // ---------------- Implicit params type -------------------
+
+  // Note: the `as const` is required here so that TS can properly infer
+  // the right params type.
+  //
+  // If you didn't include it then you'd also get an error saying that
+  // `role: string` is not assignable.
+  const streamingParams2 = {
+    model: 'gpt-4',
+    messages: [{ role: 'user' as const, content: 'Say this is a test!' }],
+    stream: true as const,
+  };
+
+  // TS knows this is a Stream instance.
+  const stream2 = await openai.chat.completions.create(streamingParams2);
+  for await (const chunk of stream2) {
+    process.stdout.write(chunk.choices[0]?.delta?.content || '');
+  }
+  process.stdout.write('\n');
+
+  // Without the `as const` for `stream`.
+  const streamingParams3 = {
+    model: 'gpt-4',
+    messages: [{ role: 'user' as const, content: 'Say this is a test!' }],
+    stream: true,
+  };
+
+  // TS doesn't know if this is a `Stream` or a direct response
+  const response = await openai.chat.completions.create(streamingParams3);
+  if (response instanceof Stream) {
+    // here TS knows the response type is a `Stream`
+  } else {
+    // here TS knows the response type is a `ChatCompletion`
+  }
+
+  // ---------------- Dynamic params type -------------------
+
+  // TS knows this is a `Stream`
+  const streamParamsFromFn = await createCompletionParams(true);
+  const streamFromFn = await openai.chat.completions.create(streamParamsFromFn);
+  console.log(streamFromFn);
+
+  // TS knows this is a `ChatCompletion`
+  const paramsFromFn = await createCompletionParams(false);
+  const completionFromFn = await openai.chat.completions.create(paramsFromFn);
+  console.log(completionFromFn);
+}
+
+// Dynamically construct the params object while retaining whether or
+// not the response will be streamed.
+export async function createCompletionParams(
+  stream: true,
+): Promise<OpenAI.Chat.ChatCompletionCreateParamsStreaming>;
+export async function createCompletionParams(
+  stream: false,
+): Promise<OpenAI.Chat.ChatCompletionCreateParamsNonStreaming>;
+export async function createCompletionParams(
+  stream: boolean,
+): Promise<OpenAI.Chat.ChatCompletionCreateParams> {
+  const params = {
+    model: 'gpt-3.5-turbo',
+    messages: [{ role: 'user' as const, content: 'Hello!' }],
+    stream: stream,
+  };
+
+  // <your logic here>
+
+  return params;
+}
+
+main();
+
+
+================================================
+File: examples/demo.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import OpenAI from 'openai';
+
+// gets API Key from environment variable OPENAI_API_KEY
+const openai = new OpenAI();
+
+async function main() {
+  // Non-streaming:
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4',
+    messages: [{ role: 'user', content: 'Say this is a test' }],
+  });
+  console.log(completion.choices[0]?.message?.content);
+
+  // Streaming:
+  const stream = await openai.chat.completions.create({
+    model: 'gpt-4',
+    messages: [{ role: 'user', content: 'Say this is a test' }],
+    stream: true,
+  });
+  for await (const part of stream) {
+    process.stdout.write(part.choices[0]?.delta?.content || '');
+  }
+  process.stdout.write('\n');
+}
+
+main();
+
+
+================================================
+File: examples/errors.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import OpenAI, { NotFoundError } from 'openai';
+
+// gets API Key from environment variable OPENAI_API_KEY
+const client = new OpenAI();
+
+async function main() {
+  try {
+    await client.completions.create({
+      prompt: 'Say this is a test',
+      model: 'unknown-model',
+    });
+  } catch (err) {
+    if (err instanceof NotFoundError) {
+      console.log(`Caught NotFoundError!`);
+      console.log(err);
+      console.log(`message: `, err.message);
+      console.log(`code: `, err.code);
+      console.log(`type: `, err.type);
+      console.log(`param: `, err.param);
+    } else {
+      console.log(`Raised unknown error`);
+      throw err;
+    }
+  }
+}
+
+main();
+
+
+================================================
+File: examples/fine-tuning.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+/**
+ * Fine-tuning allows you to train models on your own data.
+ *
+ * See this guide for more information:
+ * - https://platform.openai.com/docs/guides/fine-tuning
+ */
+
+import fs from 'fs';
+import OpenAI from 'openai';
+import { FineTuningJobEvent } from 'openai/resources/fine-tuning';
+
+// Gets the API Key from the environment variable `OPENAI_API_KEY`
+const client = new OpenAI();
+
+async function main() {
+  console.log(`Uploading file`);
+
+  let file = await client.files.create({
+    file: fs.createReadStream('./examples/fine-tuning-data.jsonl'),
+    purpose: 'fine-tune',
+  });
+  console.log(`Uploaded file with ID: ${file.id}`);
+
+  console.log('-----');
+
+  console.log(`Waiting for file to be processed`);
+  while (true) {
+    file = await client.files.retrieve(file.id);
+    console.log(`File status: ${file.status}`);
+
+    if (file.status === 'processed') {
+      break;
+    } else {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+  }
+
+  console.log('-----');
+
+  console.log(`Starting fine-tuning`);
+  let fineTune = await client.fineTuning.jobs.create({ model: 'gpt-3.5-turbo', training_file: file.id });
+  console.log(`Fine-tuning ID: ${fineTune.id}`);
+
+  console.log('-----');
+
+  console.log(`Track fine-tuning progress:`);
+
+  const events: Record<string, FineTuningJobEvent> = {};
+
+  while (fineTune.status == 'running' || fineTune.status == 'queued') {
+    fineTune = await client.fineTuning.jobs.retrieve(fineTune.id);
+    console.log(`${fineTune.status}`);
+
+    const { data } = await client.fineTuning.jobs.listEvents(fineTune.id, { limit: 100 });
+    for (const event of data.reverse()) {
+      if (event.id in events) continue;
+      events[event.id] = event;
+      const timestamp = new Date(event.created_at * 1000);
+      console.log(`- ${timestamp.toLocaleTimeString()}: ${event.message}`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+  }
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
+
+
+================================================
+File: examples/function-call-diy.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import OpenAI from 'openai';
+import { ChatCompletionMessage, ChatCompletionMessageParam } from 'openai/resources/chat';
+
+// gets API Key from environment variable OPENAI_API_KEY
+const openai = new OpenAI();
+
+const functions: OpenAI.Chat.ChatCompletionCreateParams.Function[] = [
+  {
+    name: 'list',
+    description: 'list queries books by genre, and returns a list of names of books',
+    parameters: {
+      type: 'object',
+      properties: {
+        genre: { type: 'string', enum: ['mystery', 'nonfiction', 'memoir', 'romance', 'historical'] },
+      },
+    },
+  },
+  {
+    name: 'search',
+    description: 'search queries books by their name and returns a list of book names and their ids',
+    parameters: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+      },
+    },
+  },
+  {
+    name: 'get',
+    description:
+      "get returns a book's detailed information based on the id of the book. Note that this does not accept names, and only IDs, which you can get by using search.",
+    parameters: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+      },
+    },
+  },
+];
+
+async function callFunction(function_call: ChatCompletionMessage.FunctionCall): Promise<any> {
+  const args = JSON.parse(function_call.arguments!);
+  switch (function_call.name) {
+    case 'list':
+      return await list(args['genre']);
+
+    case 'search':
+      return await search(args['name']);
+
+    case 'get':
+      return await get(args['id']);
+
+    default:
+      throw new Error('No function found');
+  }
+}
+
+async function main() {
+  const messages: ChatCompletionMessageParam[] = [
+    {
+      role: 'system',
+      content:
+        'Please use our book database, which you can access using functions to answer the following questions.',
+    },
+    {
+      role: 'user',
+      content:
+        'I really enjoyed reading To Kill a Mockingbird, could you recommend me a book that is similar and tell me why?',
+    },
+  ];
+  console.log(messages[0]);
+  console.log(messages[1]);
+  console.log();
+
+  while (true) {
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages,
+      functions: functions,
+    });
+
+    const message = completion.choices[0]!.message;
+    messages.push(message);
+    console.log(message);
+
+    // If there is no function call, we're done and can exit this loop
+    if (!message.function_call) {
+      return;
+    }
+
+    // If there is a function call, we generate a new message with the role 'function'.
+    const result = await callFunction(message.function_call);
+    const newMessage = {
+      role: 'function' as const,
+      name: message.function_call.name!,
+      content: JSON.stringify(result),
+    };
+    messages.push(newMessage);
+
+    console.log(newMessage);
+    console.log();
+  }
+}
+
+const db = [
+  {
+    id: 'a1',
+    name: 'To Kill a Mockingbird',
+    genre: 'historical',
+    description: `Compassionate, dramatic, and deeply moving, "To Kill A Mockingbird" takes readers to the roots of human behavior - to innocence and experience, kindness and cruelty, love and hatred, humor and pathos. Now with over 18 million copies in print and translated into forty languages, this regional story by a young Alabama woman claims universal appeal. Harper Lee always considered her book to be a simple love story. Today it is regarded as a masterpiece of American literature.`,
+  },
+  {
+    id: 'a2',
+    name: 'All the Light We Cannot See',
+    genre: 'historical',
+    description: `In a mining town in Germany, Werner Pfennig, an orphan, grows up with his younger sister, enchanted by a crude radio they find that brings them news and stories from places they have never seen or imagined. Werner becomes an expert at building and fixing these crucial new instruments and is enlisted to use his talent to track down the resistance. Deftly interweaving the lives of Marie-Laure and Werner, Doerr illuminates the ways, against all odds, people try to be good to one another.`,
+  },
+  {
+    id: 'a3',
+    name: 'Where the Crawdads Sing',
+    genre: 'historical',
+    description: `For years, rumors of the “Marsh Girl” haunted Barkley Cove, a quiet fishing village. Kya Clark is barefoot and wild; unfit for polite society. So in late 1969, when the popular Chase Andrews is found dead, locals immediately suspect her.
+
+But Kya is not what they say. A born naturalist with just one day of school, she takes life's lessons from the land, learning the real ways of the world from the dishonest signals of fireflies. But while she has the skills to live in solitude forever, the time comes when she yearns to be touched and loved. Drawn to two young men from town, who are each intrigued by her wild beauty, Kya opens herself to a new and startling world—until the unthinkable happens.`,
+  },
+];
+
+async function list(genre: string) {
+  return db.filter((item) => item.genre === genre).map((item) => ({ name: item.name, id: item.id }));
+}
+
+async function search(name: string) {
+  return db.filter((item) => item.name.includes(name)).map((item) => ({ name: item.name, id: item.id }));
+}
+
+async function get(id: string) {
+  return db.find((item) => item.id === id)!;
+}
+
+main();
+
+
+================================================
+File: examples/function-call-helpers-zod.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import OpenAI from 'openai';
+import { ZodSchema, z } from 'zod';
+import { zodToJsonSchema } from 'zod-to-json-schema';
+
+const openai = new OpenAI();
+
+const ListParams = z.object({
+  genre: z.enum(['mystery', 'nonfiction', 'memoir', 'romance', 'historical']),
+});
+
+const SearchParams = z.object({
+  name: z.string(),
+});
+
+const GetParams = z.object({
+  id: z.string(),
+});
+
+const functions = [
+  {
+    name: 'list',
+    description: 'list queries books by genre, and returns a list of names of books',
+    parameters: zodToJsonSchema(ListParams),
+    parse: zodParseJSON(ListParams),
+    function: list,
+  },
+  {
+    name: 'search',
+    description: 'search queries books by their name and returns a list of book names and their ids',
+    parameters: zodToJsonSchema(SearchParams),
+    parse: zodParseJSON(SearchParams),
+    function: search,
+  },
+  {
+    name: 'get',
+    description:
+      "get returns a book's detailed information based on the id of the book. Note that this does not accept names, and only IDs, which you can get by using search.",
+    parameters: zodToJsonSchema(GetParams),
+    parse: zodParseJSON(GetParams),
+    function: get,
+  },
+] as const;
+
+async function main() {
+  const runner = await openai.beta.chat.completions
+    .runFunctions({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'system',
+          content:
+            'Please use our book database, which you can access using functions to answer the following questions.',
+        },
+        {
+          role: 'user',
+          content:
+            'I really enjoyed reading To Kill a Mockingbird, could you recommend me a book that is similar and tell me why?',
+        },
+      ],
+      functions,
+    })
+    .on('message', (msg) => console.log(msg))
+    .on('content', (diff) => process.stdout.write(diff));
+
+  const result = await runner.finalChatCompletion();
+  console.log(result);
+
+  console.log();
+  console.log(runner.messages);
+}
+
+const db = [
+  {
+    id: 'a1',
+    name: 'To Kill a Mockingbird',
+    genre: 'historical',
+    description: `Compassionate, dramatic, and deeply moving, "To Kill A Mockingbird" takes readers to the roots of human behavior - to innocence and experience, kindness and cruelty, love and hatred, humor and pathos. Now with over 18 million copies in print and translated into forty languages, this regional story by a young Alabama woman claims universal appeal. Harper Lee always considered her book to be a simple love story. Today it is regarded as a masterpiece of American literature.`,
+  },
+  {
+    id: 'a2',
+    name: 'All the Light We Cannot See',
+    genre: 'historical',
+    description: `In a mining town in Germany, Werner Pfennig, an orphan, grows up with his younger sister, enchanted by a crude radio they find that brings them news and stories from places they have never seen or imagined. Werner becomes an expert at building and fixing these crucial new instruments and is enlisted to use his talent to track down the resistance. Deftly interweaving the lives of Marie-Laure and Werner, Doerr illuminates the ways, against all odds, people try to be good to one another.`,
+  },
+  {
+    id: 'a3',
+    name: 'Where the Crawdads Sing',
+    genre: 'historical',
+    description: `For years, rumors of the “Marsh Girl” haunted Barkley Cove, a quiet fishing village. Kya Clark is barefoot and wild; unfit for polite society. So in late 1969, when the popular Chase Andrews is found dead, locals immediately suspect her.
+But Kya is not what they say. A born naturalist with just one day of school, she takes life's lessons from the land, learning the real ways of the world from the dishonest signals of fireflies. But while she has the skills to live in solitude forever, the time comes when she yearns to be touched and loved. Drawn to two young men from town, who are each intrigued by her wild beauty, Kya opens herself to a new and startling world—until the unthinkable happens.`,
+  },
+];
+
+async function list({ genre }: z.infer<typeof ListParams>) {
+  return db.filter((item) => item.genre === genre).map((item) => ({ name: item.name, id: item.id }));
+}
+
+async function search({ name }: z.infer<typeof SearchParams>) {
+  return db.filter((item) => item.name.includes(name)).map((item) => ({ name: item.name, id: item.id }));
+}
+
+async function get({ id }: z.infer<typeof GetParams>) {
+  return db.find((item) => item.id === id)!;
+}
+
+function zodParseJSON<T>(schema: ZodSchema<T>) {
+  return (input: string): T => schema.parse(JSON.parse(input));
+}
+
+main();
+
+
+================================================
+File: examples/function-call-helpers.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import OpenAI from 'openai';
+
+// gets API Key from environment variable OPENAI_API_KEY
+const openai = new OpenAI();
+
+const functions = [
+  {
+    name: 'list',
+    description: 'list queries books by genre, and returns a list of names of books',
+    parameters: {
+      type: 'object',
+      properties: {
+        genre: { type: 'string', enum: ['mystery', 'nonfiction', 'memoir', 'romance', 'historical'] },
+      },
+    },
+    function: list,
+    parse: JSON.parse,
+  },
+  {
+    name: 'search',
+    description: 'search queries books by their name and returns a list of book names and their ids',
+    parameters: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+      },
+    },
+    function: search,
+    parse: JSON.parse,
+  },
+  {
+    name: 'get',
+    description:
+      "get returns a book's detailed information based on the id of the book. Note that this does not accept names, and only IDs, which you can get by using search.",
+    parameters: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+      },
+    },
+    function: get,
+    parse: JSON.parse,
+  },
+];
+
+async function main() {
+  const runner = await openai.beta.chat.completions
+    .runFunctions({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'system',
+          content:
+            'Please use our book database, which you can access using functions to answer the following questions.',
+        },
+        {
+          role: 'user',
+          content:
+            'I really enjoyed reading To Kill a Mockingbird, could you recommend me a book that is similar and tell me why?',
+        },
+      ],
+      functions,
+    })
+    .on('message', (msg) => console.log(msg))
+    .on('content', (diff) => process.stdout.write(diff));
+
+  const result = await runner.finalChatCompletion();
+  console.log(result);
+
+  console.log();
+  console.log(runner.messages);
+}
+
+const db = [
+  {
+    id: 'a1',
+    name: 'To Kill a Mockingbird',
+    genre: 'historical',
+    description: `Compassionate, dramatic, and deeply moving, "To Kill A Mockingbird" takes readers to the roots of human behavior - to innocence and experience, kindness and cruelty, love and hatred, humor and pathos. Now with over 18 million copies in print and translated into forty languages, this regional story by a young Alabama woman claims universal appeal. Harper Lee always considered her book to be a simple love story. Today it is regarded as a masterpiece of American literature.`,
+  },
+  {
+    id: 'a2',
+    name: 'All the Light We Cannot See',
+    genre: 'historical',
+    description: `In a mining town in Germany, Werner Pfennig, an orphan, grows up with his younger sister, enchanted by a crude radio they find that brings them news and stories from places they have never seen or imagined. Werner becomes an expert at building and fixing these crucial new instruments and is enlisted to use his talent to track down the resistance. Deftly interweaving the lives of Marie-Laure and Werner, Doerr illuminates the ways, against all odds, people try to be good to one another.`,
+  },
+  {
+    id: 'a3',
+    name: 'Where the Crawdads Sing',
+    genre: 'historical',
+    description: `For years, rumors of the “Marsh Girl” haunted Barkley Cove, a quiet fishing village. Kya Clark is barefoot and wild; unfit for polite society. So in late 1969, when the popular Chase Andrews is found dead, locals immediately suspect her.
+But Kya is not what they say. A born naturalist with just one day of school, she takes life's lessons from the land, learning the real ways of the world from the dishonest signals of fireflies. But while she has the skills to live in solitude forever, the time comes when she yearns to be touched and loved. Drawn to two young men from town, who are each intrigued by her wild beauty, Kya opens herself to a new and startling world—until the unthinkable happens.`,
+  },
+];
+
+async function list({ genre }: { genre: string }) {
+  return db.filter((item) => item.genre === genre).map((item) => ({ name: item.name, id: item.id }));
+}
+
+async function search({ name }: { name: string }) {
+  return db.filter((item) => item.name.includes(name)).map((item) => ({ name: item.name, id: item.id }));
+}
+
+async function get({ id }: { id: string }) {
+  return db.find((item) => item.id === id)!;
+}
+
+main();
+
+
+================================================
+File: examples/function-call-stream-raw.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import util from 'util';
+import OpenAI from 'openai';
+import {
+  ChatCompletionMessage,
+  ChatCompletionChunk,
+  ChatCompletionMessageParam,
+} from 'openai/resources/chat';
+
+// gets API Key from environment variable OPENAI_API_KEY
+const openai = new OpenAI();
+
+const functions: OpenAI.Chat.ChatCompletionCreateParams.Function[] = [
+  {
+    name: 'list',
+    description: 'list queries books by genre, and returns a list of names of books',
+    parameters: {
+      type: 'object',
+      properties: {
+        genre: { type: 'string', enum: ['mystery', 'nonfiction', 'memoir', 'romance', 'historical'] },
+      },
+    },
+  },
+  {
+    name: 'search',
+    description: 'search queries books by their name and returns a list of book names and their ids',
+    parameters: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+      },
+    },
+  },
+  {
+    name: 'get',
+    description:
+      "get returns a book's detailed information based on the id of the book. Note that this does not accept names, and only IDs, which you can get by using search.",
+    parameters: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+      },
+    },
+  },
+];
+
+async function callFunction(function_call: ChatCompletionMessage.FunctionCall): Promise<any> {
+  const args = JSON.parse(function_call.arguments!);
+  switch (function_call.name) {
+    case 'list':
+      return await list(args['genre']);
+
+    case 'search':
+      return await search(args['name']);
+
+    case 'get':
+      return await get(args['id']);
+
+    default:
+      throw new Error('No function found');
+  }
+}
+
+async function main() {
+  const messages: ChatCompletionMessageParam[] = [
+    {
+      role: 'system',
+      content:
+        'Please use our book database, which you can access using functions to answer the following questions.',
+    },
+    {
+      role: 'user',
+      content:
+        'I really enjoyed reading To Kill a Mockingbird, could you recommend me a book that is similar and tell me why?',
+    },
+  ];
+  console.log(messages[0]);
+  console.log(messages[1]);
+  console.log();
+
+  while (true) {
+    const stream = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages,
+      functions: functions,
+      stream: true,
+    });
+
+    // Since the stream returns chunks, we need to build up the ChatCompletionMessage object.
+    // We implement this logic in messageReducer, which coalesces deltas into the message.
+    // `lineRewriter()` allows us to rewrite the last output with new text, which is one
+    // way of forwarding the streamed output to a visual interface.
+    let writeLine = lineRewriter();
+    let message = {} as ChatCompletionMessage;
+    for await (const chunk of stream) {
+      message = messageReducer(message, chunk);
+      writeLine(message);
+    }
+    console.log();
+    messages.push(message);
+
+    // If there is no function call, we're done and can exit this loop
+    if (!message.function_call) {
+      return;
+    }
+
+    // If there is a function call, we generate a new message with the role 'function'.
+    const result = await callFunction(message.function_call);
+    const newMessage = {
+      role: 'function' as const,
+      name: message.function_call.name!,
+      content: JSON.stringify(result),
+    };
+    messages.push(newMessage);
+
+    console.log(newMessage);
+    console.log();
+  }
+}
+
+function messageReducer(previous: ChatCompletionMessage, item: ChatCompletionChunk): ChatCompletionMessage {
+  const reduce = (acc: any, delta: any) => {
+    acc = { ...acc };
+    for (const [key, value] of Object.entries(delta)) {
+      if (acc[key] === undefined || acc[key] === null) {
+        acc[key] = value;
+      } else if (typeof acc[key] === 'string' && typeof value === 'string') {
+        (acc[key] as string) += value;
+      } else if (typeof acc[key] === 'object' && !Array.isArray(acc[key])) {
+        acc[key] = reduce(acc[key], value);
+      }
+    }
+    return acc;
+  };
+
+  return reduce(previous, item.choices[0]!.delta) as ChatCompletionMessage;
+}
+
+function lineRewriter() {
+  let lastMessageLength = 0;
+  return function write(value: any) {
+    process.stdout.cursorTo(0);
+    process.stdout.moveCursor(0, -Math.floor((lastMessageLength - 1) / process.stdout.columns));
+    lastMessageLength = util.formatWithOptions({ colors: false, breakLength: Infinity }, value).length;
+    process.stdout.write(util.formatWithOptions({ colors: true, breakLength: Infinity }, value));
+  };
+}
+
+const db = [
+  {
+    id: 'a1',
+    name: 'To Kill a Mockingbird',
+    genre: 'historical',
+    description: `Compassionate, dramatic, and deeply moving, "To Kill A Mockingbird" takes readers to the roots of human behavior - to innocence and experience, kindness and cruelty, love and hatred, humor and pathos. Now with over 18 million copies in print and translated into forty languages, this regional story by a young Alabama woman claims universal appeal. Harper Lee always considered her book to be a simple love story. Today it is regarded as a masterpiece of American literature.`,
+  },
+  {
+    id: 'a2',
+    name: 'All the Light We Cannot See',
+    genre: 'historical',
+    description: `In a mining town in Germany, Werner Pfennig, an orphan, grows up with his younger sister, enchanted by a crude radio they find that brings them news and stories from places they have never seen or imagined. Werner becomes an expert at building and fixing these crucial new instruments and is enlisted to use his talent to track down the resistance. Deftly interweaving the lives of Marie-Laure and Werner, Doerr illuminates the ways, against all odds, people try to be good to one another.`,
+  },
+  {
+    id: 'a3',
+    name: 'Where the Crawdads Sing',
+    genre: 'historical',
+    description: `For years, rumors of the “Marsh Girl” haunted Barkley Cove, a quiet fishing village. Kya Clark is barefoot and wild; unfit for polite society. So in late 1969, when the popular Chase Andrews is found dead, locals immediately suspect her.
+
+But Kya is not what they say. A born naturalist with just one day of school, she takes life's lessons from the land, learning the real ways of the world from the dishonest signals of fireflies. But while she has the skills to live in solitude forever, the time comes when she yearns to be touched and loved. Drawn to two young men from town, who are each intrigued by her wild beauty, Kya opens herself to a new and startling world—until the unthinkable happens.`,
+  },
+];
+
+async function list(genre: string) {
+  return db.filter((item) => item.genre === genre).map((item) => ({ name: item.name, id: item.id }));
+}
+
+async function search(name: string) {
+  return db.filter((item) => item.name.includes(name)).map((item) => ({ name: item.name, id: item.id }));
+}
+
+async function get(id: string) {
+  return db.find((item) => item.id === id)!;
+}
+
+main();
+
+
+================================================
+File: examples/function-call-stream.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import util from 'util';
+import OpenAI from 'openai';
+import {
+  ChatCompletionMessage,
+  ChatCompletionChunk,
+  ChatCompletionMessageParam,
+} from 'openai/resources/chat';
+
+// gets API Key from environment variable OPENAI_API_KEY
+const openai = new OpenAI();
+
+const functions: OpenAI.Chat.ChatCompletionCreateParams.Function[] = [
+  {
+    name: 'list',
+    description: 'list queries books by genre, and returns a list of names of books',
+    parameters: {
+      type: 'object',
+      properties: {
+        genre: { type: 'string', enum: ['mystery', 'nonfiction', 'memoir', 'romance', 'historical'] },
+      },
+    },
+  },
+  {
+    name: 'search',
+    description: 'search queries books by their name and returns a list of book names and their ids',
+    parameters: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+      },
+    },
+  },
+  {
+    name: 'get',
+    description:
+      "get returns a book's detailed information based on the id of the book. Note that this does not accept names, and only IDs, which you can get by using search.",
+    parameters: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+      },
+    },
+  },
+];
+
+async function callFunction(function_call: ChatCompletionMessage.FunctionCall): Promise<any> {
+  const args = JSON.parse(function_call.arguments!);
+  switch (function_call.name) {
+    case 'list':
+      return await list(args['genre']);
+
+    case 'search':
+      return await search(args['name']);
+
+    case 'get':
+      return await get(args['id']);
+
+    default:
+      throw new Error('No function found');
+  }
+}
+
+async function main() {
+  const messages: ChatCompletionMessageParam[] = [
+    {
+      role: 'system',
+      content:
+        'Please use our book database, which you can access using functions to answer the following questions.',
+    },
+    {
+      role: 'user',
+      content:
+        'I really enjoyed reading To Kill a Mockingbird, could you recommend me a book that is similar and tell me why?',
+    },
+  ];
+  console.log(messages[0]);
+  console.log(messages[1]);
+  console.log();
+
+  while (true) {
+    const stream = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages,
+      functions: functions,
+      stream: true,
+    });
+
+    // Since the stream returns chunks, we need to build up the ChatCompletionMessage object.
+    // We implement this logic in messageReducer, which coalesces deltas into the message.
+    // `lineRewriter()` allows us to rewrite the last output with new text, which is one
+    // way of forwarding the streamed output to a visual interface.
+    let writeLine = lineRewriter();
+    let message = {} as ChatCompletionMessage;
+    for await (const chunk of stream) {
+      message = messageReducer(message, chunk);
+      writeLine(message);
+    }
+    console.log();
+    messages.push(message);
+
+    // If there is no function call, we're done and can exit this loop
+    if (!message.function_call) {
+      return;
+    }
+
+    // If there is a function call, we generate a new message with the role 'function'.
+    const result = await callFunction(message.function_call);
+    const newMessage = {
+      role: 'function' as const,
+      name: message.function_call.name!,
+      content: JSON.stringify(result),
+    };
+    messages.push(newMessage);
+
+    console.log(newMessage);
+    console.log();
+  }
+}
+
+function messageReducer(previous: ChatCompletionMessage, item: ChatCompletionChunk): ChatCompletionMessage {
+  const reduce = (acc: any, delta: any) => {
+    acc = { ...acc };
+    for (const [key, value] of Object.entries(delta)) {
+      if (acc[key] === undefined || acc[key] === null) {
+        acc[key] = value;
+      } else if (typeof acc[key] === 'string' && typeof value === 'string') {
+        (acc[key] as string) += value;
+      } else if (typeof acc[key] === 'object' && !Array.isArray(acc[key])) {
+        acc[key] = reduce(acc[key], value);
+      }
+    }
+    return acc;
+  };
+
+  return reduce(previous, item.choices[0]!.delta) as ChatCompletionMessage;
+}
+
+function lineRewriter() {
+  let lastMessageLength = 0;
+  return function write(value: any) {
+    process.stdout.cursorTo(0);
+    process.stdout.moveCursor(0, -Math.floor((lastMessageLength - 1) / process.stdout.columns));
+    lastMessageLength = util.formatWithOptions({ colors: false, breakLength: Infinity }, value).length;
+    process.stdout.write(util.formatWithOptions({ colors: true, breakLength: Infinity }, value));
+  };
+}
+
+const db = [
+  {
+    id: 'a1',
+    name: 'To Kill a Mockingbird',
+    genre: 'historical',
+    description: `Compassionate, dramatic, and deeply moving, "To Kill A Mockingbird" takes readers to the roots of human behavior - to innocence and experience, kindness and cruelty, love and hatred, humor and pathos. Now with over 18 million copies in print and translated into forty languages, this regional story by a young Alabama woman claims universal appeal. Harper Lee always considered her book to be a simple love story. Today it is regarded as a masterpiece of American literature.`,
+  },
+  {
+    id: 'a2',
+    name: 'All the Light We Cannot See',
+    genre: 'historical',
+    description: `In a mining town in Germany, Werner Pfennig, an orphan, grows up with his younger sister, enchanted by a crude radio they find that brings them news and stories from places they have never seen or imagined. Werner becomes an expert at building and fixing these crucial new instruments and is enlisted to use his talent to track down the resistance. Deftly interweaving the lives of Marie-Laure and Werner, Doerr illuminates the ways, against all odds, people try to be good to one another.`,
+  },
+  {
+    id: 'a3',
+    name: 'Where the Crawdads Sing',
+    genre: 'historical',
+    description: `For years, rumors of the “Marsh Girl” haunted Barkley Cove, a quiet fishing village. Kya Clark is barefoot and wild; unfit for polite society. So in late 1969, when the popular Chase Andrews is found dead, locals immediately suspect her.
+
+But Kya is not what they say. A born naturalist with just one day of school, she takes life's lessons from the land, learning the real ways of the world from the dishonest signals of fireflies. But while she has the skills to live in solitude forever, the time comes when she yearns to be touched and loved. Drawn to two young men from town, who are each intrigued by her wild beauty, Kya opens herself to a new and startling world—until the unthinkable happens.`,
+  },
+];
+
+async function list(genre: string) {
+  return db.filter((item) => item.genre === genre).map((item) => ({ name: item.name, id: item.id }));
+}
+
+async function search(name: string) {
+  return db.filter((item) => item.name.includes(name)).map((item) => ({ name: item.name, id: item.id }));
+}
+
+async function get(id: string) {
+  return db.find((item) => item.id === id)!;
+}
+
+main();
+
+
+================================================
+File: examples/function-call.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import OpenAI from 'openai';
+import { ChatCompletionMessage, ChatCompletionMessageParam } from 'openai/resources/chat';
+
+// gets API Key from environment variable OPENAI_API_KEY
+const openai = new OpenAI();
+
+const functions: OpenAI.Chat.ChatCompletionCreateParams.Function[] = [
+  {
+    name: 'list',
+    description: 'list queries books by genre, and returns a list of names of books',
+    parameters: {
+      type: 'object',
+      properties: {
+        genre: { type: 'string', enum: ['mystery', 'nonfiction', 'memoir', 'romance', 'historical'] },
+      },
+    },
+  },
+  {
+    name: 'search',
+    description: 'search queries books by their name and returns a list of book names and their ids',
+    parameters: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+      },
+    },
+  },
+  {
+    name: 'get',
+    description:
+      "get returns a book's detailed information based on the id of the book. Note that this does not accept names, and only IDs, which you can get by using search.",
+    parameters: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+      },
+    },
+  },
+];
+
+async function callFunction(function_call: ChatCompletionMessage.FunctionCall): Promise<any> {
+  const args = JSON.parse(function_call.arguments!);
+  switch (function_call.name) {
+    case 'list':
+      return await list(args['genre']);
+
+    case 'search':
+      return await search(args['name']);
+
+    case 'get':
+      return await get(args['id']);
+
+    default:
+      throw new Error('No function found');
+  }
+}
+
+async function main() {
+  const messages: ChatCompletionMessageParam[] = [
+    {
+      role: 'system',
+      content:
+        'Please use our book database, which you can access using functions to answer the following questions.',
+    },
+    {
+      role: 'user',
+      content:
+        'I really enjoyed reading To Kill a Mockingbird, could you recommend me a book that is similar and tell me why?',
+    },
+  ];
+  console.log(messages[0]);
+  console.log(messages[1]);
+  console.log();
+
+  while (true) {
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages,
+      functions: functions,
+    });
+
+    const message = completion.choices[0]!.message;
+    messages.push(message);
+    console.log(message);
+
+    // If there is no function call, we're done and can exit this loop
+    if (!message.function_call) {
+      return;
+    }
+
+    // If there is a function call, we generate a new message with the role 'function'.
+    const result = await callFunction(message.function_call);
+    const newMessage = {
+      role: 'function' as const,
+      name: message.function_call.name!,
+      content: JSON.stringify(result),
+    };
+    messages.push(newMessage);
+
+    console.log(newMessage);
+    console.log();
+  }
+}
+
+const db = [
+  {
+    id: 'a1',
+    name: 'To Kill a Mockingbird',
+    genre: 'historical',
+    description: `Compassionate, dramatic, and deeply moving, "To Kill A Mockingbird" takes readers to the roots of human behavior - to innocence and experience, kindness and cruelty, love and hatred, humor and pathos. Now with over 18 million copies in print and translated into forty languages, this regional story by a young Alabama woman claims universal appeal. Harper Lee always considered her book to be a simple love story. Today it is regarded as a masterpiece of American literature.`,
+  },
+  {
+    id: 'a2',
+    name: 'All the Light We Cannot See',
+    genre: 'historical',
+    description: `In a mining town in Germany, Werner Pfennig, an orphan, grows up with his younger sister, enchanted by a crude radio they find that brings them news and stories from places they have never seen or imagined. Werner becomes an expert at building and fixing these crucial new instruments and is enlisted to use his talent to track down the resistance. Deftly interweaving the lives of Marie-Laure and Werner, Doerr illuminates the ways, against all odds, people try to be good to one another.`,
+  },
+  {
+    id: 'a3',
+    name: 'Where the Crawdads Sing',
+    genre: 'historical',
+    description: `For years, rumors of the “Marsh Girl” haunted Barkley Cove, a quiet fishing village. Kya Clark is barefoot and wild; unfit for polite society. So in late 1969, when the popular Chase Andrews is found dead, locals immediately suspect her.
+
+But Kya is not what they say. A born naturalist with just one day of school, she takes life's lessons from the land, learning the real ways of the world from the dishonest signals of fireflies. But while she has the skills to live in solitude forever, the time comes when she yearns to be touched and loved. Drawn to two young men from town, who are each intrigued by her wild beauty, Kya opens herself to a new and startling world—until the unthinkable happens.`,
+  },
+];
+
+async function list(genre: string) {
+  return db.filter((item) => item.genre === genre).map((item) => ({ name: item.name, id: item.id }));
+}
+
+async function search(name: string) {
+  return db.filter((item) => item.name.includes(name)).map((item) => ({ name: item.name, id: item.id }));
+}
+
+async function get(id: string) {
+  return db.find((item) => item.id === id)!;
+}
+
+main();
+
+
+================================================
+File: examples/logprobs.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import OpenAI from 'openai';
+
+// gets API Key from environment variable OPENAI_API_KEY
+const openai = new OpenAI();
+
+async function main() {
+  const stream = await openai.beta.chat.completions
+    .stream({
+      model: 'gpt-4',
+      messages: [{ role: 'user', content: 'Say this is a test' }],
+      stream: true,
+      logprobs: true,
+    })
+    .on('logprobs.content.delta', (logprob) => {
+      console.log(logprob);
+    });
+
+  console.dir(await stream.finalChatCompletion(), { depth: null });
+}
+
+main();
+
+
+================================================
+File: examples/parsing-run-tools.ts
+================================================
+import OpenAI from 'openai';
+import z from 'zod';
+import { zodFunction } from 'openai/helpers/zod';
+
+const Table = z.enum(['orders', 'customers', 'products']);
+const Column = z.enum([
+  'id',
+  'status',
+  'expected_delivery_date',
+  'delivered_at',
+  'shipped_at',
+  'ordered_at',
+  'canceled_at',
+]);
+const Operator = z.enum(['=', '>', '<', '<=', '>=', '!=']);
+const OrderBy = z.enum(['asc', 'desc']);
+
+const DynamicValue = z.object({
+  column_name: z.string(),
+});
+
+const Condition = z.object({
+  column: z.string(),
+  operator: Operator,
+  value: z.union([z.string(), z.number(), DynamicValue]),
+});
+
+const openai = new OpenAI();
+
+async function main() {
+  const runner = openai.beta.chat.completions
+    .runTools({
+      model: 'gpt-4o-2024-08-06',
+      messages: [{ role: 'user', content: `What are the last 10 orders?` }],
+      stream: true,
+      tools: [
+        zodFunction({
+          name: 'query',
+          function: (args) => {
+            return { table_name: args.table_name, data: fakeOrders };
+          },
+          parameters: z.object({
+            location: z.string(),
+            table_name: Table,
+            columns: z.array(Column),
+            conditions: z.array(Condition),
+            order_by: OrderBy,
+          }),
+        }),
+      ],
+    })
+    .on('tool_calls.function.arguments.done', (props) =>
+      console.log(`parsed function arguments: ${props.parsed_arguments}`),
+    );
+
+  await runner.done();
+
+  console.dir(runner.messages, { depth: 10 });
+}
+
+const fakeOrders = [
+  {
+    orderId: 'ORD-001',
+    customerName: 'Alice Johnson',
+    products: [{ name: 'Wireless Headphones', quantity: 1, price: 89.99 }],
+    totalPrice: 89.99,
+    orderDate: '2024-08-02',
+  },
+  {
+    orderId: 'ORD-002',
+    customerName: 'Bob Smith',
+    products: [
+      { name: 'Smartphone Case', quantity: 2, price: 19.99 },
+      { name: 'Screen Protector', quantity: 1, price: 9.99 },
+    ],
+    totalPrice: 49.97,
+    orderDate: '2024-08-03',
+  },
+  {
+    orderId: 'ORD-003',
+    customerName: 'Carol Davis',
+    products: [
+      { name: 'Laptop', quantity: 1, price: 999.99 },
+      { name: 'Mouse', quantity: 1, price: 29.99 },
+    ],
+    totalPrice: 1029.98,
+    orderDate: '2024-08-04',
+  },
+  {
+    orderId: 'ORD-004',
+    customerName: 'David Wilson',
+    products: [{ name: 'Coffee Maker', quantity: 1, price: 79.99 }],
+    totalPrice: 79.99,
+    orderDate: '2024-08-05',
+  },
+  {
+    orderId: 'ORD-005',
+    customerName: 'Eva Brown',
+    products: [
+      { name: 'Fitness Tracker', quantity: 1, price: 129.99 },
+      { name: 'Water Bottle', quantity: 2, price: 14.99 },
+    ],
+    totalPrice: 159.97,
+    orderDate: '2024-08-06',
+  },
+  {
+    orderId: 'ORD-006',
+    customerName: 'Frank Miller',
+    products: [
+      { name: 'Gaming Console', quantity: 1, price: 499.99 },
+      { name: 'Controller', quantity: 2, price: 59.99 },
+    ],
+    totalPrice: 619.97,
+    orderDate: '2024-08-07',
+  },
+  {
+    orderId: 'ORD-007',
+    customerName: 'Grace Lee',
+    products: [{ name: 'Bluetooth Speaker', quantity: 1, price: 69.99 }],
+    totalPrice: 69.99,
+    orderDate: '2024-08-08',
+  },
+  {
+    orderId: 'ORD-008',
+    customerName: 'Henry Taylor',
+    products: [
+      { name: 'Smartwatch', quantity: 1, price: 199.99 },
+      { name: 'Watch Band', quantity: 2, price: 24.99 },
+    ],
+    totalPrice: 249.97,
+    orderDate: '2024-08-09',
+  },
+  {
+    orderId: 'ORD-009',
+    customerName: 'Isla Garcia',
+    products: [
+      { name: 'Tablet', quantity: 1, price: 349.99 },
+      { name: 'Tablet Case', quantity: 1, price: 29.99 },
+      { name: 'Stylus', quantity: 1, price: 39.99 },
+    ],
+    totalPrice: 419.97,
+    orderDate: '2024-08-10',
+  },
+  {
+    orderId: 'ORD-010',
+    customerName: 'Jack Robinson',
+    products: [{ name: 'Wireless Charger', quantity: 2, price: 34.99 }],
+    totalPrice: 69.98,
+    orderDate: '2024-08-11',
+  },
+];
+
+main();
+
+
+================================================
+File: examples/parsing-stream.ts
+================================================
+import { zodResponseFormat } from 'openai/helpers/zod';
+import OpenAI from 'openai/index';
+import { z } from 'zod';
+
+const Step = z.object({
+  explanation: z.string(),
+  output: z.string(),
+});
+
+const MathResponse = z.object({
+  steps: z.array(Step),
+  final_answer: z.string(),
+});
+
+async function main() {
+  const client = new OpenAI();
+
+  const stream = client.beta.chat.completions
+    .stream({
+      model: 'gpt-4o-2024-08-06',
+      messages: [
+        {
+          role: 'user',
+          content: `What's the weather like in SF?`,
+        },
+      ],
+      response_format: zodResponseFormat(MathResponse, 'math_response'),
+    })
+    .on('refusal.delta', ({ delta }) => {
+      process.stdout.write(delta);
+    })
+    .on('refusal.done', () => console.log('\n\nrequest refused 😱'))
+    .on('content.delta', ({ snapshot, parsed }) => {
+      console.log('content:', snapshot);
+      console.log('parsed:', parsed);
+      console.log();
+    })
+    .on('content.done', (props) => {
+      if (props.parsed) {
+        console.log('\n\nfinished parsing!');
+        console.log(`answer: ${props.parsed.final_answer}`);
+      }
+    });
+
+  await stream.done();
+
+  const completion = await stream.finalChatCompletion();
+
+  console.dir(completion, { depth: 5 });
+
+  const message = completion.choices[0]?.message;
+  if (message?.parsed) {
+    console.log(message.parsed.steps);
+  }
+}
+
+main();
+
+
+================================================
+File: examples/parsing-tools-stream.ts
+================================================
+import { zodFunction } from 'openai/helpers/zod';
+import OpenAI from 'openai/index';
+import { z } from 'zod';
+
+const GetWeatherArgs = z.object({
+  city: z.string(),
+  country: z.string(),
+  units: z.enum(['c', 'f']).default('c'),
+});
+
+async function main() {
+  const client = new OpenAI();
+  const refusal = process.argv.includes('refusal');
+
+  const stream = client.beta.chat.completions
+    .stream({
+      model: 'gpt-4o-2024-08-06',
+      messages: [
+        {
+          role: 'user',
+          content: refusal ? 'How do I make anthrax?' : `What's the weather like in SF?`,
+        },
+      ],
+      tools: [zodFunction({ name: 'get_weather', parameters: GetWeatherArgs })],
+    })
+    .on('tool_calls.function.arguments.delta', (props) =>
+      console.log('tool_calls.function.arguments.delta', props),
+    )
+    .on('tool_calls.function.arguments.done', (props) =>
+      console.log('tool_calls.function.arguments.done', props),
+    )
+    .on('refusal.delta', ({ delta }) => {
+      process.stdout.write(delta);
+    })
+    .on('refusal.done', () => console.log('\n\nrequest refused 😱'));
+
+  const completion = await stream.finalChatCompletion();
+
+  console.log('final completion:');
+  console.dir(completion, { depth: 10 });
+}
+
+main();
+
+
+================================================
+File: examples/parsing-tools.ts
+================================================
+import { zodFunction } from 'openai/helpers/zod';
+import OpenAI from 'openai/index';
+import { z } from 'zod';
+
+const Table = z.enum(['orders', 'customers', 'products']);
+
+const Column = z.enum([
+  'id',
+  'status',
+  'expected_delivery_date',
+  'delivered_at',
+  'shipped_at',
+  'ordered_at',
+  'canceled_at',
+]);
+
+const Operator = z.enum(['=', '>', '<', '<=', '>=', '!=']);
+
+const OrderBy = z.enum(['asc', 'desc']);
+
+const DynamicValue = z.object({
+  column_name: z.string(),
+});
+
+const Condition = z.object({
+  column: z.string(),
+  operator: Operator,
+  value: z.union([z.string(), z.number(), DynamicValue]),
+});
+
+const Query = z.object({
+  table_name: Table,
+  columns: z.array(Column),
+  conditions: z.array(Condition),
+  order_by: OrderBy,
+});
+
+async function main() {
+  const client = new OpenAI();
+
+  const completion = await client.beta.chat.completions.parse({
+    model: 'gpt-4o-2024-08-06',
+    messages: [
+      {
+        role: 'system',
+        content:
+          'You are a helpful assistant. The current date is August 6, 2024. You help users query for the data they are looking for by calling the query function.',
+      },
+      {
+        role: 'user',
+        content:
+          'look up all my orders in november of last year that were fulfilled but not delivered on time',
+      },
+    ],
+    tools: [zodFunction({ name: 'query', parameters: Query })],
+  });
+  console.dir(completion, { depth: 10 });
+
+  const toolCall = completion.choices[0]?.message.tool_calls?.[0];
+  if (toolCall) {
+    const args = toolCall.function.parsed_arguments as z.infer<typeof Query>;
+    console.log(args);
+    console.log(args.table_name);
+  }
+}
+
+main();
+
+
+================================================
+File: examples/parsing.ts
+================================================
+import { zodResponseFormat } from 'openai/helpers/zod';
+import OpenAI from 'openai/index';
+import { z } from 'zod';
+
+const Step = z.object({
+  explanation: z.string(),
+  output: z.string(),
+});
+
+const MathResponse = z.object({
+  steps: z.array(Step),
+  final_answer: z.string(),
+});
+
+async function main() {
+  const client = new OpenAI();
+
+  const completion = await client.beta.chat.completions.parse({
+    model: 'gpt-4o-2024-08-06',
+    messages: [
+      { role: 'system', content: 'You are a helpful math tutor.' },
+      { role: 'user', content: 'solve 8x + 31 = 2' },
+    ],
+    response_format: zodResponseFormat(MathResponse, 'math_response'),
+  });
+
+  console.dir(completion, { depth: 5 });
+
+  const message = completion.choices[0]?.message;
+  if (message?.parsed) {
+    console.log(message.parsed.steps);
+    console.log(`answer: ${message.parsed.final_answer}`);
+  }
+}
+
+main();
+
+
+================================================
+File: examples/raw-response.ts
+================================================
+#!/usr/bin/env -S yarn tsn -T
+
+import OpenAI from 'openai';
+
+// gets API Key from environment variable OPENAI_API_KEY
+const client = new OpenAI();
+
+async function main() {
+  // getting just raw Response:
+  {
+    const response = await client.completions
+      .create({
+        prompt: 'Say this is a test',
+        model: 'gpt-3.5-turbo-instruct',
+      })
+      .asResponse();
+    console.log(`response headers: `, Object.fromEntries(response.headers.entries()));
+    console.log(`response json: `, await response.json());
+  }
+
+  // getting the usual return value plus raw Response:
+  {
+    const { data: completion, response } = await client.completions
+      .create({
+        prompt: 'Say this is a test',
+        model: 'gpt-3.5-turbo-instruct',
+      })
+      .withResponse();
+    console.log(`response headers: `, Object.fromEntries(response.headers.entries()));
+    console.log(`completion: `, completion);
+  }
+}
+
+main().catch(console.error);
+
+
+================================================
+File: examples/stream-to-client-browser.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+/**
+ * This file is intended be run from the command-line with Node
+ * for easy demo purposes, but simulating use in the browser.
+ *
+ * To run it in a browser application, copy/paste it into a frontend application,
+ * remove the 'node-fetch' import, and replace `process.stdout.write` with
+ * a console.log or UI display.
+ */
+import fetch from 'node-fetch';
+import { ChatCompletionStream } from 'openai/lib/ChatCompletionStream';
+
+fetch('http://localhost:3000', {
+  method: 'POST',
+  body: 'Tell me why dogs are better than cats',
+  headers: { 'Content-Type': 'text/plain' },
+}).then(async (res) => {
+  // @ts-ignore ReadableStream on different environments can be strange
+  const runner = ChatCompletionStream.fromReadableStream(res.body);
+
+  runner.on('content', (delta, snapshot) => {
+    process.stdout.write(delta);
+    // or, in a browser, you might display like this:
+    // document.body.innerText += delta; // or:
+    // document.body.innerText = snapshot;
+  });
+
+  console.dir(await runner.finalChatCompletion(), { depth: null });
+});
+
+
+================================================
+File: examples/stream-to-client-express.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+// This file demonstrates how to stream from the server the chunks as
+// a new-line separated JSON-encoded stream.
+
+import OpenAI from 'openai';
+import express, { Request, Response } from 'express';
+
+const openai = new OpenAI();
+const app = express();
+
+app.use(express.text());
+
+// This endpoint can be called with:
+//
+//   curl 127.0.0.1:3000 -N -X POST -H 'Content-Type: text/plain' \
+//     --data 'Can you explain why dogs are better than cats?'
+//
+// Or consumed with fetch:
+//
+//   fetch('http://localhost:3000', {
+//     method: 'POST',
+//     body: 'Tell me why dogs are better than cats',
+//   }).then(async res => {
+//     const runner = ChatCompletionStreamingRunner.fromReadableStream(res)
+//   })
+//
+// See examples/stream-to-client-browser.ts for a more complete example.
+app.post('/', async (req: Request, res: Response) => {
+  try {
+    console.log('Received request:', req.body);
+
+    const stream = openai.beta.chat.completions.stream({
+      model: 'gpt-3.5-turbo',
+      stream: true,
+      messages: [{ role: 'user', content: req.body }],
+    });
+
+    res.header('Content-Type', 'text/plain');
+    for await (const chunk of stream.toReadableStream()) {
+      res.write(chunk);
+    }
+
+    res.end();
+  } catch (e) {
+    console.error(e);
+  }
+});
+
+app.listen('3000', () => {
+  console.log('Started proxy express server');
+});
+
+
+================================================
+File: examples/stream-to-client-next.ts
+================================================
+import OpenAI from 'openai';
+import type { NextApiRequest, NextApiResponse } from 'next';
+
+// This file demonstrates how to stream from a Next.JS server as
+// a new-line separated JSON-encoded stream. This file cannot be run
+// without Next.JS scaffolding.
+
+export const runtime = 'edge';
+
+// This endpoint can be called with:
+//
+//   curl 127.0.0.1:3000 -N -X POST -H 'Content-Type: text/plain' \
+//     --data 'Can you explain why dogs are better than cats?'
+//
+// Or consumed with fetch:
+//
+//   fetch('http://localhost:3000', {
+//     method: 'POST',
+//     body: 'Tell me why dogs are better than cats',
+//   }).then(async res => {
+//     const runner = ChatCompletionStreamingRunner.fromReadableStream(res)
+//   })
+//
+// See examples/stream-to-client-browser.ts for a more complete example.
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const openai = new OpenAI();
+
+  const stream = openai.beta.chat.completions.stream({
+    model: 'gpt-3.5-turbo',
+    stream: true,
+    // @ts-ignore
+    messages: [{ role: 'user', content: await req.text() }],
+  });
+
+  return res.send(stream.toReadableStream());
+  // @ts-ignore -- Or, for the app router:
+  return new Response(stream.toReadableStream());
+}
+
+
+================================================
+File: examples/stream-to-client-raw.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+// This file demonstrates how to stream from the server as a text/plain
+// response with express and the stream async iterator.
+
+import OpenAI from 'openai';
+import express, { Request, Response } from 'express';
+
+const openai = new OpenAI();
+const app = express();
+
+app.use(express.text());
+
+// This endpoint can be called with:
+//
+//   curl 127.0.0.1:3000 -N -X POST -H 'Content-Type: text/plain' \
+//     --data 'Can you explain why dogs are better than cats?'
+//
+// Or consumed with fetch:
+//
+//   fetch('http://localhost:3000', {
+//     method: 'POST',
+//     body: 'Tell me why dogs are better than cats',
+//   }).then(async res => {
+//     const decoder = new TextDecoder();
+//     for await (const chunk of res.body) {
+//       console.log(`chunk: ${decoder.decode(chunk)}`);
+//     }
+//   })
+//
+app.post('/', async (req: Request, res: Response) => {
+  try {
+    console.log('Received request:', req.body);
+
+    const stream = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      stream: true,
+      messages: [{ role: 'user', content: req.body }],
+    });
+
+    res.header('Content-Type', 'text/plain');
+
+    // Sends each content stream chunk-by-chunk, such that the client
+    // ultimately receives a single string.
+    for await (const chunk of stream) {
+      res.write(chunk.choices[0]?.delta.content || '');
+    }
+
+    res.end();
+  } catch (e) {
+    console.error(e);
+  }
+});
+
+app.listen('3000', () => {
+  console.log('Started proxy express server');
+});
+
+
+================================================
+File: examples/stream.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import OpenAI from 'openai';
+
+const openai = new OpenAI();
+
+async function main() {
+  const runner = openai.beta.chat.completions
+    .stream({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: 'Say this is a test' }],
+    })
+    .on('message', (msg) => console.log(msg))
+    .on('content', (diff) => process.stdout.write(diff));
+
+  for await (const chunk of runner) {
+    console.log('chunk', chunk);
+  }
+
+  const result = await runner.finalChatCompletion();
+  console.log(result);
+}
+
+main();
+
+
+================================================
+File: examples/tool-call-helpers-zod.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import OpenAI from 'openai';
+import { RunnableToolFunctionWithParse } from 'openai/lib/RunnableFunction';
+import { JSONSchema } from 'openai/lib/jsonschema';
+import { ZodSchema, z } from 'zod';
+import { zodToJsonSchema } from 'zod-to-json-schema';
+
+// gets API Key from environment variable OPENAI_API_KEY
+const openai = new OpenAI();
+
+// Define your functions, alongside zod schemas.
+
+const ListParams = z.object({
+  genre: z.enum(['mystery', 'nonfiction', 'memoir', 'romance', 'historical']),
+});
+type ListParams = z.infer<typeof ListParams>;
+async function listBooks({ genre }: ListParams) {
+  return db.filter((item) => item.genre === genre).map((item) => ({ name: item.name, id: item.id }));
+}
+
+const SearchParams = z.object({
+  name: z.string(),
+});
+type SearchParams = z.infer<typeof SearchParams>;
+async function searchBooks({ name }: SearchParams) {
+  return db.filter((item) => item.name.includes(name)).map((item) => ({ name: item.name, id: item.id }));
+}
+
+const GetParams = z.object({
+  id: z.string(),
+});
+type GetParams = z.infer<typeof GetParams>;
+async function getBook({ id }: GetParams) {
+  return db.find((item) => item.id === id)!;
+}
+
+async function main() {
+  const runner = openai.beta.chat.completions
+    .runTools({
+      model: 'gpt-4-1106-preview',
+      stream: true,
+      tools: [
+        zodFunction({
+          function: listBooks,
+          schema: ListParams,
+          description: 'List queries books by genre, and returns a list of names of books',
+        }),
+        zodFunction({
+          function: searchBooks,
+          schema: SearchParams,
+          description: 'Search queries books by their name and returns a list of book names and their ids',
+        }),
+        zodFunction({
+          function: getBook,
+          schema: GetParams,
+          description:
+            "Get returns a book's detailed information based on the id of the book. Note that this does not accept names, and only IDs, which you can get by using search.",
+        }),
+      ],
+      messages: [
+        {
+          role: 'system',
+          content:
+            'Please use our book database, which you can access using functions to answer the following questions.',
+        },
+        {
+          role: 'user',
+          content:
+            'I really enjoyed reading To Kill a Mockingbird, could you recommend me a book that is similar and tell me why?',
+        },
+      ],
+    })
+    .on('message', (msg) => console.log('msg', msg))
+    .on('functionCall', (functionCall) => console.log('functionCall', functionCall))
+    .on('functionCallResult', (functionCallResult) => console.log('functionCallResult', functionCallResult))
+    .on('content', (diff) => process.stdout.write(diff));
+
+  const result = await runner.finalChatCompletion();
+  console.log();
+  console.log('messages');
+  console.log(runner.messages);
+
+  console.log();
+  console.log('final chat completion');
+  console.dir(result, { depth: null });
+}
+
+const db = [
+  {
+    id: 'a1',
+    name: 'To Kill a Mockingbird',
+    genre: 'historical',
+    description: `Compassionate, dramatic, and deeply moving, "To Kill A Mockingbird" takes readers to the roots of human behavior - to innocence and experience, kindness and cruelty, love and hatred, humor and pathos. Now with over 18 million copies in print and translated into forty languages, this regional story by a young Alabama woman claims universal appeal. Harper Lee always considered her book to be a simple love story. Today it is regarded as a masterpiece of American literature.`,
+  },
+  {
+    id: 'a2',
+    name: 'All the Light We Cannot See',
+    genre: 'historical',
+    description: `In a mining town in Germany, Werner Pfennig, an orphan, grows up with his younger sister, enchanted by a crude radio they find that brings them news and stories from places they have never seen or imagined. Werner becomes an expert at building and fixing these crucial new instruments and is enlisted to use his talent to track down the resistance. Deftly interweaving the lives of Marie-Laure and Werner, Doerr illuminates the ways, against all odds, people try to be good to one another.`,
+  },
+  {
+    id: 'a3',
+    name: 'Where the Crawdads Sing',
+    genre: 'historical',
+    description: `For years, rumors of the “Marsh Girl” haunted Barkley Cove, a quiet fishing village. Kya Clark is barefoot and wild; unfit for polite society. So in late 1969, when the popular Chase Andrews is found dead, locals immediately suspect her.
+But Kya is not what they say. A born naturalist with just one day of school, she takes life's lessons from the land, learning the real ways of the world from the dishonest signals of fireflies. But while she has the skills to live in solitude forever, the time comes when she yearns to be touched and loved. Drawn to two young men from town, who are each intrigued by her wild beauty, Kya opens herself to a new and startling world—until the unthinkable happens.`,
+  },
+];
+
+/**
+ * A generic utility function that returns a RunnableFunction
+ * you can pass to `.runTools()`,
+ * with a fully validated, typesafe parameters schema.
+ *
+ * You are encouraged to copy/paste this into your codebase!
+ */
+function zodFunction<T extends object>({
+  function: fn,
+  schema,
+  description = '',
+  name,
+}: {
+  function: (args: T) => Promise<object>;
+  schema: ZodSchema<T>;
+  description?: string;
+  name?: string;
+}): RunnableToolFunctionWithParse<T> {
+  return {
+    type: 'function',
+    function: {
+      function: fn,
+      name: name ?? fn.name,
+      description: description,
+      parameters: zodToJsonSchema(schema) as JSONSchema,
+      parse(input: string): T {
+        const obj = JSON.parse(input);
+        return schema.parse(obj);
+      },
+    },
+  };
+}
+
+main();
+
+
+================================================
+File: examples/tool-call-helpers.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import OpenAI from 'openai';
+import { RunnableToolFunction } from 'openai/lib/RunnableFunction';
+
+// gets API Key from environment variable OPENAI_API_KEY
+const openai = new OpenAI();
+
+/**
+ * Note, this will automatically ensure the model returns valid JSON,
+ * but won't ensure it conforms to your schema.
+ *
+ * For that functionality, please see the `tool-call-helpers-zod.ts` example,
+ * which shows a fully typesafe, schema-validating version.
+ */
+const tools: RunnableToolFunction<any>[] = [
+  {
+    type: 'function',
+    function: {
+      name: 'list',
+      description: 'list queries books by genre, and returns a list of names of books',
+      parameters: {
+        type: 'object',
+        properties: {
+          genre: { type: 'string', enum: ['mystery', 'nonfiction', 'memoir', 'romance', 'historical'] },
+        },
+      },
+      function: list,
+      parse: JSON.parse,
+    },
+  } as RunnableToolFunction<{ genre: string }>,
+  {
+    type: 'function',
+    function: {
+      name: 'search',
+      description: 'search queries books by their name and returns a list of book names and their ids',
+      parameters: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+        },
+      },
+      function: search,
+      parse: JSON.parse,
+    },
+  } as RunnableToolFunction<{ name: string }>,
+  {
+    type: 'function',
+    function: {
+      name: 'get',
+      description:
+        "get returns a book's detailed information based on the id of the book. Note that this does not accept names, and only IDs, which you can get by using search.",
+      parameters: {
+        type: 'object',
+        properties: {
+          id: { type: 'string' },
+        },
+      },
+      function: get,
+      parse: JSON.parse,
+    },
+  } as RunnableToolFunction<{ id: string }>,
+];
+
+async function main() {
+  const runner = await openai.beta.chat.completions
+    .runTools({
+      model: 'gpt-4-1106-preview',
+      stream: true,
+      tools,
+      messages: [
+        {
+          role: 'system',
+          content:
+            'Please use our book database, which you can access using functions to answer the following questions.',
+        },
+        {
+          role: 'user',
+          content:
+            'I really enjoyed reading To Kill a Mockingbird, could you recommend me a book that is similar and tell me why?',
+        },
+      ],
+    })
+    .on('message', (msg) => console.log('msg', msg))
+    .on('functionCall', (functionCall) => console.log('functionCall', functionCall))
+    .on('functionCallResult', (functionCallResult) => console.log('functionCallResult', functionCallResult))
+    .on('content', (diff) => process.stdout.write(diff));
+
+  const result = await runner.finalChatCompletion();
+  console.log();
+  console.log('messages');
+  console.log(runner.messages);
+
+  console.log();
+  console.log('final chat completion');
+  console.dir(result, { depth: null });
+}
+
+const db = [
+  {
+    id: 'a1',
+    name: 'To Kill a Mockingbird',
+    genre: 'historical',
+    description: `Compassionate, dramatic, and deeply moving, "To Kill A Mockingbird" takes readers to the roots of human behavior - to innocence and experience, kindness and cruelty, love and hatred, humor and pathos. Now with over 18 million copies in print and translated into forty languages, this regional story by a young Alabama woman claims universal appeal. Harper Lee always considered her book to be a simple love story. Today it is regarded as a masterpiece of American literature.`,
+  },
+  {
+    id: 'a2',
+    name: 'All the Light We Cannot See',
+    genre: 'historical',
+    description: `In a mining town in Germany, Werner Pfennig, an orphan, grows up with his younger sister, enchanted by a crude radio they find that brings them news and stories from places they have never seen or imagined. Werner becomes an expert at building and fixing these crucial new instruments and is enlisted to use his talent to track down the resistance. Deftly interweaving the lives of Marie-Laure and Werner, Doerr illuminates the ways, against all odds, people try to be good to one another.`,
+  },
+  {
+    id: 'a3',
+    name: 'Where the Crawdads Sing',
+    genre: 'historical',
+    description: `For years, rumors of the “Marsh Girl” haunted Barkley Cove, a quiet fishing village. Kya Clark is barefoot and wild; unfit for polite society. So in late 1969, when the popular Chase Andrews is found dead, locals immediately suspect her.
+But Kya is not what they say. A born naturalist with just one day of school, she takes life's lessons from the land, learning the real ways of the world from the dishonest signals of fireflies. But while she has the skills to live in solitude forever, the time comes when she yearns to be touched and loved. Drawn to two young men from town, who are each intrigued by her wild beauty, Kya opens herself to a new and startling world—until the unthinkable happens.`,
+  },
+];
+
+async function list({ genre }: { genre: string }) {
+  return db.filter((item) => item.genre === genre).map((item) => ({ name: item.name, id: item.id }));
+}
+
+async function search({ name }: { name: string }) {
+  return db.filter((item) => item.name.includes(name)).map((item) => ({ name: item.name, id: item.id }));
+}
+
+async function get({ id }: { id: string }) {
+  return db.find((item) => item.id === id)!;
+}
+
+main();
+
+
+================================================
+File: examples/tool-calls-stream.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+//
+//
+//
+//
+//
+//
+// Note: this file is provided for completeness,
+// but much more convenient ways of streaming tool calls are available
+// with the `.stream()` and `.runTools()` helpers.
+//
+// See the `tool-call-helpers.ts` and `stream.ts` examples for usage,
+// or the README for documentation.
+//
+//
+//
+//
+//
+//
+
+import util from 'util';
+import OpenAI from 'openai';
+import {
+  ChatCompletionMessage,
+  ChatCompletionChunk,
+  ChatCompletionMessageParam,
+} from 'openai/resources/chat';
+
+// Used so that the each chunk coming in is noticable
+const CHUNK_DELAY_MS = 100;
+
+// gets API Key from environment variable OPENAI_API_KEY
+const openai = new OpenAI();
+
+const tools: OpenAI.Chat.Completions.ChatCompletionTool[] = [
+  {
+    type: 'function',
+    function: {
+      name: 'list',
+      description: 'list queries books by genre, and returns a list of names of books',
+      parameters: {
+        type: 'object',
+        properties: {
+          genre: { type: 'string', enum: ['mystery', 'nonfiction', 'memoir', 'romance', 'historical'] },
+        },
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'search',
+      description: 'search queries books by their name and returns a list of book names and their ids',
+      parameters: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+        },
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'get',
+      description:
+        "get returns a book's detailed information based on the id of the book. Note that this does not accept names, and only IDs, which you can get by using search.",
+      parameters: {
+        type: 'object',
+        properties: {
+          id: { type: 'string' },
+        },
+      },
+    },
+  },
+];
+
+async function callTool(tool_call: OpenAI.Chat.Completions.ChatCompletionMessageToolCall): Promise<any> {
+  if (tool_call.type !== 'function') throw new Error('Unexpected tool_call type:' + tool_call.type);
+  const args = JSON.parse(tool_call.function.arguments);
+  switch (tool_call.function.name) {
+    case 'list':
+      return await list(args['genre']);
+
+    case 'search':
+      return await search(args['name']);
+
+    case 'get':
+      return await get(args['id']);
+
+    default:
+      throw new Error('No function found');
+  }
+}
+
+async function main() {
+  const messages: ChatCompletionMessageParam[] = [
+    {
+      role: 'system',
+      content:
+        'Please use our book database, which you can access using functions to answer the following questions.',
+    },
+    {
+      role: 'user',
+      content:
+        'I really enjoyed reading To Kill a Mockingbird, could you recommend me a book that is similar and tell me why?',
+    },
+  ];
+  console.log(messages[0]);
+  console.log();
+  console.log(messages[1]);
+  console.log();
+
+  while (true) {
+    const stream = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages,
+      tools: tools,
+      stream: true,
+    });
+
+    // Since the stream returns chunks, we need to build up the ChatCompletionMessage object.
+    // We implement this logic in messageReducer, which coalesces deltas into the message.
+    // `lineRewriter()` allows us to rewrite the last output with new text, which is one
+    // way of forwarding the streamed output to a visual interface.
+    let writeLine = lineRewriter();
+    let message = {} as ChatCompletionMessage;
+    for await (const chunk of stream) {
+      message = messageReducer(message, chunk);
+      writeLine(message);
+
+      // Add a small delay so that the chunks coming in are noticablej
+      await new Promise((resolve) => setTimeout(resolve, CHUNK_DELAY_MS));
+    }
+    console.log();
+    messages.push(message);
+
+    // If there are no tool calls, we're done and can exit this loop
+    if (!message.tool_calls) {
+      return;
+    }
+
+    // If there are tool calls, we generate a new message with the role 'tool' for each tool call.
+    for (const toolCall of message.tool_calls) {
+      const result = await callTool(toolCall);
+      const newMessage = {
+        tool_call_id: toolCall.id,
+        role: 'tool' as const,
+        name: toolCall.function.name,
+        content: JSON.stringify(result),
+      };
+      console.log(newMessage);
+      messages.push(newMessage);
+    }
+    console.log();
+  }
+}
+
+function messageReducer(previous: ChatCompletionMessage, item: ChatCompletionChunk): ChatCompletionMessage {
+  const reduce = (acc: any, delta: ChatCompletionChunk.Choice.Delta) => {
+    acc = { ...acc };
+    for (const [key, value] of Object.entries(delta)) {
+      if (acc[key] === undefined || acc[key] === null) {
+        acc[key] = value;
+        //  OpenAI.Chat.Completions.ChatCompletionMessageToolCall does not have a key, .index
+        if (Array.isArray(acc[key])) {
+          for (const arr of acc[key]) {
+            delete arr.index;
+          }
+        }
+      } else if (typeof acc[key] === 'string' && typeof value === 'string') {
+        acc[key] += value;
+      } else if (typeof acc[key] === 'number' && typeof value === 'number') {
+        acc[key] = value;
+      } else if (Array.isArray(acc[key]) && Array.isArray(value)) {
+        const accArray = acc[key];
+        for (let i = 0; i < value.length; i++) {
+          const { index, ...chunkTool } = value[i];
+          if (index - accArray.length > 1) {
+            throw new Error(
+              `Error: An array has an empty value when tool_calls are constructed. tool_calls: ${accArray}; tool: ${value}`,
+            );
+          }
+          accArray[index] = reduce(accArray[index], chunkTool);
+        }
+      } else if (typeof acc[key] === 'object' && typeof value === 'object') {
+        acc[key] = reduce(acc[key], value);
+      }
+    }
+    return acc;
+  };
+
+  const choice = item.choices[0];
+  if (!choice) {
+    // chunk contains information about usage and token counts
+    return previous;
+  }
+  return reduce(previous, choice.delta) as ChatCompletionMessage;
+}
+
+function lineRewriter() {
+  let lastMessageLines = 0;
+  return function write(value: any) {
+    process.stdout.cursorTo(0);
+    process.stdout.moveCursor(0, -lastMessageLines);
+
+    // calculate where to move cursor back for the next move.
+    const text = util.formatWithOptions({ colors: false, breakLength: Infinity, depth: 4 }, value);
+    const __LINE_BREAK_PLACE_HOLDER__ = '__LINE_BREAK_PLACE_HOLDER__';
+    const lines = text
+      // @ts-ignore-error this requires es2021
+      .replaceAll('\\n', __LINE_BREAK_PLACE_HOLDER__)
+      .split('\n')
+      // @ts-ignore-error this requires es2021
+      .map((line: string) => line.replaceAll(__LINE_BREAK_PLACE_HOLDER__, '\\n'));
+    lastMessageLines = -1;
+    for (const line of lines) {
+      const lineLength = line.length;
+      lastMessageLines += Math.ceil(lineLength / process.stdout.columns);
+    }
+    lastMessageLines = Math.max(lastMessageLines, 0);
+
+    process.stdout.clearScreenDown();
+    process.stdout.write(util.formatWithOptions({ colors: true, breakLength: Infinity, depth: 4 }, value));
+  };
+}
+const db: { id: string; name: string; genre: string; description: string }[] = [
+  {
+    id: 'a1',
+    name: 'To Kill a Mockingbird',
+    genre: 'historical',
+    description: `Compassionate, dramatic, and deeply moving, "To Kill A Mockingbird" takes readers to the roots of human behavior - to innocence and experience, kindness and cruelty, love and hatred, humor and pathos. Now with over 18 million copies in print and translated into forty languages, this regional story by a young Alabama woman claims universal appeal. Harper Lee always considered her book to be a simple love story. Today it is regarded as a masterpiece of American literature.`,
+  },
+  {
+    id: 'a2',
+    name: 'All the Light We Cannot See',
+    genre: 'historical',
+    description: `In a mining town in Germany, Werner Pfennig, an orphan, grows up with his younger sister, enchanted by a crude radio they find that brings them news and stories from places they have never seen or imagined. Werner becomes an expert at building and fixing these crucial new instruments and is enlisted to use his talent to track down the resistance. Deftly interweaving the lives of Marie-Laure and Werner, Doerr illuminates the ways, against all odds, people try to be good to one another.`,
+  },
+  {
+    id: 'a3',
+    name: 'Where the Crawdads Sing',
+    genre: 'historical',
+    description: `For years, rumors of the “Marsh Girl” haunted Barkley Cove, a quiet fishing village. Kya Clark is barefoot and wild; unfit for polite society. So in late 1969, when the popular Chase Andrews is found dead, locals immediately suspect her.
+
+But Kya is not what they say. A born naturalist with just one day of school, she takes life's lessons from the land, learning the real ways of the world from the dishonest signals of fireflies. But while she has the skills to live in solitude forever, the time comes when she yearns to be touched and loved. Drawn to two young men from town, who are each intrigued by her wild beauty, Kya opens herself to a new and startling world—until the unthinkable happens.`,
+  },
+];
+
+async function list(genre: string) {
+  return db.filter((item) => item.genre === genre).map((item) => ({ name: item.name, id: item.id }));
+}
+
+async function search(name: string) {
+  return db.filter((item) => item.name.includes(name)).map((item) => ({ name: item.name, id: item.id }));
+}
+
+async function get(id: string) {
+  return db.find((item) => item.id === id)!;
+}
+
+main();
+
+
+================================================
+File: examples/types.ts
+================================================
+#!/usr/bin/env -S npm run tsn -T
+
+import OpenAI from 'openai';
+
+// gets API Key from environment variable OPENAI_API_KEY
+const openai = new OpenAI();
+
+async function main() {
+  // Explicit non streaming params type:
+  const params: OpenAI.Chat.CompletionCreateParams = {
+    model: 'gpt-4',
+    messages: [{ role: 'user', content: 'Say this is a test!' }],
+  };
+  const completion = await openai.chat.completions.create(params);
+  console.log(completion.choices[0]?.message?.content);
+
+  // Explicit streaming params type:
+  const streaming_params: OpenAI.Chat.CompletionCreateParams = {
+    model: 'gpt-4',
+    messages: [{ role: 'user', content: 'Say this is a test!' }],
+    stream: true,
+  };
+
+  const stream = await openai.chat.completions.create(streaming_params);
+  for await (const chunk of stream) {
+    process.stdout.write(chunk.choices[0]?.delta?.content || '');
+  }
+  process.stdout.write('\n');
+}
+
+main();
+
+
+================================================
+File: examples/ui-generation.ts
+================================================
+import OpenAI from 'openai';
+import { z } from 'zod';
+import { zodResponseFormat } from 'openai/helpers/zod';
+
+const openai = new OpenAI();
+
+// `z.lazy()` can't infer recursive types so we have to explicitly
+// define the type ourselves here
+interface UI {
+  type: 'div' | 'button' | 'header' | 'section' | 'field' | 'form';
+  label: string;
+  children: Array<UI>;
+  attributes: {
+    value: string;
+    name: string;
+  }[];
+}
+
+const UISchema: z.ZodType<UI> = z.lazy(() =>
+  z.object({
+    type: z.enum(['div', 'button', 'header', 'section', 'field', 'form']),
+    label: z.string(),
+    children: z.array(UISchema),
+    attributes: z.array(
+      z.object({
+        name: z.string(),
+        value: z.string(),
+      }),
+    ),
+  }),
+);
+
+async function main() {
+  const completion = await openai.beta.chat.completions.parse({
+    model: 'gpt-4o-2024-08-06',
+    messages: [
+      {
+        role: 'system',
+        content: 'You are a UI generator AI. Convert the user input into a UI.',
+      },
+      { role: 'user', content: 'Make a User Profile Form' },
+    ],
+    response_format: zodResponseFormat(UISchema, 'ui'),
+  });
+
+  const message = completion.choices[0]!.message;
+  const ui = message.parsed;
+  console.dir(ui, { depth: 10 });
+}
+
+main();
+
+

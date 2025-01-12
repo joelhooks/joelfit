@@ -1,14 +1,10 @@
 import { z } from 'zod'
 
-export const codeBlockSchema = z.object({
+const codeBlockSchema = z.object({
   language: z.string().optional(),
   code: z.string(),
-})
-
-export const technicalDetailSchema = z.object({
-  title: z.string(),
-  description: z.string(),
-  examples: z.array(codeBlockSchema).optional(),
+  path: z.string().optional(),
+  explanation: z.string().optional()
 })
 
 export const contentSchema = z.object({
@@ -16,7 +12,7 @@ export const contentSchema = z.object({
     title: z.string(),
     author: z.string().optional(),
     date: z.string().optional(),
-    summary: z.string(),
+    summary: z.string()
   }),
   introduction: z.string(),
   mainPoints: z.array(z.string()),
@@ -25,13 +21,17 @@ export const contentSchema = z.object({
     content: z.string(),
     subsections: z.array(z.object({
       title: z.string(),
-      content: z.string(),
-    })).optional(),
+      content: z.string()
+    })).optional()
   })),
   codeExamples: z.array(codeBlockSchema).optional(),
   technical: z.object({
-    details: z.array(technicalDetailSchema),
-    implementation: z.array(codeBlockSchema),
+    details: z.array(z.object({
+      title: z.string(),
+      description: z.string(),
+      examples: z.array(codeBlockSchema).optional()
+    })),
+    implementation: z.array(codeBlockSchema)
   }).optional(),
-  references: z.array(z.string()).optional(),
+  references: z.array(z.string()).optional()
 }) 
