@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { PageHeader } from '@/components/page-header'
 import { ShoppingBag, Archive, Lightbulb } from 'lucide-react'
 import { ShoppingRepository } from '@/lib/repositories/shopping'
+import { ShoppingItem } from './shopping-item'
 
 export const metadata: Metadata = {
   title: 'Shopping List | High-Protein Meal Prep OS',
@@ -50,55 +51,50 @@ export default async function ShoppingListPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="bg-card border rounded-lg p-4">
                 <h3 className="font-medium mb-3">Meat Counter</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
+                <ul className="space-y-2">
                   {shoppingList.weeklyItems.meat.map((item, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <span className="flex-shrink-0">•</span>
-                      <span>{item}</span>
+                    <li key={index}>
+                      <ShoppingItem item={item} />
                     </li>
                   ))}
                 </ul>
               </div>
               <div className="bg-card border rounded-lg p-4">
                 <h3 className="font-medium mb-3">Dairy</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
+                <ul className="space-y-2">
                   {shoppingList.weeklyItems.dairy.map((item, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <span className="flex-shrink-0">•</span>
-                      <span>{item}</span>
+                    <li key={index}>
+                      <ShoppingItem item={item} />
                     </li>
                   ))}
                 </ul>
               </div>
               <div className="bg-card border rounded-lg p-4">
                 <h3 className="font-medium mb-3">Produce</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
+                <ul className="space-y-2">
                   {shoppingList.weeklyItems.produce.map((item, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <span className="flex-shrink-0">•</span>
-                      <span>{item}</span>
+                    <li key={index}>
+                      <ShoppingItem item={item} />
                     </li>
                   ))}
                 </ul>
               </div>
               <div className="bg-card border rounded-lg p-4">
                 <h3 className="font-medium mb-3">Frozen</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
+                <ul className="space-y-2">
                   {shoppingList.weeklyItems.frozen.map((item, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <span className="flex-shrink-0">•</span>
-                      <span>{item}</span>
+                    <li key={index}>
+                      <ShoppingItem item={item} />
                     </li>
                   ))}
                 </ul>
               </div>
               <div className="bg-card border rounded-lg p-4">
                 <h3 className="font-medium mb-3">Bulk</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
+                <ul className="space-y-2">
                   {shoppingList.weeklyItems.bulk.map((item, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <span className="flex-shrink-0">•</span>
-                      <span>{item}</span>
+                    <li key={index}>
+                      <ShoppingItem item={item} />
                     </li>
                   ))}
                 </ul>

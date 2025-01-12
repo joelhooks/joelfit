@@ -189,7 +189,7 @@ export function ClientTabs({ mealPlans, defaultPlan }: { mealPlans: MealPlan[], 
 
   return (
     <Tabs value={selectedPlan} onValueChange={setSelectedPlan} className="space-y-8">
-      <TabsList className="w-full border-b rounded-none p-0 h-auto bg-transparent">
+      <TabsList className="w-full justify-start border-b rounded-none p-0 h-auto bg-transparent">
         {mealPlans.map((plan) => (
           <TabsTrigger
             key={plan.slug}
