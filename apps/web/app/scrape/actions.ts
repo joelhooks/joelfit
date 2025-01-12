@@ -74,6 +74,13 @@ If certain fields are not present in the content, use empty arrays or omit optio
 // Default model for content extraction
 const SCRAPER_MODEL = 'gpt-4o-2024-08-06'
 
+// Helper to ensure objects are serializable
+const toSerializable = (obj: unknown) => {
+  if (obj === null || obj === undefined) return null
+  if (typeof obj === 'string' || typeof obj === 'number' || typeof obj === 'boolean') return obj
+  return JSON.parse(JSON.stringify(obj))
+}
+
 export async function scrapeUrl(url: string) {
   try {
     return createDataStreamResponse({
@@ -132,7 +139,7 @@ export async function scrapeUrl(url: string) {
         for await (const partial of partialObjectStream) {
           dataStream.writeData({ 
             status: 'generating', 
-            partial: JSON.parse(JSON.stringify(partial)) // Convert to plain object
+            partial: toSerializable(partial)
           })
         }
         
@@ -140,14 +147,14 @@ export async function scrapeUrl(url: string) {
       },
       onError: (error) => {
         console.error('Scraping failed:', error)
-        return error instanceof Error ? error.message : 'Unknown error'
+        return toSerializable(error instanceof Error ? error.message : 'Unknown error')
       },
     })
   } catch (error) {
     console.error('Scraping failed:', error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: toSerializable(error instanceof Error ? error.message : 'Unknown error'),
     }
   }
 } 
