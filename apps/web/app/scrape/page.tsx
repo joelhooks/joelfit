@@ -4,21 +4,21 @@ import { useState } from 'react'
 import { Button } from '@repo/ui'
 import { scrapeUrl } from './actions'
 import * as React from 'react'
-import { useUIState } from 'ai/rsc'
+import { LoadingState } from './components'
 
 export default function ScrapePage() {
   const [inputUrl, setInputUrl] = useState('')
   const [component, setComponent] = useState<React.ReactNode | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [uiState, setUIState] = useUIState()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (inputUrl) {
       try {
         setIsLoading(true)
-        const ui = await scrapeUrl(inputUrl)
-        setUIState(ui)
+        setComponent(<LoadingState />)
+        const result = await scrapeUrl(inputUrl)
+        setComponent(result)
       } catch (error) {
         console.error('Error scraping:', error)
         setComponent(
@@ -36,19 +36,18 @@ export default function ScrapePage() {
     setComponent(null)
     setInputUrl('')
     setIsLoading(false)
-    setUIState(null)
   }
 
   return (
     <div className="container mx-auto p-4">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Content Scraper</h1>
-        {(component || uiState) && (
+        {component && (
           <Button onClick={handleNewScrape}>New Scrape</Button>
         )}
       </div>
 
-      {!uiState ? (
+      {!component ? (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <input
@@ -69,7 +68,7 @@ export default function ScrapePage() {
           </p>
         </form>
       ) : (
-        <div>{uiState}</div>
+        <div>{component}</div>
       )}
     </div>
   )
