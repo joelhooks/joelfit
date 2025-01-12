@@ -9,23 +9,27 @@ import { Providers } from '@/components/providers'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://joelfit.app'),
   title: 'JoelFit',
   description: 'a personal health & fitness framework',
   openGraph: {
     title: 'JoelFit',
     description: 'a personal health & fitness framework',
-    images: [{
-      url: '/api/og',
-      width: 1200,
-      height: 630,
-    }],
+    images: [
+      {
+        url: `/api/og?title=${encodeURIComponent('JoelFit')}&description=${encodeURIComponent('a personal health & fitness framework')}`,
+        width: 1200,
+        height: 630,
+        alt: 'JoelFit'
+      }
+    ]
   },
   twitter: {
     card: 'summary_large_image',
     title: 'JoelFit',
     description: 'a personal health & fitness framework',
-    images: ['/api/og'],
-  },
+    images: [`/api/og?title=${encodeURIComponent('JoelFit')}&description=${encodeURIComponent('a personal health & fitness framework')}`]
+  }
 }
 
 export default function RootLayout({
