@@ -8,29 +8,29 @@ import { Readability } from '@mozilla/readability'
 import { JSDOM } from 'jsdom'
 
 const codeBlockSchema = z.object({
-  language: z.string().describe('Programming language of the code block'),
-  code: z.string().describe('The actual code content'),
-  context: z.string().optional().describe('Any surrounding context or explanation for the code'),
+  language: z.string().default('text'),
+  code: z.string(),
+  context: z.string().optional(),
 })
 
 const technicalDetailSchema = z.object({
-  type: z.enum(['formula', 'algorithm', 'configuration', 'architecture', 'other']),
-  content: z.string().describe('The technical detail content'),
-  explanation: z.string().describe('Explanation or context for the technical detail'),
+  type: z.enum(['formula', 'algorithm', 'configuration', 'architecture', 'other']).default('other'),
+  content: z.string(),
+  explanation: z.string().optional(),
 })
 
 const defaultSchema = z.object({
   metadata: z.object({
-    title: z.string().describe('The main title or heading of the page'),
-    description: z.string().describe('A brief description or summary of the page content'),
-    authors: z.array(z.string()).optional().describe('Authors of the content'),
-    publishDate: z.string().optional().describe('Publication date if available'),
-    lastUpdated: z.string().optional().describe('Last update date if available'),
-    topics: z.array(z.string()).describe('Main topics or categories covered'),
+    title: z.string(),
+    description: z.string(),
+    authors: z.array(z.string()).default([]),
+    publishDate: z.string().optional(),
+    lastUpdated: z.string().optional(),
+    topics: z.array(z.string()).default([]),
   }),
   content: z.object({
-    introduction: z.string().describe('Introduction or overview section'),
-    mainPoints: z.array(z.string()).describe('Key points or arguments made in the content'),
+    introduction: z.string(),
+    mainPoints: z.array(z.string()).default([]),
     sections: z.array(z.object({
       title: z.string(),
       content: z.string(),
@@ -38,23 +38,38 @@ const defaultSchema = z.object({
         title: z.string(),
         content: z.string(),
       })).optional(),
-    })),
-    conclusions: z.string().optional().describe('Conclusions or summary if present'),
+    })).default([]),
+    conclusions: z.string().optional(),
   }),
   technical: z.object({
-    codeBlocks: z.array(codeBlockSchema).describe('Code examples found in the content'),
-    technicalDetails: z.array(technicalDetailSchema).describe('Technical details, formulas, or algorithms'),
+    codeBlocks: z.array(codeBlockSchema).default([]),
+    technicalDetails: z.array(technicalDetailSchema).default([]),
     technologies: z.array(z.object({
       name: z.string(),
-      context: z.string().describe('How/where this technology is used or referenced'),
-    })),
-  }),
+      context: z.string(),
+    })).default([]),
+  }).default({}),
   references: z.array(z.object({
     text: z.string(),
     url: z.string(),
-    context: z.string().describe('Where/how this reference is used in the content'),
-  })).describe('Links and references with context'),
+    context: z.string().optional(),
+  })).default([]),
 })
+
+const SYSTEM_PROMPT = `You are a technical content analyzer. Your task is to extract structured information from web content.
+
+Follow these guidelines:
+1. Always include metadata.title and metadata.description
+2. Always include content.introduction
+3. Break down the content into logical sections
+4. Identify and preserve all technical information:
+   - Code blocks with their context
+   - Technical concepts and explanations
+   - Technologies mentioned and how they're used
+5. Capture all relevant links and references
+6. Keep technical details accurate and complete
+
+If certain fields are not present in the content, use empty arrays or omit optional fields rather than making up information.`
 
 export async function scrapeUrl(url: string) {
   try {
@@ -90,9 +105,7 @@ export async function scrapeUrl(url: string) {
       messages: [
         {
           role: 'system',
-          content: `Extract detailed, structured data from the webpage content. 
-          Pay special attention to technical details, code examples, and their context. 
-          Preserve all technical information accurately.`,
+          content: SYSTEM_PROMPT,
         },
         {
           role: 'user',
