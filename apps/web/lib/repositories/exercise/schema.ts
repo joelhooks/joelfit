@@ -8,10 +8,12 @@ export const exerciseCategorySchema = z.enum([
 ])
 
 export const exerciseTargetSchema = z.enum([
-  'shoulder',
+  'shoulder_anterior',
+  'shoulder_lateral',
+  'shoulder_posterior',
   'rotator_cuff',
-  'core',
-  'lower_body'
+  'scapula',
+  'traps'
 ])
 
 export const exerciseSchema = baseSchema.extend({

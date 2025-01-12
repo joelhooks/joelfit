@@ -1,20 +1,22 @@
 'use client'
 
 import { useState } from 'react'
-import { Clock, ChevronDown, Activity } from 'lucide-react'
+import { ChevronDown, Activity, Clock } from 'lucide-react'
+import { SetTracker } from '@/components/exercise/set-tracker'
+import type { Exercise as ExerciseType } from '@/lib/repositories/exercise/schema'
 
-type ExerciseStep = string
+type ExerciseProps = ExerciseType
 
-export interface ExerciseProps {
-  title: string
-  sets: string
-  frequency: string
-  execution: ExerciseStep[]
-  keyPoints?: string
-}
-
-export function Exercise({ title, sets, frequency, execution, keyPoints }: ExerciseProps) {
+export function Exercise({ title, sets, frequency, execution, keyPoints, category }: ExerciseProps) {
   const [isOpen, setIsOpen] = useState(true)
+  
+  const setsDisplay = sets.hold 
+    ? `${sets.count} × ${sets.hold}s hold`
+    : `${sets.count} × ${sets.reps} reps`
+
+  const frequencyDisplay = frequency.period === 'day'
+    ? frequency.times === 1 ? 'daily' : `${frequency.times}×/day`
+    : frequency.times === 1 ? 'weekly' : `${frequency.times}×/week`
   
   return (
     <div className="border rounded-lg p-3 bg-card text-card-foreground">
@@ -33,15 +35,17 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
           <div className="flex gap-4 text-xs text-muted-foreground mb-3">
             <div className="flex items-center gap-1.5">
               <Activity className="w-3.5 h-3.5 text-primary" />
-              {sets}
+              <span>{setsDisplay}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5 text-primary" />
-              {frequency}
+              <span>{frequencyDisplay}</span>
             </div>
           </div>
 
-          <div className="space-y-2">
+          <SetTracker totalSets={sets.count} />
+
+          <div className="space-y-2 mt-4">
             <h4 className="text-xs font-medium text-muted-foreground">Execution:</h4>
             <ul className="list-disc pl-4 space-y-1 text-xs text-muted-foreground">
               {execution.map((step, index) => (
