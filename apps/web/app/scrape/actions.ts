@@ -3,7 +3,7 @@
 import { chromium } from 'playwright'
 import { z } from 'zod'
 import { openai } from '@/lib/openai'
-import { generateObject } from 'ai'
+import { streamObject, createDataStreamResponse } from 'ai'
 import { Readability } from '@mozilla/readability'
 import { JSDOM } from 'jsdom'
 
@@ -72,53 +72,77 @@ Follow these guidelines:
 If certain fields are not present in the content, use empty arrays or omit optional fields rather than making up information.`
 
 // Default model for content extraction
-const SCRAPER_MODEL = 'gpt-4-turbo-preview'
+const SCRAPER_MODEL = 'gpt-4o-2024-08-06'
 
 export async function scrapeUrl(url: string) {
   try {
-    // Launch browser
-    const browser = await chromium.launch()
-    const page = await browser.newPage()
-    await page.goto(url)
+    return createDataStreamResponse({
+      execute: async (dataStream) => {
+        dataStream.writeData({ status: 'launching_browser' })
+        
+        // Launch browser
+        const browser = await chromium.launch()
+        const page = await browser.newPage()
+        await page.goto(url)
 
-    // Get page content
-    const html = await page.content()
-    const dom = new JSDOM(html)
-    const reader = new Readability(dom.window.document)
-    const article = reader.parse()
-    const content = article ? article.textContent : dom.window.document.body.textContent
+        dataStream.writeData({ status: 'extracting_content' })
+        
+        // Get page content
+        const html = await page.content()
+        const dom = new JSDOM(html)
+        const reader = new Readability(dom.window.document)
+        const article = reader.parse()
+        const content = article ? article.textContent : dom.window.document.body.textContent
 
-    // Get code blocks
-    const codeBlocks = await page.evaluate(() => {
-      const blocks = Array.from(document.querySelectorAll('pre code, .highlight'))
-      return blocks.map(block => ({
-        language: block.className.match(/language-(\w+)/)?.[1] || 'text',
-        code: block.textContent || '',
-        context: block.parentElement?.previousElementSibling?.textContent || '',
-      }))
+        dataStream.writeData({ status: 'extracting_code_blocks' })
+        
+        // Get code blocks
+        const codeBlocks = await page.evaluate(() => {
+          const blocks = Array.from(document.querySelectorAll('pre code, .highlight'))
+          return blocks.map(block => ({
+            language: block.className.match(/language-(\w+)/)?.[1] || 'text',
+            code: block.textContent || '',
+            context: block.parentElement?.previousElementSibling?.textContent || '',
+          }))
+        })
+
+        await browser.close()
+
+        dataStream.writeData({ status: 'analyzing_content' })
+
+        // Stream the AI analysis
+        const { partialObjectStream } = streamObject({
+          model: openai(process.env.SCRAPER_MODEL || SCRAPER_MODEL),
+          schema: contentSchema,
+          schemaName: 'TechnicalContent',
+          schemaDescription: 'Structured representation of technical content from a webpage',
+          messages: [
+            {
+              role: 'system',
+              content: SYSTEM_PROMPT,
+            },
+            {
+              role: 'user',
+              content: `URL: ${url}\n\nContent: ${content}\n\nCode Blocks: ${JSON.stringify(codeBlocks, null, 2)}`,
+            },
+          ],
+        })
+
+        // Stream partial objects as they're generated
+        for await (const partial of partialObjectStream) {
+          dataStream.writeData({ 
+            status: 'generating', 
+            partial: JSON.parse(JSON.stringify(partial)) // Convert to plain object
+          })
+        }
+        
+        dataStream.writeData({ status: 'complete' })
+      },
+      onError: (error) => {
+        console.error('Scraping failed:', error)
+        return error instanceof Error ? error.message : 'Unknown error'
+      },
     })
-
-    await browser.close()
-
-    // Use AI SDK to extract structured data
-    const { object: data } = await generateObject({
-      model: openai(process.env.SCRAPER_MODEL || SCRAPER_MODEL),
-      schema: contentSchema,
-      schemaName: 'TechnicalContent',
-      schemaDescription: 'Structured representation of technical content from a webpage',
-      messages: [
-        {
-          role: 'system',
-          content: SYSTEM_PROMPT,
-        },
-        {
-          role: 'user',
-          content: `URL: ${url}\n\nContent: ${content}\n\nCode Blocks: ${JSON.stringify(codeBlocks, null, 2)}`,
-        },
-      ],
-    })
-
-    return { success: true, data }
   } catch (error) {
     console.error('Scraping failed:', error)
     return {
