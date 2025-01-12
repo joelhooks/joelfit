@@ -27,7 +27,7 @@ Keep that in mind at all times.
 - Use React Query for client-side data
 - `next-safe-action` for server actions
 - `nuqs` for URL state management
-- Shadcn for common components
+- Shadcn for common components which are in @repo/ui
 
 ## State & Data Flow
 - Server state > Client state
@@ -90,3 +90,4 @@ Keep that in mind at all times.
 - Test at package boundaries
 - No circular dependencies
 - Most dependencies aren't added to the root package.json
+- our components are in @repo/ui and are shared across apps
