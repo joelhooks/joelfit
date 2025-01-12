@@ -6,6 +6,7 @@ import { GeistMono } from 'geist/font/mono'
 import { SiteHeader } from '@/components/site-header'
 import { PageFooter } from '@/components/page-footer'
 import { Providers } from '@/components/providers'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 export const metadata: Metadata = {
   title: 'JoelFit',
@@ -40,9 +41,11 @@ export default function RootLayout({
           <div className="cyberpunk-noise" />
           
           <Providers>
-            <SiteHeader />
-            <div className="flex-1">{children}</div>
-            <PageFooter />
+            <NuqsAdapter>
+              <SiteHeader />
+              <div className="flex-1">{children}</div>
+              <PageFooter />
+            </NuqsAdapter>
           </Providers>
         </div>
       </body>
