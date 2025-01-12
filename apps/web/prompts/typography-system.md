@@ -105,43 +105,27 @@ const lineHeight = {
 - [x] Export components from UI package
 
 ### High Priority Updates
-- [x] Page Header
-  - [x] Update with new typography system
-  - [x] Test in routes:
-    - [x] /eat
-    - [x] /eat/recipes
-    - [x] /eat/framework
-    - [x] /eat/shopping
-  - [x] Document any responsive issues
-  - [x] Verify vertical rhythm
 
-- [x] Metrics Grid
-  - [x] Replace hard-coded pixel values
-  - [x] Apply responsive typography
-  - [x] Test in all breakpoints
+#### ✅ Page Header
+- [x] Update with new typography system
+- [x] Test in routes:
+  - [x] `/eat`
+  - [x] `/eat/recipes`
+  - [x] `/eat/framework`
+  - [x] `/eat/shopping`
+- [x] Document responsive issues
+- [x] Verify vertical rhythm
 
-- [x] Profile Components
-  - [x] ProfileHeader
-    - [x] Replace text-2xl with H1
-    - [x] Update metadata text with Text component
-    - [x] Add proper spacing
-  - [x] StrengthAreas
-    - [x] Replace text-[32px] with Text component
-    - [x] Update labels with Text variant="meta"
-    - [x] Ensure consistent spacing
-  - [x] ActionPlan
-    - [x] Update category titles with H3
-    - [x] Use Text for descriptions
-    - [x] Standardize card typography
-  - [x] NutritionProfile
-    - [x] Replace text-[32px] with Text component
-    - [x] Update percentages with Text variant="meta"
-    - [x] Standardize meal details typography
+#### ✅ Site Header
+- [x] Update navigation text
+- [x] Fix mobile typography
+- [x] Standardize menu items
 
-- [ ] Site Header
-  - [ ] Update navigation links
-  - [ ] Adjust logo sizing
-  - [ ] Test mobile menu
+#### Metrics Grid
+- [ ] Replace pixel values
+- [ ] Add responsive behavior
+- [ ] Standardize data display
+- [ ] Update section headers
 
 ### Documentation
 - [ ] Create typography usage guide in README.md
