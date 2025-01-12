@@ -1,10 +1,11 @@
-import { BaseRepository, SlugGenerationError } from '../base'
+import { BaseRepository, ValidationError } from '../base'
 import { Exercise, exerciseSchema, type NewExercise } from './schema'
 import { initialExercises } from './data'
 
 export class ExerciseRepository extends BaseRepository<Exercise, typeof exerciseSchema> {
   private initialized = false
   protected items: Exercise[] = []
+  private shouldLoadInitialData = true
 
   constructor() {
     super(exerciseSchema, 'exercise')
@@ -12,11 +13,11 @@ export class ExerciseRepository extends BaseRepository<Exercise, typeof exercise
 
   private async ensureInitialized() {
     if (!this.initialized) {
-      if (this.items.length === 0) {
+      if (this.items.length === 0 && this.shouldLoadInitialData) {
         const now = new Date()
-        this.items = initialExercises.map((item: NewExercise, index: number) => ({
+        this.items = initialExercises.map((item: NewExercise) => ({
           ...item,
-          id: `exercise-${index + 1}`,
+          id: crypto.randomUUID(),
           slug: this.generateSlug(item),
           createdAt: now,
           updatedAt: now
@@ -27,7 +28,7 @@ export class ExerciseRepository extends BaseRepository<Exercise, typeof exercise
   }
 
   public generateSlug(data: Partial<Exercise>): string {
-    if (!data.title) throw new SlugGenerationError('Exercise title is required')
+    if (!data.title) throw new ValidationError('Title is required')
     return data.title.toLowerCase()
       .replace(/[^\w\s-]/g, '')
       .replace(/[\s_-]+/g, '-')
@@ -73,5 +74,12 @@ export class ExerciseRepository extends BaseRepository<Exercise, typeof exercise
   protected async setData(data: Exercise[]): Promise<void> {
     this.items = data
     this.initialized = true
+  }
+
+  // For testing only
+  async reset(): Promise<void> {
+    this.items = []
+    this.initialized = false
+    this.shouldLoadInitialData = false
   }
 } 

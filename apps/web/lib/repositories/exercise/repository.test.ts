@@ -1,10 +1,15 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, beforeEach } from 'vitest'
 import { ExerciseRepository } from './repository'
 import { NotFoundError, ValidationError } from '../base'
 import type { NewExercise } from './schema'
 
 describe('ExerciseRepository', () => {
-  const repo = new ExerciseRepository()
+  let repo: ExerciseRepository
+
+  beforeEach(async () => {
+    repo = new ExerciseRepository()
+    await repo.reset()
+  })
 
   const mockExercise: NewExercise = {
     title: "Test Exercise",
@@ -28,19 +33,19 @@ describe('ExerciseRepository', () => {
 
   describe('findAll', () => {
     it('should return all exercises', async () => {
+      const exercise = await repo.create(mockExercise)
       const exercises = await repo.findAll()
       expect(exercises).toBeInstanceOf(Array)
-      expect(exercises.length).toBeGreaterThan(0)
-      expect(exercises[0]).toHaveProperty('id')
-      expect(exercises[0]).toHaveProperty('slug')
+      expect(exercises.length).toBe(1)
+      expect(exercises[0]).toEqual(exercise)
     })
   })
 
   describe('findById', () => {
     it('should find exercise by id', async () => {
-      const exercises = await repo.findAll()
-      const exercise = await repo.findById(exercises[0]!.id)
-      expect(exercise).toEqual(exercises[0])
+      const exercise = await repo.create(mockExercise)
+      const found = await repo.findById(exercise.id)
+      expect(found).toEqual(exercise)
     })
 
     it('should throw NotFoundError for non-existent id', async () => {
@@ -50,9 +55,9 @@ describe('ExerciseRepository', () => {
 
   describe('findBySlug', () => {
     it('should find exercise by slug', async () => {
-      const exercises = await repo.findAll()
-      const exercise = await repo.findBySlug(exercises[0]!.slug)
-      expect(exercise).toEqual(exercises[0])
+      const exercise = await repo.create(mockExercise)
+      const found = await repo.findBySlug(exercise.slug)
+      expect(found).toEqual(exercise)
     })
 
     it('should throw NotFoundError for non-existent slug', async () => {
@@ -83,6 +88,7 @@ describe('ExerciseRepository', () => {
         title: ""
       }
       await expect(repo.create(invalidExercise)).rejects.toThrow(ValidationError)
+      await expect(repo.create(invalidExercise)).rejects.toThrowError('Title is required')
     })
 
     it('should validate target area', async () => {
@@ -91,17 +97,18 @@ describe('ExerciseRepository', () => {
         targetArea: []
       }
       await expect(repo.create(invalidExercise)).rejects.toThrow(ValidationError)
+      await expect(repo.create(invalidExercise)).rejects.toThrowError('Must target at least one area')
     })
   })
 
   describe('update', () => {
     it('should update existing exercise', async () => {
-      const exercises = await repo.findAll()
-      const updated = await repo.update(exercises[0]!.id, {
+      const exercise = await repo.create(mockExercise)
+      const updated = await repo.update(exercise.id, {
         title: "Updated Title"
       })
       expect(updated.title).toBe("Updated Title")
-      expect(updated.id).toBe(exercises[0]!.id)
+      expect(updated.id).toBe(exercise.id)
     })
 
     it('should throw NotFoundError for non-existent id', async () => {
@@ -109,8 +116,8 @@ describe('ExerciseRepository', () => {
     })
 
     it('should validate updated fields', async () => {
-      const exercises = await repo.findAll()
-      await expect(repo.update(exercises[0]!.id, {
+      const exercise = await repo.create(mockExercise)
+      await expect(repo.update(exercise.id, {
         title: "" // invalid title
       })).rejects.toThrow(ValidationError)
     })
@@ -130,15 +137,15 @@ describe('ExerciseRepository', () => {
 
   describe('getByCategory', () => {
     it('should return exercises by category', async () => {
+      const exercise = await repo.create(mockExercise)
       const exercises = await repo.getByCategory('strength')
       expect(exercises).toBeInstanceOf(Array)
-      exercises.forEach(exercise => {
-        expect(exercise.category).toBe('strength')
-      })
+      expect(exercises).toContainEqual(exercise)
     })
 
     it('should return empty array for unused category', async () => {
-      const exercises = await repo.getByCategory('warmup')
+      await repo.create(mockExercise) // strength category
+      const exercises = await repo.getByCategory('mobility')
       expect(exercises).toBeInstanceOf(Array)
       expect(exercises.length).toBe(0)
     })
@@ -146,15 +153,15 @@ describe('ExerciseRepository', () => {
 
   describe('getByTarget', () => {
     it('should return exercises by target area', async () => {
+      const exercise = await repo.create(mockExercise)
       const exercises = await repo.getByTarget('shoulder_anterior')
       expect(exercises).toBeInstanceOf(Array)
-      exercises.forEach(exercise => {
-        expect(exercise.targetArea).toContain('shoulder_anterior')
-      })
+      expect(exercises).toContainEqual(exercise)
     })
 
     it('should return empty array for unused target', async () => {
-      const exercises = await repo.getByTarget('traps')
+      await repo.create(mockExercise) // shoulder_anterior target
+      const exercises = await repo.getByTarget('scapula')
       expect(exercises).toBeInstanceOf(Array)
       expect(exercises.length).toBe(0)
     })
@@ -162,14 +169,14 @@ describe('ExerciseRepository', () => {
 
   describe('getByEquipment', () => {
     it('should return exercises by equipment', async () => {
+      const exercise = await repo.create(mockExercise)
       const exercises = await repo.getByEquipment('dumbbells')
       expect(exercises).toBeInstanceOf(Array)
-      exercises.forEach(exercise => {
-        expect(exercise.equipment).toContain('dumbbells')
-      })
+      expect(exercises).toContainEqual(exercise)
     })
 
     it('should return empty array for unused equipment', async () => {
+      await repo.create(mockExercise) // dumbbells equipment
       const exercises = await repo.getByEquipment('barbell')
       expect(exercises).toBeInstanceOf(Array)
       expect(exercises.length).toBe(0)
@@ -178,6 +185,10 @@ describe('ExerciseRepository', () => {
 
   describe('search', () => {
     it('should find exercises by title', async () => {
+      await repo.create({
+        ...mockExercise,
+        title: "Lateral Raise Exercise"
+      })
       const exercises = await repo.search('lateral')
       expect(exercises).toBeInstanceOf(Array)
       expect(exercises.length).toBeGreaterThan(0)
@@ -185,6 +196,10 @@ describe('ExerciseRepository', () => {
     })
 
     it('should find exercises by execution steps', async () => {
+      await repo.create({
+        ...mockExercise,
+        execution: ["Squeeze shoulder blades together"]
+      })
       const exercises = await repo.search('squeeze shoulder blades')
       expect(exercises).toBeInstanceOf(Array)
       expect(exercises.length).toBeGreaterThan(0)
@@ -194,6 +209,7 @@ describe('ExerciseRepository', () => {
     })
 
     it('should return empty array for no matches', async () => {
+      await repo.create(mockExercise)
       const exercises = await repo.search('xyzabc123')
       expect(exercises).toBeInstanceOf(Array)
       expect(exercises.length).toBe(0)
