@@ -8,7 +8,11 @@ import { Button } from '@repo/ui'
 export default function ScrapePage() {
   const [url, setUrl] = useQueryState('url')
   const [chunks, setChunks] = useState<string[]>([])
-  const [inputUrl, setInputUrl] = useState('')
+  const [inputUrl, setInputUrl] = useState(url || '')
+
+  useEffect(() => {
+    setInputUrl(url || '')
+  }, [url])
 
   useEffect(() => {
     if (!url) return
@@ -54,54 +58,53 @@ export default function ScrapePage() {
     }
   }
 
-  if (!url) {
-    return (
-      <div className="p-8">
-        <h1 className="text-2xl font-bold mb-4">URL Scraper</h1>
-        <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl">
-          <div className="flex gap-4">
-            <input
-              type="url"
-              value={inputUrl}
-              onChange={(e) => setInputUrl(e.target.value)}
-              placeholder="Enter URL to scrape..."
-              className="flex-1 rounded-md border bg-background px-4 py-2"
-              required
-            />
-            <Button type="submit">Scrape</Button>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Example: <code>https://upstash.com/blog/degree-guru</code>
-          </p>
-        </form>
-      </div>
-    )
-  }
-
   return (
     <div className="p-8">
       <div className="flex items-center gap-4 mb-4">
-        <h1 className="text-2xl font-bold">Scraping URL</h1>
-        <Button 
-          variant="outline" 
-          onClick={() => {
-            setUrl(null)
-            setInputUrl('')
-            setChunks([])
-          }}
-        >
-          New Scrape
-        </Button>
+        <h1 className="text-2xl font-bold">URL Scraper</h1>
+        {url && (
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              setUrl(null)
+              setInputUrl('')
+              setChunks([])
+            }}
+          >
+            New Scrape
+          </Button>
+        )}
       </div>
-      <p className="font-mono text-sm mb-4">{url}</p>
-      <div className="font-mono text-sm whitespace-pre-wrap border rounded-lg p-4 bg-muted/50 min-h-[200px]">
-        {chunks.map((chunk, i) => (
-          <div key={i} className="mb-2">
-            {chunk}
-          </div>
-        ))}
-        {chunks.length === 0 && <div className="text-muted-foreground">Waiting for data...</div>}
-      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl mb-8">
+        <div className="flex gap-4">
+          <input
+            type="url"
+            value={inputUrl}
+            onChange={(e) => setInputUrl(e.target.value)}
+            placeholder="Enter URL to scrape..."
+            className="flex-1 rounded-md border bg-background px-4 py-2"
+            required
+          />
+          <Button type="submit">Scrape</Button>
+        </div>
+        {!url && (
+          <p className="text-sm text-muted-foreground">
+            Example: <code>https://upstash.com/blog/degree-guru</code>
+          </p>
+        )}
+      </form>
+
+      {url && (
+        <div className="font-mono text-sm whitespace-pre-wrap border rounded-lg p-4 bg-muted/50 min-h-[200px]">
+          {chunks.map((chunk, i) => (
+            <div key={i} className="mb-2">
+              {chunk}
+            </div>
+          ))}
+          {chunks.length === 0 && <div className="text-muted-foreground">Waiting for data...</div>}
+        </div>
+      )}
     </div>
   )
 } 
