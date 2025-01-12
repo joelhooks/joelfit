@@ -104,79 +104,91 @@ function toSerializable(obj: any): any {
   return plainObj
 }
 
+type StreamMessage = {
+  type: 'status' | 'partial' | 'error';
+  message?: string;
+  data?: Record<string, any>;
+}
+
 export async function scrapeUrl(url: string) {
   console.log('Starting scrape for URL:', url)
-  return createDataStreamResponse({
-    execute: async (dataStream) => {
-      try {
-        console.log('Launching browser')
-        const browser = await chromium.launch()
-        
-        console.log('Creating page')
-        const page = await browser.newPage()
-        
-        console.log('Navigating to:', url)
-        await page.goto(url)
-        
-        const content = await page.content()
-        console.log('Content length:', content.length)
-        
-        const codeBlocks = await page.evaluate(() => {
-          const blocks = Array.from(document.querySelectorAll('pre code'))
-          console.log('Found code blocks:', blocks.length)
-          return blocks.map(block => ({
-            language: block.className.replace('language-', ''),
-            code: block.textContent || ''
-          }))
-        })
-        console.log('Code blocks extracted:', codeBlocks.length)
+  
+  const stream = new TransformStream()
+  const writer = stream.writable.getWriter()
+  const encoder = new TextEncoder()
 
-        await browser.close()
-        console.log('Browser closed')
+  const writeToStream = (msg: StreamMessage) => {
+    console.log('Writing to stream:', JSON.stringify(msg))
+    writer.write(encoder.encode(`data: ${JSON.stringify(msg)}\n\n`))
+  }
 
-        console.log('Writing initial status')
-        const statusMsg = { type: 'status', message: 'Analyzing content...' }
-        console.log('Status message:', JSON.stringify(statusMsg))
-        dataStream.writeData(statusMsg)
+  // Start processing in the background
+  (async () => {
+    try {
+      console.log('Launching browser')
+      const browser = await chromium.launch()
+      
+      console.log('Creating page')
+      const page = await browser.newPage()
+      
+      console.log('Navigating to:', url)
+      await page.goto(url)
+      
+      const content = await page.content()
+      console.log('Content length:', content.length)
+      
+      const codeBlocks = await page.evaluate(() => {
+        const blocks = Array.from(document.querySelectorAll('pre code'))
+        console.log('Found code blocks:', blocks.length)
+        return blocks.map(block => ({
+          language: block.className.replace('language-', ''),
+          code: block.textContent || ''
+        }))
+      })
+      console.log('Code blocks extracted:', codeBlocks.length)
 
-        console.log('Starting streamObject')
-        const { partialObjectStream } = await streamObject({
-          model: openai(process.env.SCRAPER_MODEL || SCRAPER_MODEL),
-          messages: [
-            { role: 'system', content: SYSTEM_PROMPT },
-            { role: 'user', content: `URL: ${url}\n\nContent: ${content}\n\nCode Blocks: ${JSON.stringify(codeBlocks, null, 2)}` }
-          ],
-          schema: contentSchema
-        })
+      await browser.close()
+      console.log('Browser closed')
 
-        console.log('Processing stream')
-        for await (const partial of partialObjectStream) {
-          console.log('Received partial object with keys:', Object.keys(partial))
-          const serialized = toSerializable(partial)
-          console.log('Serialized partial:', JSON.stringify({ type: 'partial', data: serialized }))
-          dataStream.writeData({ type: 'partial', data: serialized })
-        }
+      writeToStream({ type: 'status', message: 'Analyzing content...' })
 
-        console.log('Stream completed')
-        const completeMsg = { type: 'status', message: 'Analysis complete' }
-        console.log('Complete message:', JSON.stringify(completeMsg))
-        dataStream.writeData(completeMsg)
+      console.log('Starting streamObject')
+      const { partialObjectStream } = await streamObject({
+        model: openai(process.env.SCRAPER_MODEL || SCRAPER_MODEL),
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: `URL: ${url}\n\nContent: ${content}\n\nCode Blocks: ${JSON.stringify(codeBlocks, null, 2)}` }
+        ],
+        schema: contentSchema
+      })
 
-      } catch (error) {
-        console.error('Stream error:', error)
-        console.log('Error type:', error?.constructor?.name)
-        console.log('Error properties:', Object.keys(error || {}))
-        const errorMsg = { type: 'error', message: error instanceof Error ? error.message : 'Unknown error' }
-        console.log('Error message:', JSON.stringify(errorMsg))
-        dataStream.writeData(errorMsg)
-        throw error
+      console.log('Processing stream')
+      for await (const partial of partialObjectStream) {
+        console.log('Received partial object with keys:', Object.keys(partial))
+        const serialized = toSerializable(partial)
+        writeToStream({ type: 'partial', data: serialized })
       }
-    },
-    onError: (error) => {
-      console.error('Stream error in onError:', error)
-      console.log('Error type in onError:', error?.constructor?.name)
-      console.log('Error properties in onError:', Object.keys(error || {}))
-      throw error
+
+      writeToStream({ type: 'status', message: 'Analysis complete' })
+      
+    } catch (error) {
+      console.error('Stream error:', error)
+      console.log('Error type:', error?.constructor?.name)
+      console.log('Error properties:', Object.keys(error || {}))
+      writeToStream({ 
+        type: 'error', 
+        message: error instanceof Error ? error.message : 'Unknown error' 
+      })
+    } finally {
+      writer.close()
     }
+  })()
+
+  return new Response(stream.readable, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+    },
   })
 } 
