@@ -6,6 +6,7 @@ import { contentSchema } from './schema'
 import { Card } from '@repo/ui'
 import { ClipboardCopy, Check } from 'lucide-react'
 import { CodeBlock } from '@/components/ui/code-block'
+import { Loader2 } from 'lucide-react'
 
 type Content = z.infer<typeof contentSchema>
 type Section = Content['sections'][number]
@@ -14,26 +15,20 @@ type CodeExample = NonNullable<Content['codeExamples']>[number]
 type TechnicalDetail = NonNullable<Content['technical']>['details'][number]
 type TechnicalExample = NonNullable<TechnicalDetail['examples']>[number]
 
-export function LoadingState({ progress }: { progress?: string[] }) {
+interface LoadingStateProps {
+  progress?: string
+}
+
+export function LoadingState({ progress }: LoadingStateProps) {
   return (
-    <Card className="p-4 bg-background/50 backdrop-blur">
-      <div className="flex flex-col space-y-2">
-        <div className="flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          <p className="ml-2">Processing content...</p>
-        </div>
-        {progress && progress.length > 0 && (
-          <div className="mt-4 font-mono text-sm text-foreground/70 bg-muted/50 rounded-md p-4 max-h-48 overflow-y-auto">
-            {progress.map((msg, i) => (
-              <div key={i} className="flex items-start">
-                <span className="text-primary mr-2">❯</span>
-                <span>{msg}</span>
-              </div>
-            ))}
-          </div>
-        )}
+    <div className="flex flex-col items-center justify-center space-y-4 p-8">
+      <div className="flex items-center space-x-2">
+        <Loader2 className="h-4 w-4 animate-spin" />
+        <span className="text-sm text-muted-foreground font-mono">
+          {progress || 'Processing content...'}
+        </span>
       </div>
-    </Card>
+    </div>
   )
 }
 
@@ -184,10 +179,25 @@ export function ScrapedContent({ content }: { content: Content }) {
             References
           </h2>
           <ul className="list-none pl-0 space-y-2">
-            {content.references.map((ref: string, index: number) => (
-              <li key={index} className="flex items-start">
+            {content.references.map((ref, index: number) => (
+              <li key={index} className="flex items-start gap-2">
                 <span className="text-primary mr-2">❯</span>
-                <span>{ref}</span>
+                <div className="flex items-center gap-2 flex-1">
+                  <a 
+                    href={ref.url}
+                    target="_blank"
+                    rel="noopener noreferrer" 
+                    className="text-primary hover:underline flex-1"
+                  >
+                    {ref.title}
+                  </a>
+                  <button
+                    onClick={() => window.location.href = `/scrape?url=${encodeURIComponent(ref.url)}`}
+                    className="px-2 py-1 text-xs font-medium bg-primary/10 text-primary rounded hover:bg-primary/20 transition-colors"
+                  >
+                    Scrape
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

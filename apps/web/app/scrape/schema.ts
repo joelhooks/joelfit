@@ -31,7 +31,12 @@ export const contentSchema = z.object({
       description: z.string(),
       examples: z.array(codeBlockSchema).optional()
     })),
-    implementation: z.array(codeBlockSchema)
+    implementation: z.array(codeBlockSchema).optional()
   }).optional(),
-  references: z.array(z.string()).optional()
-}) 
+  references: z.array(z.object({
+    title: z.string(),
+    url: z.string().url()
+  })).optional()
+})
+
+export type Content = z.infer<typeof contentSchema> 

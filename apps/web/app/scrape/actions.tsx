@@ -76,8 +76,8 @@ export async function scrapeUrl(url: string) {
 
         // Generate structured content
         sendProgress('🧠 Preparing content for analysis...')
-        const response = await openai.chat.completions.create({
-          model: 'gpt-4o-mini-2024-07-18',
+        const stream = await openai.chat.completions.create({
+          model: process.env.SCRAPER_MODEL || 'gpt-4o-mini-2024-07-18',
           messages: [
             {
               role: 'system',
@@ -120,7 +120,10 @@ export async function scrapeUrl(url: string) {
       "explanation": string (optional)
     }]
   } (optional),
-  "references": string[] (optional)
+  "references": [{
+    "title": string,
+    "url": string (must be a valid URL)
+  }] (optional)
 }
 
 IMPORTANT:
@@ -128,7 +131,8 @@ IMPORTANT:
 2. mainPoints must be an array of strings and is REQUIRED
 3. section content must be a string, NOT an array
 4. Ensure all required fields are present
-5. Format code blocks with proper indentation`
+5. Format code blocks with proper indentation
+6. References must include both title and valid URL`
             },
             {
               role: 'user',
@@ -136,30 +140,38 @@ IMPORTANT:
             }
           ],
           temperature: 0.7,
-          response_format: { type: 'json_object' }
+          response_format: { type: 'json_object' },
+          stream: true
         })
 
-        const messageContent = response.choices[0].message.content
-        if (!messageContent) {
-          throw new Error('No content generated')
+        let responseText = ''
+        let validated
+        for await (const chunk of stream) {
+          const content = chunk.choices[0]?.delta?.content || ''
+          responseText += content
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ progress: `🤖 Generating content... ${responseText.length} chars` })}\n\n`))
         }
 
-        const validatedContent = contentSchema.parse(JSON.parse(messageContent))
-        
-        // Cache the validated content
-        sendProgress('💾 Caching content for future requests')
-        await redis.set(cacheKey, validatedContent, { ex: CACHE_TTL })
-
-        controller.enqueue(
-          encoder.encode(
-            `data: ${JSON.stringify({
-              status: 'success',
-              data: validatedContent,
-              fromCache: false,
-              progress: 'Content generation complete'
-            })}\n\n`
-          )
-        )
+        try {
+          const parsed = JSON.parse(responseText)
+          validated = contentSchema.parse(parsed)
+          
+          // Cache first
+          if (validated) {
+            sendProgress('💾 Caching content for future requests')
+            await redis.set(cacheKey, validated, { ex: CACHE_TTL })
+          }
+          
+          // Then send success response
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ 
+            status: 'success',
+            data: validated, 
+            progress: '✅ Content generation complete' 
+          })}\n\n`))
+        } catch (error) {
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: 'Failed to parse AI response', progress: ['❌ Error parsing AI response'] })}\n\n`))
+          throw error
+        }
 
       } catch (error) {
         console.error('Error in scrapeUrl:', error)

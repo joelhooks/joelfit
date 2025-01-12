@@ -1,36 +1,28 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card } from '@repo/ui'
 import { scrapeUrl } from './actions'
 import { ErrorState, ScrapedContent } from './components'
 import { useQueryState } from 'nuqs'
+import { Trash2 } from 'lucide-react'
+import { Content } from './schema'
 
-type ScrapeState = {
-  status: 'idle' | 'loading' | 'error' | 'success'
-  data?: any
+interface ScrapeState {
+  status: 'idle' | 'loading' | 'success' | 'error'
+  data?: Content
   error?: string
-  progress: string[]
+  progress: string
   fromCache?: boolean
 }
 
-export function LoadingState({ progress }: { progress: string[] }) {
+export function LoadingState({ progress }: { progress: string }) {
   return (
     <Card className="p-4">
-      <div className="flex items-center justify-center mb-4">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-        <p className="ml-2">Processing content...</p>
+      <div className="flex items-center justify-center">
+        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
+        <p className="ml-2 font-mono text-sm text-muted-foreground">{progress}</p>
       </div>
-      {progress.length > 0 && (
-        <div className="mt-4 space-y-1 font-mono text-sm text-gray-600 bg-gray-50 rounded-lg p-4">
-          {progress.map((step, index) => (
-            <div key={index} className="flex items-start">
-              <span className="mr-2 opacity-50">$</span>
-              <span>{step}</span>
-            </div>
-          ))}
-        </div>
-      )}
     </Card>
   )
 }
@@ -42,14 +34,20 @@ export default function ScrapePage() {
   })
   const [state, setState] = useState<ScrapeState>({ 
     status: 'idle',
-    progress: []
+    progress: ''
   })
+
+  useEffect(() => {
+    if (url && state.status === 'idle') {
+      handleSubmit(new Event('submit') as any)
+    }
+  }, [url]) // Only trigger on URL changes when idle
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!url) return
 
-    setState({ status: 'loading', progress: ['Starting scrape...'] })
+    setState({ status: 'loading', progress: '🔍 Checking cache...' })
 
     try {
       const response = await fetch(`/api/scrape?url=${encodeURIComponent(url)}`, {
@@ -77,7 +75,7 @@ export default function ScrapePage() {
               setState(prev => ({
                 ...prev,
                 ...data,
-                progress: data.progress ? [...prev.progress, data.progress] : prev.progress
+                progress: data.progress || prev.progress
               }))
             } catch (e) {
               console.error('Failed to parse SSE data:', e)
@@ -89,9 +87,29 @@ export default function ScrapePage() {
       setState({ 
         status: 'error', 
         error: error instanceof Error ? error.message : 'Unknown error occurred',
-        progress: []
+        progress: ''
       })
     }
+  }
+
+  const handleClearCache = async () => {
+    if (!url) return
+    
+    const response = await fetch('/api/clear-cache', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ url })
+    })
+
+    if (!response.ok) {
+      console.error('Failed to clear cache')
+      return
+    }
+
+    // Re-scrape after clearing cache
+    handleSubmit(new Event('submit') as any)
   }
 
   return (
@@ -126,11 +144,7 @@ export default function ScrapePage() {
       </Card>
 
       {state.status === 'loading' && (
-        <Card className="mb-8">
-          <div className="p-6">
-            <LoadingState progress={state.progress} />
-          </div>
-        </Card>
+        <LoadingState progress={state.progress} />
       )}
       
       {state.status === 'error' && (
@@ -141,9 +155,7 @@ export default function ScrapePage() {
               <div className="mt-4 p-4 bg-gray-50 rounded-md">
                 <h3 className="text-sm font-medium text-gray-900 mb-2">Progress Log</h3>
                 <div className="space-y-1">
-                  {state.progress.map((step, index) => (
-                    <div key={index} className="text-sm text-gray-600 font-mono">{step}</div>
-                  ))}
+                  <div className="text-sm text-gray-600 font-mono">{state.progress}</div>
                 </div>
               </div>
             )}
@@ -157,12 +169,21 @@ export default function ScrapePage() {
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold">Analysis Results</h2>
-                {state.fromCache && (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    <span className="mr-1">📦</span>
-                    From Cache
-                  </span>
-                )}
+                <div className="flex items-center gap-2">
+                  {state.fromCache && (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      <span className="mr-1">📦</span>
+                      From Cache
+                    </span>
+                  )}
+                  <button
+                    onClick={handleClearCache}
+                    className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-red-600 bg-red-100 rounded-md hover:bg-red-200 transition-colors"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                    Clear Cache
+                  </button>
+                </div>
               </div>
             </div>
           </Card>
