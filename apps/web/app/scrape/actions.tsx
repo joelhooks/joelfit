@@ -5,6 +5,7 @@ import { contentSchema } from './schema'
 import OpenAI from 'openai'
 import { Redis } from '@upstash/redis'
 import { load } from 'cheerio'
+import { createHash } from 'crypto'
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -16,6 +17,16 @@ const openai = new OpenAI({
 })
 
 const CACHE_TTL = 24 * 60 * 60 // 24 hours
+
+function hashContent(content: string, codeBlocks: Array<{ language: string; code: string }>): string {
+  const hasher = createHash('sha256')
+  hasher.update(content)
+  codeBlocks.forEach(block => {
+    hasher.update(block.language)
+    hasher.update(block.code)
+  })
+  return hasher.digest('hex')
+}
 
 export async function scrapeUrl(url: string) {
   const encoder = new TextEncoder()
@@ -30,25 +41,7 @@ export async function scrapeUrl(url: string) {
       }
 
       try {
-        // Check cache first
-        const cacheKey = `scrape:${url}`
-        const cachedContent = await redis.get<z.infer<typeof contentSchema>>(cacheKey)
-        if (cachedContent) {
-          sendProgress('📦 Found cached content')
-          controller.enqueue(
-            encoder.encode(
-              `data: ${JSON.stringify({
-                status: 'success',
-                data: cachedContent,
-                fromCache: true,
-                progress: 'Retrieved from cache'
-              })}\n\n`
-            )
-          )
-          return
-        }
-
-        // Fetch page content
+        // Fetch page content first
         sendProgress('🌐 Fetching page...')
         const response = await fetch(url)
         const html = await response.text()
@@ -64,6 +57,27 @@ export async function scrapeUrl(url: string) {
             code: $el.text()
           }
         }).get()
+
+        // Generate content hash
+        const contentHash = hashContent(content, codeBlocks)
+        const cacheKey = `scrape:${url}:${contentHash}`
+        
+        // Check cache with content hash
+        const cachedContent = await redis.get<z.infer<typeof contentSchema>>(cacheKey)
+        if (cachedContent) {
+          sendProgress('📦 Found cached content (matching hash)')
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({
+                status: 'success',
+                data: cachedContent,
+                fromCache: true,
+                progress: 'Retrieved from cache'
+              })}\n\n`
+            )
+          )
+          return
+        }
 
         sendProgress(`📊 Content length: ${content.length}, found ${codeBlocks.length} code blocks`)
         
