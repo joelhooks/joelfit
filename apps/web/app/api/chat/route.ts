@@ -1,7 +1,7 @@
 import { anthropic } from '@ai-sdk/anthropic'
 import { streamText } from 'ai'
 import { SYSTEM_PROMPT } from '@/prompts/system-prompt'
-import { type ChatContext } from '@/components/chat/chat-interface'
+
 
 export const maxDuration = 30
 
@@ -17,13 +17,14 @@ export async function POST(req: Request) {
   const model = process.env.AI_MODEL || DEFAULT_MODEL
 
   const contextString = JSON.stringify(context, null, 2)
+  const timestamp = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })
 
   const result = streamText({
     model: anthropic(model),
     messages: [
       { 
         role: 'system', 
-        content: `${SYSTEM_PROMPT}\n\nCurrent Context:\n${contextString}` 
+        content: `${SYSTEM_PROMPT(timestamp)}\n\nCurrent Context:\n${contextString}` 
       },
       ...messages,
     ],
