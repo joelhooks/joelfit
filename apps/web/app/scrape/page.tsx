@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Card } from '@repo/ui'
 import { scrapeUrl } from './actions'
 import { ErrorState, ScrapedContent } from './components'
+import { LoadingState } from './components/loading-state'
 import { useQueryState } from 'nuqs'
 import { Trash2 } from 'lucide-react'
 import { Content } from './schema'
@@ -14,17 +15,6 @@ interface ScrapeState {
   error?: string
   progress: string
   fromCache?: boolean
-}
-
-export function LoadingState({ progress }: { progress: string }) {
-  return (
-    <Card className="p-4">
-      <div className="flex items-center justify-center">
-        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
-        <p className="ml-2 font-mono text-sm text-muted-foreground">{progress}</p>
-      </div>
-    </Card>
-  )
 }
 
 export default function ScrapePage() {
