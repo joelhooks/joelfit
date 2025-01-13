@@ -4,31 +4,31 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 221 83% 53%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222 47% 11%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221 83% 53%;
+    --background: 230 20% 10%;
+    --foreground: 180 5% 80%;
+    --card: 230 20% 12%;
+    --card-foreground: 180 5% 80%;
+    --popover: 230 20% 12%;
+    --popover-foreground: 180 5% 80%;
+    --primary: 326 100% 74%;
+    --primary-foreground: 230 20% 12%;
+    --secondary: 230 20% 15%;
+    --secondary-foreground: 180 5% 80%;
+    --muted: 230 20% 15%;
+    --muted-foreground: 180 5% 50%;
+    --accent: 326 100% 74%;
+    --accent-foreground: 230 20% 12%;
+    --destructive: 0 90% 60%;
+    --destructive-foreground: 180 5% 80%;
+    --border: 230 20% 15%;
+    --input: 230 20% 15%;
+    --ring: 326 100% 74%;
     --radius: 0.5rem;
-    --chart-1: 221 83% 53%;
-    --chart-2: 142 71% 45%;
-    --chart-3: 43 96% 56%;
-    --chart-4: 326 100% 74%;
-    --chart-5: 187 100% 42%;
+    --chart-1: 326 100% 74%;
+    --chart-2: 155 100% 65%;
+    --chart-3: 43 100% 64%;
+    --chart-4: 187 100% 65%;
+    --chart-5: 270 100% 75%;
   }
 
   .dark {
@@ -75,4 +75,78 @@
   .container {
     @apply px-4 md:px-8 lg:px-12 mx-auto max-w-7xl;
   }
+}
+
+/* Article Prose Styles */
+.prose-container {
+  @apply prose prose-zinc dark:prose-invert max-w-none;
+}
+
+.prose-container .mdx-content {
+  @apply mt-8;
+}
+
+.prose-container .mdx-content h1 {
+  @apply text-4xl font-bold mb-6;
+}
+
+.prose-container .mdx-content h2 {
+  @apply text-3xl font-bold mt-12 mb-6;
+}
+
+.prose-container .mdx-content h3 {
+  @apply text-2xl font-bold mt-8 mb-4;
+}
+
+.prose-container .mdx-content p {
+  @apply mb-4 leading-relaxed;
+}
+
+.prose-container .mdx-content ul {
+  @apply list-disc pl-6 mb-4;
+}
+
+.prose-container .mdx-content ol {
+  @apply list-decimal pl-6 mb-4;
+}
+
+.prose-container .mdx-content li {
+  @apply mb-2;
+}
+
+.prose-container .mdx-content pre {
+  @apply my-6 p-4 rounded-lg bg-zinc-900 dark:bg-zinc-800 overflow-x-auto;
+}
+
+.prose-container .mdx-content code {
+  @apply font-mono text-sm;
+}
+
+.prose-container .mdx-content a {
+  @apply text-primary hover:underline;
+}
+
+.prose-container .mdx-content blockquote {
+  @apply border-l-4 border-primary pl-4 italic my-6;
+}
+
+.prose-container .mdx-content img {
+  @apply rounded-lg my-6;
+}
+
+.prose-container .mdx-content hr {
+  @apply my-8 border-t border-border;
+}
+
+.prose-container .mdx-content table {
+  @apply w-full my-6 border-collapse;
+}
+
+.prose-container .mdx-content th,
+.prose-container .mdx-content td {
+  @apply border border-border px-4 py-2;
+}
+
+.prose-container .mdx-content th {
+  @apply bg-muted font-bold;
 }
