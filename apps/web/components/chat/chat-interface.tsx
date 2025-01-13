@@ -85,33 +85,37 @@ export function ChatInterface({ context }: { context: ChatContext }) {
   }
 
   return (
-    <div className="flex flex-col w-full h-[calc(100vh-12rem)]">
+    <div className="flex flex-col h-full">
       <div 
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto space-y-6 p-4"
+        className="flex-1 min-h-0 overflow-y-auto space-y-4 p-2 sm:space-y-6 sm:p-4 scrollbar-thin scrollbar-thumb-border scrollbar-track-muted relative before:absolute before:top-0 before:left-0 before:right-0 before:h-8 before:bg-gradient-to-b before:from-background before:to-transparent before:z-10 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-8 after:bg-gradient-to-t after:from-background after:to-transparent after:z-10"
       >
-        <AnimatePresence initial={false}>
+        <AnimatePresence initial={false} mode="sync">
           {messages.map((message) => (
             <motion.div
               key={message.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
               className={cn(
-                "flex gap-3 relative group",
+                "flex gap-2 sm:gap-3 relative group",
                 message.role === "user" ? "flex-row-reverse" : ""
               )}
             >
               <div className={cn(
-                "flex flex-col max-w-[80%] relative",
+                "flex flex-col max-w-[90%] sm:max-w-[80%] relative",
                 message.role === "user" ? "items-end" : "items-start"
               )}>
-                <div className={cn(
-                  "rounded-lg px-4 py-2 shadow-sm",
-                  message.role === "user" 
-                    ? "bg-primary font-medium dark:bg-zinc-800" 
-                    : "prose bg-muted/60 dark:bg-muted/20 dark:prose-invert"
-                )}>
+                <motion.div 
+                  layout="position"
+                  className={cn(
+                    "rounded-lg px-3 py-2 sm:px-4 shadow-sm",
+                    message.role === "user" 
+                      ? "bg-primary font-medium dark:bg-zinc-800" 
+                      : "prose prose-sm sm:prose-base bg-muted/60 dark:bg-muted/20 dark:prose-invert"
+                  )}
+                >
                   <ReactMarkdown 
                     remarkPlugins={[remarkGfm]}
                     className={message.role === "user" ? "prose" : "prose"}
@@ -147,19 +151,30 @@ export function ChatInterface({ context }: { context: ChatContext }) {
                   >
                     {message.content}
                   </ReactMarkdown>
-                </div>
-                <span className="text-xs text-muted-foreground mt-1">
+                </motion.div>
+                <motion.span 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.6 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-[10px] sm:text-xs text-muted-foreground mt-1"
+                >
                   {format(new Date(), 'h:mm a')}
-                </span>
+                </motion.span>
                 {message.role === "assistant" && (
-                  <Button
-                    onClick={() => copyToClipboard(message.content)}
-                    size="icon"
-                    variant="ghost"
-                    className="absolute -right-12 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
                   >
-                    <Copy className="h-4 w-4" />
-                  </Button>
+                    <Button
+                      onClick={() => copyToClipboard(message.content)}
+                      size="icon"
+                      variant="ghost"
+                      className="absolute -right-8 sm:-right-12 top-0 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-all duration-300"
+                    >
+                      <Copy className="h-3 w-3 sm:h-4 sm:w-4" />
+                    </Button>
+                  </motion.div>
                 )}
               </div>
             </motion.div>
@@ -169,12 +184,46 @@ export function ChatInterface({ context }: { context: ChatContext }) {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
             className="flex items-center gap-2 text-sm text-muted-foreground"
           >
-            <div className="flex gap-1">
-              <span className="animate-bounce">●</span>
-              <span className="animate-bounce delay-100">●</span>
-              <span className="animate-bounce delay-200">●</span>
+            <div className="flex gap-1.5">
+              <motion.span
+                animate={{
+                  opacity: [0.4, 0.7, 0.4]
+                }}
+                transition={{
+                  duration: 1.4,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="size-1 rounded-full bg-current"
+              />
+              <motion.span
+                animate={{
+                  opacity: [0.4, 0.7, 0.4]
+                }}
+                transition={{
+                  duration: 1.4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 0.2
+                }}
+                className="size-1 rounded-full bg-current"
+              />
+              <motion.span
+                animate={{
+                  opacity: [0.4, 0.7, 0.4]
+                }}
+                transition={{
+                  duration: 1.4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 0.4
+                }}
+                className="size-1 rounded-full bg-current"
+              />
             </div>
             AI is thinking...
           </motion.div>
@@ -204,23 +253,23 @@ export function ChatInterface({ context }: { context: ChatContext }) {
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 border-t">
+      <form onSubmit={handleSubmit} className="flex-shrink-0 p-2 sm:p-4 border-t">
         <div className="flex gap-2">
           <div className="flex-1 relative">
             <input
               ref={inputRef}
-              className="w-full px-4 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed pr-16"
+              className="w-full px-3 py-2 sm:px-4 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed pr-12 sm:pr-16 text-sm sm:text-base"
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              placeholder={isLoading ? "AI is thinking..." : "Ask me anything about fitness and nutrition..."}
+              placeholder={isLoading ? "AI is thinking..." : "Ask anything..."}
               disabled={isLoading}
             />
-            <kbd className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs text-muted-foreground hidden sm:inline-block">
+            <kbd className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[10px] sm:text-xs text-muted-foreground hidden sm:inline-block">
               ⌘ + ↵
             </kbd>
           </div>
-          <Button type="submit" disabled={isLoading || !input.trim()}>
+          <Button type="submit" disabled={isLoading || !input.trim()} size="sm" className="sm:text-base sm:h-10">
             Send
           </Button>
         </div>
