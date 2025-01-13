@@ -10,7 +10,7 @@ export async function POST(request: NextRequest): Promise<Response> {
 
   const rateLimitResult = await rateLimit({
     uniqueIdentifier: 'scrape',
-    limit: 10,
+    limit: 100,
     window: 60 * 60, // 1 hour
     errorMessage: 'Rate limit exceeded. Try again in an hour.'
   })
