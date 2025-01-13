@@ -2,9 +2,9 @@
 
 import { z } from 'zod'
 import { contentSchema } from './schema'
-import { chromium } from 'playwright'
 import OpenAI from 'openai'
 import { Redis } from '@upstash/redis'
+import { load } from 'cheerio'
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -48,32 +48,25 @@ export async function scrapeUrl(url: string) {
           return
         }
 
-        // Launch browser and scrape content
-        sendProgress('🌐 Launching browser...')
-        const browser = await chromium.launch()
-        const page = await browser.newPage()
-
-        // Load page and extract content
-        sendProgress('📄 Loading page...')
-        await page.goto(url)
+        // Fetch page content
+        sendProgress('🌐 Fetching page...')
+        const response = await fetch(url)
+        const html = await response.text()
         
+        // Parse content with cheerio
         sendProgress('📝 Extracting content...')
-        const content = await page.evaluate(() => document.body.innerText)
-        const codeBlocks = await page.evaluate(() => {
-          return Array.from(document.querySelectorAll('pre code')).map(block => {
-            const language = block.className.replace('language-', '')
-            return {
-              language,
-              code: block.textContent || ''
-            }
-          })
-        })
+        const $ = load(html)
+        const content = $('body').text()
+        const codeBlocks = $('pre code').map((_, el): { language: string; code: string } => {
+          const $el = $(el)
+          return {
+            language: $el.attr('class')?.replace('language-', '') || '',
+            code: $el.text()
+          }
+        }).get()
 
         sendProgress(`📊 Content length: ${content.length}, found ${codeBlocks.length} code blocks`)
         
-        // Close browser
-        await browser.close()
-
         // Generate structured content
         sendProgress('🧠 Preparing content for analysis...')
         const stream = await openai.chat.completions.create({
