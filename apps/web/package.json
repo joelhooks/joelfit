@@ -24,6 +24,8 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^1.0.8",
     "@ai-sdk/openai": "^1.0.18",
+    "@auth/core": "0.37.2",
+    "@auth/drizzle-adapter": "1.7.2",
     "@mozilla/readability": "^0.5.0",
     "@radix-ui/react-checkbox": "^1.0.4",
     "@radix-ui/react-navigation-menu": "^1.2.3",
@@ -48,6 +50,7 @@
     "lucide-react": "^0.471.0",
     "mysql2": "^3.12.0",
     "next": "^15.1.0",
+    "next-auth": "5.0.0-beta.25",
     "next-mdx-remote": "^5.0.0",
     "next-themes": "^0.3.0",
     "nuqs": "^2.3.0",

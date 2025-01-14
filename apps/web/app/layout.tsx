@@ -4,6 +4,8 @@ import { ThemeProvider } from "next-themes"
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { cn } from "@/lib/utils"
 import { SiteHeader } from "@/components/site-header"
+import { auth } from "@/auth/auth.config"
+import { SessionProvider } from "next-auth/react"
 
 import "./globals.css"
 import "../styles/cyberpunk.css"
@@ -13,11 +15,13 @@ export const metadata = {
   description: "Joel's personal fitness tracking app",
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const session = await auth()
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -27,21 +31,23 @@ export default function RootLayout({
           GeistMono.variable
         )}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <NuqsAdapter>
-            <div className="relative flex min-h-screen flex-col">
-              <div className="cyberpunk-scanlines" />
-              <div className="cyberpunk-noise" />
-              <SiteHeader />
-              <div className="flex-1">{children}</div>
-            </div>
-          </NuqsAdapter>
-        </ThemeProvider>
+        <SessionProvider session={session}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <NuqsAdapter>
+              <div className="relative flex min-h-screen flex-col">
+                <div className="cyberpunk-scanlines" />
+                <div className="cyberpunk-noise" />
+                <SiteHeader />
+                <div className="flex-1">{children}</div>
+              </div>
+            </NuqsAdapter>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   )
