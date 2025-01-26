@@ -33,12 +33,12 @@ function getCurrentStreamingState(id: string): StreamedResponse {
     }
   }
   
-  const items: StreamedResponseItem[] = _streamingRequests[id].map(({ id, data, status, progress }) => ({
+  const items: StreamedResponseItem[] = _streamingRequests[id]?.map(({ id, data, status, progress }) => ({
     id,
     status,
     data,
     progress
-  }))
+  })) ?? []
   
   return {
     id,
