@@ -4,7 +4,6 @@ import NextAuth, { type NextAuthConfig, type DefaultSession, Session} from 'next
 
 import { db } from '@/db'
 import { schema } from "@/db/schema"
-import { auth } from "@/app/api/auth/[...nextauth]/route"
 
 declare module 'next-auth' {
 	interface Session extends DefaultSession {
@@ -31,6 +30,12 @@ export const authOptions: NextAuthConfig = {
 	},
 }
 
+export const {
+	auth,
+	handlers: { GET, POST },
+	signIn,
+	signOut,
+} = NextAuth(authOptions)
 
 
 export const getServerAuthSession = async (): Promise<Session | null> => {

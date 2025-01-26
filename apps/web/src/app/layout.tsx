@@ -8,7 +8,7 @@ import { SessionProvider } from "next-auth/react"
 
 import "./globals.css"
 import "../styles/cyberpunk.css"
-import { auth } from "./api/auth/[...nextauth]/route"
+import { auth } from "@/server/auth"
 
 export const metadata = {
   title: "JoelFit",
