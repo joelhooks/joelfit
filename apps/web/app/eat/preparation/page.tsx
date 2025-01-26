@@ -37,53 +37,68 @@ const weeklyTimeline = [
   {
     day: "Sunday",
     title: "Main Prep Session",
-    totalTime: "2-3 hours",
+    totalTime: "3.5 hours",
     waves: [
       {
         title: "Wave 1: Setup",
         time: "15 min",
         tasks: [
-          "Label all containers",
-          "Organize workspace",
-          "Preheat oven to 400°F",
-          "Start rice cooker"
+          "Preheat double oven to 400°F",
+          "Preheat single oven to 450°F for potatoes",
+          "Start rice cooker",
+          "Lay out and label containers",
+          "Prep baking sheets and pans"
         ]
       },
       {
         title: "Wave 2: Proteins",
+        time: "60 min",
+        tasks: [
+          "Put chicken in single 400°F oven",
+          "While chicken bakes (30 mins), portion meatball mix onto sheets",
+          "Remove chicken to rest",
+          "Put meatball sheets in double 400°F oven for 20 mins"
+        ]
+      },
+      {
+        title: "Wave 3: Potato Prep",
+        time: "25 min",
+        tasks: [
+          "Peel potatoes and cut into 1-2 inch pieces",
+          "Boil in heavily salted water for exactly 4 minutes",
+          "Drain and return to pot",
+          "Toss with flour and shake to rough up edges",
+          "Spread in single layer on baking sheets"
+        ]
+      },
+      {
+        title: "Wave 4: Oven Transition & Vegetables",
+        time: "50 min",
+        tasks: [
+          "Put potato pans in 450°F single oven (30-45 mins until golden)",
+          "Season potatoes with salt and pepper",
+          "Steam frozen vegetables in batches",
+          "Monitor and rotate as needed",
+          "Cool items properly"
+        ]
+      },
+      {
+        title: "Wave 5: Assembly",
         time: "45 min",
         tasks: [
-          "Season and prep all proteins",
-          "Start chicken in oven",
-          "Begin fish on stovetop",
-          "Prep turkey for cooking"
+          "Portion cooked rice into containers",
+          "Portion proteins as they finish cooling",
+          "Remove and portion crispy potatoes",
+          "Add proteins, potatoes, vegetables to containers",
+          "Pack any additional items"
         ]
       },
       {
-        title: "Wave 3: Vegetables",
-        time: "30 min",
-        tasks: [
-          "Steam frozen vegetables",
-          "Portion into containers",
-          "Cool and store properly"
-        ]
-      },
-      {
-        title: "Wave 4: Assembly",
-        time: "45 min",
-        tasks: [
-          "Portion proteins into containers",
-          "Add rice and vegetables",
-          "Pack breakfast items",
-          "Prepare smoothie bags"
-        ]
-      },
-      {
-        title: "Wave 5: Cleanup",
+        title: "Wave 6: Cleanup",
         time: "15 min",
         tasks: [
-          "Clean all surfaces",
-          "Store containers properly",
+          "Wipe down all surfaces",
+          "Store prepped meals properly",
           "Take out trash",
           "Final organization"
         ]

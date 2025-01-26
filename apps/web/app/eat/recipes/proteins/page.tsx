@@ -35,14 +35,15 @@ const turkeyMeatballs = {
     "Parchment paper",
     "Cookie scoop or portion scoop (2 tablespoon size)",
     "Large mixing bowl",
-    "Instant-read thermometer"
+    "Instant-read thermometer",
+    "Oven"
   ],
   ingredients: [
     "3 pounds ground turkey (93% lean)",
     "2 medium onions, roughly chopped",
     "7 cloves garlic",
     "3 large eggs",
-    "2 cups panko breadcrumbs",
+    "1 1/2 cups panko breadcrumbs",
     "¾ cup fresh parsley, roughly chopped",
     "1 tablespoon soy sauce",
     "1 teaspoon fennel pollen",
