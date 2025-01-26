@@ -13,7 +13,6 @@
     "turbo": "^2.3.3",
     "typescript": "5.5.4"
   },
-  "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=18"
   },
@@ -22,5 +21,6 @@
     "@radix-ui/react-avatar": "^1.1.2",
     "@repo/core": "workspace:^",
     "@repo/ui": "workspace:^"
-  }
+  },
+	"packageManager": "pnpm@8.15.5"
 }
