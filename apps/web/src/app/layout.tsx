@@ -4,7 +4,7 @@ import { ThemeProvider } from "next-themes"
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { cn } from "@/lib/utils"
 import { SiteHeader } from "@/components/site-header"
-import { auth } from "@/auth/auth.config"
+import { auth } from "@/server/auth.config"
 import { SessionProvider } from "next-auth/react"
 
 import "./globals.css"

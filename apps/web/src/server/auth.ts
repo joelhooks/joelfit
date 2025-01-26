@@ -1,18 +1,18 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import Google from "next-auth/providers/google"
-import NextAuth, { type NextAuthConfig, type DefaultSession} from 'next-auth'
+import NextAuth, { type NextAuthConfig, type DefaultSession, Session} from 'next-auth'
 
 import { db } from '@/db'
 import { schema } from "@/db/schema"
 
-// declare module 'next-auth' {
-// 	interface Session extends DefaultSession {
-// 		user: {
-// 			id: string
-// 			image: string
-// 		} & DefaultSession["user"]
-// 	}
-// }
+declare module 'next-auth' {
+	interface Session extends DefaultSession {
+		user: {
+			id: string
+			image: string
+		} & DefaultSession["user"]
+	}
+}
 
 export const authOptions: NextAuthConfig = {
 	adapter: DrizzleAdapter(db, schema),
@@ -36,3 +36,6 @@ export const {
 	signOut,
 } = NextAuth(authOptions)
 
+export const getServerAuthSession = async (): Promise<Session | null> => {
+	return await auth()
+}
