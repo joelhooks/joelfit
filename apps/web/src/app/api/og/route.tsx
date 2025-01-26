@@ -11,11 +11,11 @@ const USE_CLOUDINARY = process.env.USE_CLOUDINARY === 'true'
 
 // Font files in public/fonts directory
 const geistRegular = fetch(
-  new URL('../../../public/fonts/Geist-Regular.ttf', import.meta.url)
+  new URL('../../../../public/fonts/Geist-Regular.ttf', import.meta.url)
 ).then((res) => res.arrayBuffer())
 
 const geistBold = fetch(
-  new URL('../../../public/fonts/Geist-Bold.ttf', import.meta.url)
+  new URL('../../../../public/fonts/Geist-Bold.ttf', import.meta.url)
 ).then((res) => res.arrayBuffer())
 
 type ColorPair = [string, string]
