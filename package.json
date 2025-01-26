@@ -11,7 +11,7 @@
     "@types/node": "^20.17.12",
     "prettier": "^3.2.5",
     "turbo": "^2.3.3",
-    "typescript": "5.5.4"
+    "typescript": "5.4.5"
   },
   "engines": {
     "node": ">=18"
