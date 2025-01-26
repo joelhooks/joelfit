@@ -30,12 +30,7 @@ export const authOptions: NextAuthConfig = {
 	},
 }
 
-export const {
-	auth,
-	handlers: { GET, POST },
-	signIn,
-	signOut,
-} = NextAuth(authOptions)
+
 
 export const getServerAuthSession = async (): Promise<Session | null> => {
 	return await auth()
