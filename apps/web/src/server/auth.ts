@@ -4,6 +4,7 @@ import NextAuth, { type NextAuthConfig, type DefaultSession, Session} from 'next
 
 import { db } from '@/db'
 import { schema } from "@/db/schema"
+import { auth } from "@/app/api/auth/[...nextauth]/route"
 
 declare module 'next-auth' {
 	interface Session extends DefaultSession {

@@ -4,11 +4,11 @@ import { ThemeProvider } from "next-themes"
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { cn } from "@/lib/utils"
 import { SiteHeader } from "@/components/site-header"
-import { auth } from "@/server/auth"
 import { SessionProvider } from "next-auth/react"
 
 import "./globals.css"
 import "../styles/cyberpunk.css"
+import { auth } from "./api/auth/[...nextauth]/route"
 
 export const metadata = {
   title: "JoelFit",
