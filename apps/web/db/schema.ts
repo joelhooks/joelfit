@@ -107,10 +107,54 @@ export const authenticatorsTable = mysqlTable(
   })
 )
 
-export const schema = { articles,
+export const contributionTypes = mysqlTable("contribution_types", {
+  id: varchar("id", { length: 255 }).primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+})
+
+export const roles = mysqlTable("roles", {
+  id: varchar("id", { length: 255 }).primaryKey(),
+  name: varchar("name", { length: 255 }).notNull().unique(),
+})
+
+export const permissions = mysqlTable("permissions", {
+  id: varchar("id", { length: 255 }).primaryKey(),
+  name: varchar("name", { length: 255 }).notNull().unique(),
+})
+
+export const rolePermissions = mysqlTable("role_permissions", {
+  roleId: varchar("role_id", { length: 255 }).notNull(),
+  permissionId: varchar("permission_id", { length: 255 }).notNull(),
+}, (table) => ({
+  pk: primaryKey({
+    columns: [table.roleId, table.permissionId],
+  }),
+}))
+
+export const communicationPreferenceTypes = mysqlTable("communication_preference_types", {
+  id: varchar("id", { length: 255 }).primaryKey(),
+  name: varchar("name", { length: 255 }).notNull().unique(),
+  description: text("description").notNull(),
+})
+
+export const communicationChannel = mysqlTable("communication_channels", {
+  id: varchar("id", { length: 255 }).primaryKey(),
+  name: varchar("name", { length: 255 }).notNull().unique(),
+  description: text("description").notNull(),
+})
+
+export const schema = { 
+  articles,
   usersTable,
   accountsTable,
   sessionsTable,
   verificationTokensTable,
-  authenticatorsTable
+  authenticatorsTable,
+  contributionTypes,
+  roles,
+  permissions,
+  rolePermissions,
+  communicationPreferenceTypes,
+  communicationChannel
 }

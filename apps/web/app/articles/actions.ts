@@ -147,4 +147,34 @@ The Conjugate Method is highly effective but requires attention to detail and pr
   })
 
   return article
+}
+
+export async function createArticleFromUrl(
+  url: string,
+  category: z.infer<typeof articleCategorySchema>,
+  tags: z.infer<typeof articleTagSchema>[]
+) {
+  const scrapedContent = await scrapeUrl(url)
+  const content = contentSchema.parse(scrapedContent)
+  
+  const article = await repository.create({
+    title: content.metadata.title,
+    summary: content.metadata.summary,
+    content: [
+      content.introduction,
+      ...content.mainPoints,
+      ...content.sections.map(section => `## ${section.title}\n\n${section.content}`),
+    ].join('\n\n'),
+    category,
+    tags,
+    source: {
+      url,
+      author: content.metadata.author || 'Unknown'
+    },
+    relatedExercises: [],
+    relatedMealPlans: []
+  })
+
+  await clearArticles()
+  return article
 } 

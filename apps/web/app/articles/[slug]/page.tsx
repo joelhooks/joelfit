@@ -4,7 +4,7 @@ import {notFound} from 'next/navigation'
 import {Badge} from '@repo/ui/components/badge'
 
 interface PageProps {
-  params: Promise<{slug: string}> | {slug: string}
+  params: Promise<{slug: string}>
 }
 
 export default async function ArticlePage({params}: PageProps) {

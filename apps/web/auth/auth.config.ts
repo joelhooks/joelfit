@@ -1,6 +1,6 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import Google from "next-auth/providers/google"
-import NextAuth, { type NextAuthConfig, type DefaultSession, type NextAuthResult } from 'next-auth'
+import NextAuth, { type NextAuthConfig, type DefaultSession, type Session } from 'next-auth'
 import { db } from '@/db'
 import { schema } from "@/db/schema"
 
@@ -28,11 +28,10 @@ export const authOptions: NextAuthConfig = {
 	},
 }
 
-export const {
-	handlers: { GET, POST },
-	auth,
-	signIn,
-} : NextAuthResult = NextAuth(authOptions) as NextAuthResult
+const nextAuth = NextAuth(authOptions)
+
+export const { handlers: { GET, POST }, signIn } = nextAuth
+export const auth = nextAuth.auth as () => Promise<Session | null>
 
 export const getServerAuthSession = async () => {
 	const session = await auth()
