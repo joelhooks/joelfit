@@ -13,6 +13,18 @@ interface ArticleSidebarProps {
   relatedArticles?: Article[]
 }
 
+const setsDisplay = (sets: Exercise['sets']) => {
+  if (sets.type === 'standard') {
+    return `${sets.count} sets × ${sets.reps} reps${sets.hold ? ` (${sets.hold}s hold)` : ''}`
+  }
+  if (sets.type === 'distance') {
+    return `${sets.count} sets × ${sets.distance}`
+  }
+  if (sets.type === 'duration') {
+    return `${sets.count} sets × ${sets.duration}s`
+  }
+}
+
 export function ArticleSidebar({
   article,
   relatedExercises = [],
@@ -61,8 +73,7 @@ export function ArticleSidebar({
                   >
                     <h3 className="font-medium">{exercise.title}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {exercise.sets.count} sets × {exercise.sets.reps} reps
-                      {exercise.sets.hold && ` (${exercise.sets.hold}s hold)`}
+                      {setsDisplay(exercise.sets)}
                     </p>
                   </Link>
                 </li>

@@ -4,6 +4,7 @@ export const initialExercises: NewExercise[] = [
   {
     title: "Crossbody Stretch",
     sets: {
+      type: 'standard',
       count: 3,
       reps: 1,
       hold: 60
@@ -18,13 +19,187 @@ export const initialExercises: NewExercise[] = [
       "Feel gentle stretch in back of shoulder",
       "Maintain steady breathing and relaxed shoulders"
     ],
-    category: "mobility",
+    category: "warmup",
     targetArea: ["shoulder_posterior"],
     equipment: []
   },
   {
+    title: "Ulnar Nerve Flossing",
+    sets: {
+      type: 'standard',
+      count: 2,
+      reps: 20
+    },
+    frequency: {
+      times: 2,
+      period: 'day'
+    },
+    execution: [
+      "Start with arm by side",
+      "Extend wrist and fingers",
+      "Gently tilt head away from arm",
+      "Return to start position",
+      "Perform smooth, controlled movements"
+    ],
+    category: "mobility",
+    targetArea: ["nerve"],
+    equipment: []
+  },
+  {
+    title: "Eccentric Focus Pull Ups",
+    sets: {
+      type: 'standard',
+      count: 5,
+      reps: 10
+    },
+    frequency: {
+      times: 2,
+      period: 'week'
+    },
+    execution: [
+      "Start at top of pull-up position",
+      "Lower body very slowly with control",
+      "Focus on shoulder blade movement",
+      "Maintain proper form throughout descent"
+    ],
+    category: "strength",
+    targetArea: ["lats", "scapula"],
+    equipment: ["pull_up_bar"]
+  },
+  {
+    title: "Movie Stars",
+    sets: {
+      type: 'standard',
+      count: 3,
+      reps: 10,
+      hold: 3
+    },
+    frequency: {
+      times: 3,
+      period: 'week'
+    },
+    execution: [
+      "Start with arm at shoulder height",
+      "Lower arm with control",
+      "Hold for 3 seconds at bottom position",
+      "Return to start position"
+    ],
+    category: "strength",
+    targetArea: ["rotator_cuff"],
+    equipment: ["dumbbells"]
+  },
+  {
+    title: "Upright Row Holds",
+    sets: {
+      type: 'standard',
+      count: 3,
+      reps: 12,
+      hold: 10
+    },
+    frequency: {
+      times: 2,
+      period: 'week'
+    },
+    execution: [
+      "Stand with weights at thighs",
+      "Pull elbows up to shoulder height",
+      "Hold position for 5-10 seconds",
+      "Lower with control"
+    ],
+    category: "strength",
+    targetArea: ["traps", "shoulder_lateral"],
+    equipment: ["dumbbells"]
+  },
+  {
+    title: "90/90 KB up carries",
+    sets: {
+      type: 'distance',
+      count: 3,
+      distance: "20-40 ft"
+    },
+    frequency: {
+      times: 2,
+      period: 'week'
+    },
+    execution: [
+      "Hold kettlebell at shoulder height",
+      "Elbow at 90 degrees",
+      "Walk specified distance",
+      "Maintain stable shoulder position"
+    ],
+    category: "strength",
+    targetArea: ["shoulder_stability"],
+    equipment: ["kettlebell"]
+  },
+  {
+    title: "Dumbbell Front Raise (Eccentric)",
+    sets: {
+      type: 'standard',
+      count: 3,
+      reps: 8,
+      hold: 6
+    },
+    frequency: {
+      times: 3,
+      period: 'week'
+    },
+    execution: [
+      "Light dumbbells, slight elbow bend",
+      "Raise to shoulder height",
+      "6-second lowering phase",
+      "Control throughout movement"
+    ],
+    category: "strength",
+    targetArea: ["shoulder_anterior"],
+    equipment: ["dumbbells"]
+  },
+  {
+    title: "Chicken Wings",
+    sets: {
+      type: 'standard',
+      count: 3,
+      reps: 10,
+      hold: 10
+    },
+    frequency: {
+      times: 2,
+      period: 'week'
+    },
+    execution: [
+      "Arms at sides, elbows bent",
+      "Rotate shoulders externally",
+      "Hold end position",
+      "Return with control"
+    ],
+    category: "strength",
+    targetArea: ["rotator_cuff"],
+    equipment: []
+  },
+  {
+    title: "Overhead Banded Quicks",
+    sets: {
+      type: 'duration',
+      count: 3,
+      duration: 30
+    },
+    frequency: {
+      times: 2,
+      period: 'week'
+    },
+    execution: [
+      "Hold band overhead",
+      "Perform small pulse movements",
+      "Maintain tension throughout",
+      "Focus on shoulder stability"
+    ],
+    category: "endurance",
+    targetArea: ["shoulder_stability"],
+    equipment: ["resistance_band"]
+  },
+  {
     title: "External Rotation Stretch (with Stick)",
     sets: {
+      type: 'standard',
       count: 3,
       reps: 1,
       hold: 60
@@ -48,6 +223,7 @@ export const initialExercises: NewExercise[] = [
   {
     title: "90/90 External Rotation Walk Out",
     sets: {
+      type: 'standard',
       count: 2,
       reps: 10,
       hold: 5
@@ -71,6 +247,7 @@ export const initialExercises: NewExercise[] = [
   {
     title: "Front Raise (Y) Banded",
     sets: {
+      type: 'standard',
       count: 3,
       reps: 10
     },
@@ -91,53 +268,9 @@ export const initialExercises: NewExercise[] = [
     equipment: ["resistance_band"]
   },
   {
-    title: "Dumbbell Front Raise (Eccentric)",
-    sets: {
-      count: 3,
-      reps: 8,
-      hold: 6
-    },
-    frequency: {
-      times: 3,
-      period: 'week'
-    },
-    execution: [
-      "Light dumbbells in hands, palms facing up",
-      "Slight bend in elbows (not locked)",
-      "Raise arms to shoulder height at moderate pace",
-      "Lower very slowly (6-second count)",
-      "Like slowly pouring water from a pitcher"
-    ],
-    category: "strength",
-    targetArea: ["shoulder_anterior"],
-    equipment: ["dumbbells"]
-  },
-  {
-    title: "Movie Stars (Rotator Cuff)",
-    sets: {
-      count: 3,
-      reps: 8,
-      hold: 3
-    },
-    frequency: {
-      times: 3,
-      period: 'week'
-    },
-    execution: [
-      "Sit on bench, affected arm's elbow on same-side knee",
-      "Hold light dumbbell in affected hand",
-      "Start with forearm pointing outward (L shape)",
-      "Slowly rotate arm inward toward floor",
-      "Hold 3 seconds at bottom position",
-      "Keep elbow firmly planted throughout"
-    ],
-    category: "strength",
-    targetArea: ["rotator_cuff"],
-    equipment: ["dumbbells"]
-  },
-  {
     title: "Lateral Raises with Holds",
     sets: {
+      type: 'standard',
       count: 3,
       reps: 8,
       hold: 3
@@ -160,6 +293,7 @@ export const initialExercises: NewExercise[] = [
   {
     title: "Lat Pull Downs",
     sets: {
+      type: 'standard',
       count: 3,
       reps: 10
     },

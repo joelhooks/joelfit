@@ -14,16 +14,6 @@ export class EquipmentRepository extends BaseRepository<Equipment, typeof equipm
 
   private async ensureInitialized() {
     if (!this.initialized) {
-      if (this.items.length === 0) {
-        const now = new Date()
-        this.items = initialEquipment.map((item, index) => ({
-          ...item,
-          id: `equipment-${index + 1}`,
-          slug: this.generateSlug(item),
-          createdAt: now,
-          updatedAt: now
-        }))
-      }
       this.initialized = true
     }
   }
@@ -80,5 +70,10 @@ export class EquipmentRepository extends BaseRepository<Equipment, typeof equipm
   async findAll(): Promise<Equipment[]> {
     await this.ensureInitialized()
     return super.findAll()
+  }
+
+  async reset(): Promise<void> {
+    this.items = []
+    this.initialized = false
   }
 } 

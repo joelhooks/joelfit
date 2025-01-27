@@ -8,6 +8,7 @@ describe('EquipmentRepository', () => {
 
   beforeEach(() => {
     repo = new EquipmentRepository()
+    return repo.reset()
   })
 
   const validEquipment = {

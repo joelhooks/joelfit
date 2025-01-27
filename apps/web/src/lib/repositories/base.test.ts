@@ -17,6 +17,8 @@ type TestEntity = z.infer<typeof testSchema> & Entity
 
 // Test repository implementation
 class TestRepository extends BaseRepository<TestEntity, typeof testSchema> {
+  private items: TestEntity[]
+
   constructor() {
     super(testSchema, 'Test')
     // Initialize with test data
@@ -40,7 +42,7 @@ class TestRepository extends BaseRepository<TestEntity, typeof testSchema> {
     this.items = data
   }
 
-  protected generateSlug(data: Partial<TestEntity>): string {
+  public generateSlug(data: Partial<TestEntity>): string {
     if (!data.name) throw new SlugGenerationError('Name is required to generate slug')
     return data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
   }

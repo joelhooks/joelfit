@@ -4,7 +4,8 @@ import { baseSchema } from '../base'
 export const exerciseCategorySchema = z.enum([
   'warmup',
   'strength',
-  'mobility'
+  'mobility',
+  'endurance'
 ])
 
 export const exerciseTargetSchema = z.enum([
@@ -13,16 +14,36 @@ export const exerciseTargetSchema = z.enum([
   'shoulder_posterior',
   'rotator_cuff',
   'scapula',
-  'traps'
+  'traps',
+  'nerve',
+  'lats',
+  'shoulder_stability'
 ])
+
+const exerciseSetBaseSchema = z.object({
+  count: z.number().positive('Must have at least 1 set')
+})
+
+const standardSetSchema = exerciseSetBaseSchema.extend({
+  reps: z.number().positive('Must have at least 1 rep'),
+  hold: z.number().positive('Hold time must be positive').optional()
+})
+
+const distanceSetSchema = exerciseSetBaseSchema.extend({
+  distance: z.string()
+})
+
+const durationSetSchema = exerciseSetBaseSchema.extend({
+  duration: z.number().positive('Duration must be positive')
+})
 
 export const exerciseSchema = baseSchema.extend({
   title: z.string().min(1, 'Title is required'),
-  sets: z.object({
-    count: z.number().positive('Must have at least 1 set'),
-    reps: z.number().positive('Must have at least 1 rep'),
-    hold: z.number().positive('Hold time must be positive').optional()
-  }),
+  sets: z.discriminatedUnion('type', [
+    standardSetSchema.extend({ type: z.literal('standard') }),
+    distanceSetSchema.extend({ type: z.literal('distance') }),
+    durationSetSchema.extend({ type: z.literal('duration') })
+  ]),
   frequency: z.object({
     times: z.number().positive('Must occur at least once'),
     period: z.enum(['day', 'week'])

@@ -12,16 +12,6 @@ export class ProfileRepository extends BaseRepository<Profile, typeof profileSch
 
   private async ensureInitialized() {
     if (!this.initialized) {
-      if (this.items.length === 0) {
-        const now = new Date()
-        this.items = [{
-          ...initialProfile,
-          id: 'profile-1',
-          slug: this.generateSlug(initialProfile),
-          createdAt: now,
-          updatedAt: now
-        }]
-      }
       this.initialized = true
     }
   }
@@ -60,5 +50,10 @@ export class ProfileRepository extends BaseRepository<Profile, typeof profileSch
   async findAll(): Promise<Profile[]> {
     await this.ensureInitialized()
     return super.findAll()
+  }
+
+  async reset(): Promise<void> {
+    this.items = []
+    this.initialized = false
   }
 } 

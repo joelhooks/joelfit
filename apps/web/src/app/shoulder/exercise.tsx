@@ -10,9 +10,19 @@ type ExerciseProps = ExerciseType
 export function Exercise({ title, sets, frequency, execution, keyPoints }: ExerciseProps) {
   const [isOpen, setIsOpen] = useState(true)
   
-  const setsDisplay = sets.hold 
-    ? `${sets.count} × ${sets.hold}s hold`
-    : `${sets.count} × ${sets.reps} reps`
+  const setsDisplay = (() => {
+    if (sets.type === 'standard') {
+      return sets.hold 
+        ? `${sets.count} × ${sets.hold}s hold`
+        : `${sets.count} × ${sets.reps} reps`
+    }
+    if (sets.type === 'distance') {
+      return `${sets.count} × ${sets.distance}`
+    }
+    if (sets.type === 'duration') {
+      return `${sets.count} × ${sets.duration}s`
+    }
+  })()
 
   const frequencyDisplay = frequency.period === 'day'
     ? frequency.times === 1 ? 'daily' : `${frequency.times}×/day`

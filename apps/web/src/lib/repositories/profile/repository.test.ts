@@ -8,6 +8,7 @@ describe('ProfileRepository', () => {
 
   beforeEach(() => {
     repo = new ProfileRepository()
+    return repo.reset()
   })
 
   const validProfile = {

@@ -70,11 +70,17 @@ describe('FrameworkRepository', () => {
           sunday: {
             title: "Updated Prep Day",
             totalTime: "3-4 hours",
-            waves: []
+            waves: [
+              {
+                title: "Wave 1",
+                time: "30 min",
+                tasks: ["Task 1", "Task 2"]
+              }
+            ]
           },
           wednesday: {
             title: "Updated Mid-week Tasks",
-            tasks: []
+            tasks: ["Task 1", "Task 2"]
           }
         }
       }
@@ -90,15 +96,22 @@ describe('FrameworkRepository', () => {
         weeklySchedule: {
           saturday: {
             title: "Test Title",
-            tasks: []
+            tasks: [{ task: "Task 1", time: "10 min" }]
           },
           sunday: {
             title: "Test Title",
-            tasks: []
+            totalTime: "3 hours",
+            waves: [
+              {
+                title: "Wave 1",
+                time: "30 min",
+                tasks: ["Task 1"]
+              }
+            ]
           },
           wednesday: {
             title: "Test Title",
-            tasks: []
+            tasks: ["Task 1"]
           }
         }
       }
@@ -116,11 +129,18 @@ describe('FrameworkRepository', () => {
           },
           sunday: {
             title: "Test Title",
-            tasks: []
+            totalTime: "3 hours",
+            waves: [
+              {
+                title: "Wave 1",
+                time: "30 min",
+                tasks: ["Task 1"]
+              }
+            ]
           },
           wednesday: {
             title: "Test Title",
-            tasks: []
+            tasks: ["Task 1"]
           }
         }
       } as unknown as Partial<Framework>
