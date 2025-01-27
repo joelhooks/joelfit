@@ -6,23 +6,32 @@
   :root {
     --background: 230 20% 10%;
     --foreground: 180 5% 80%;
+
     --card: 230 20% 12%;
     --card-foreground: 180 5% 80%;
+
     --popover: 230 20% 12%;
     --popover-foreground: 180 5% 80%;
+
     --primary: 326 100% 74%;
     --primary-foreground: 230 20% 12%;
+
     --secondary: 230 20% 15%;
     --secondary-foreground: 180 5% 80%;
+
     --muted: 230 20% 15%;
     --muted-foreground: 180 5% 50%;
+
     --accent: 326 100% 74%;
     --accent-foreground: 230 20% 12%;
+
     --destructive: 0 90% 60%;
     --destructive-foreground: 180 5% 80%;
+
     --border: 230 20% 15%;
     --input: 230 20% 15%;
     --ring: 326 100% 74%;
+
     --radius: 0.5rem;
     --chart-1: 326 100% 74%;
     --chart-2: 155 100% 65%;
@@ -34,23 +43,32 @@
   .dark {
     --background: 230 20% 10%;
     --foreground: 180 5% 80%;
+
     --card: 230 20% 12%;
     --card-foreground: 180 5% 80%;
+
     --popover: 230 20% 12%;
     --popover-foreground: 180 5% 80%;
+
     --primary: 326 100% 74%;
     --primary-foreground: 230 20% 12%;
+
     --secondary: 230 20% 15%;
     --secondary-foreground: 180 5% 80%;
+
     --muted: 230 20% 15%;
     --muted-foreground: 180 5% 50%;
+
     --accent: 326 100% 74%;
     --accent-foreground: 230 20% 12%;
+
     --destructive: 0 90% 60%;
     --destructive-foreground: 180 5% 80%;
+
     --border: 230 20% 15%;
     --input: 230 20% 15%;
     --ring: 326 100% 74%;
+
     --chart-1: 326 100% 74%;
     --chart-2: 155 100% 65%;
     --chart-3: 43 100% 64%;
@@ -66,9 +84,11 @@
   body {
     @apply bg-background text-foreground font-sans;
   }
-  html {
-    overflow-y: scroll;
-  }
+}
+
+/* Always show scrollbar to prevent layout shifts */
+html {
+  overflow-y: scroll;
 }
 
 @layer components {
