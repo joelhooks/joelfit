@@ -75,7 +75,10 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
 
           <div className="flex justify-between items-center">
             <div className="flex flex-col gap-1">
-              <SetTracker totalSets={sets.count} currentSet={currentSet} />
+              <SetTracker 
+                totalSets={sets.count} 
+                currentSet={showTimer ? currentSet : undefined} 
+              />
               {sets.type === 'standard' && sets.reps > 1 && (
                 <div className="text-xs text-muted-foreground">
                   Rep {currentRep + 1} of {sets.reps}
