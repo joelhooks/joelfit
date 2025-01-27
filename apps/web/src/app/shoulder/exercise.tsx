@@ -3,12 +3,14 @@
 import { useState } from 'react'
 import { ChevronDown, Activity, Clock } from 'lucide-react'
 import { SetTracker } from '@/components/exercise/set-tracker'
+import { Timer } from '@/components/exercise/timer'
 import type { Exercise as ExerciseType } from '@/lib/repositories/exercise/schema'
 
 type ExerciseProps = ExerciseType
 
 export function Exercise({ title, sets, frequency, execution, keyPoints }: ExerciseProps) {
   const [isOpen, setIsOpen] = useState(true)
+  const [currentSet, setCurrentSet] = useState(0)
   
   const setsDisplay = (() => {
     if (sets.type === 'standard') {
@@ -27,6 +29,9 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
   const frequencyDisplay = frequency.period === 'day'
     ? frequency.times === 1 ? 'daily' : `${frequency.times}×/day`
     : frequency.times === 1 ? 'weekly' : `${frequency.times}×/week`
+
+  const showTimer = sets.type === 'standard' ? sets.hold : sets.type === 'duration'
+  const timerDuration = sets.type === 'standard' ? sets.hold : sets.type === 'duration' ? sets.duration : undefined
   
   return (
     <div className="border rounded-lg p-3 bg-card text-card-foreground">
@@ -53,7 +58,19 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
             </div>
           </div>
 
-          <SetTracker totalSets={sets.count} />
+          <div className="flex justify-between items-center">
+            <SetTracker totalSets={sets.count} />
+            {showTimer && timerDuration && (
+              <Timer 
+                duration={timerDuration} 
+                onComplete={() => {
+                  if (currentSet < sets.count) {
+                    setCurrentSet(currentSet + 1)
+                  }
+                }}
+              />
+            )}
+          </div>
 
           <div className="space-y-2 mt-4">
             <h4 className="text-xs font-medium text-muted-foreground">Execution:</h4>
