@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, Activity, Clock } from 'lucide-react'
+import { ChevronDown, Activity, Clock, CheckCircle2, RotateCcw } from 'lucide-react'
 import { SetTracker } from '@/components/exercise/set-tracker'
 import { Timer } from '@/components/exercise/timer'
+import { Button } from '@/components/ui/button'
 import type { Exercise as ExerciseType } from '@/lib/repositories/exercise/schema'
 
 type ExerciseProps = ExerciseType
@@ -12,6 +13,7 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
   const [isOpen, setIsOpen] = useState(true)
   const [currentSet, setCurrentSet] = useState(0)
   const [currentRep, setCurrentRep] = useState(0)
+  const [isComplete, setIsComplete] = useState(false)
   
   const setsDisplay = (() => {
     if (sets.type === 'standard') {
@@ -43,9 +45,18 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
       setCurrentRep(0)
       if (currentSet < sets.count - 1) {
         setCurrentSet(currentSet + 1)
+        return true // Start next set
+      } else {
+        setIsComplete(true)
+        return false // Don't auto-reset, we're done
       }
-      return false // Don't auto-reset, we're done with the set
     }
+  }
+
+  const resetExercise = () => {
+    setCurrentSet(0)
+    setCurrentRep(0)
+    setIsComplete(false)
   }
 
   return (
@@ -79,18 +90,34 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
                 totalSets={sets.count} 
                 currentSet={showTimer ? currentSet : undefined} 
               />
-              {sets.type === 'standard' && sets.reps > 1 && (
+              {sets.type === 'standard' && sets.reps > 1 && !isComplete && (
                 <div className="text-sm text-muted-foreground">
                   Rep {currentRep + 1} of {sets.reps}
                 </div>
               )}
             </div>
-            {showTimer && timerDuration && (
+            {isComplete ? (
+              <div className="flex flex-col items-center gap-3 sm:flex-row">
+                <div className="flex items-center gap-2 text-primary">
+                  <CheckCircle2 className="h-5 w-5" />
+                  <span className="font-medium">Exercise Complete!</span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={resetExercise}
+                  className="flex items-center gap-2"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  <span>Start Again</span>
+                </Button>
+              </div>
+            ) : showTimer && timerDuration ? (
               <Timer 
                 duration={timerDuration} 
                 onComplete={handleTimerComplete}
               />
-            )}
+            ) : null}
           </div>
 
           <div className="space-y-2">
