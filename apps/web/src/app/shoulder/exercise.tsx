@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ChevronDown, Activity, Clock, CheckCircle2, RotateCcw } from 'lucide-react'
+import { ChevronDown, Activity, Clock, CheckCircle2, RotateCcw, CheckCircle } from 'lucide-react'
 import { SetTracker } from '@/components/exercise/set-tracker'
 import { Timer } from '@/components/exercise/timer'
 import { Button } from '@/components/ui/button'
@@ -47,18 +47,22 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
         setCurrentSet(currentSet + 1)
         return true // Start next set
       } else {
-        setIsComplete(true)
-        setIsOpen(false) // Auto-close on completion
+        completeExercise()
         return false // Don't auto-reset, we're done
       }
     }
+  }
+
+  const completeExercise = () => {
+    setIsComplete(true)
+    setIsOpen(false)
   }
 
   const resetExercise = () => {
     setCurrentSet(0)
     setCurrentRep(0)
     setIsComplete(false)
-    setIsOpen(true) // Re-open when starting again
+    setIsOpen(true)
   }
 
   return (
@@ -122,12 +126,25 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
                 </div>
               )}
             </div>
-            {showTimer && timerDuration && !isComplete && (
-              <Timer 
-                duration={timerDuration} 
-                onComplete={handleTimerComplete}
-              />
-            )}
+            <div className="flex items-center gap-3">
+              {showTimer && timerDuration && !isComplete && (
+                <Timer 
+                  duration={timerDuration} 
+                  onComplete={handleTimerComplete}
+                />
+              )}
+              {!isComplete && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={completeExercise}
+                  className="flex items-center gap-2 whitespace-nowrap"
+                >
+                  <CheckCircle className="h-4 w-4" />
+                  <span>Complete Exercise</span>
+                </Button>
+              )}
+            </div>
           </div>
 
           <div className="space-y-2">
