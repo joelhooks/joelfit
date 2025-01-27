@@ -25,8 +25,9 @@ export function Timer({ duration, onComplete }: TimerProps) {
             if (shouldReset) {
               setTimeLeft(duration)
               setIsRunning(true)
+              return duration
             }
-            return shouldReset ? duration : 0
+            return 0
           }
           return prev - 1
         })
@@ -42,8 +43,8 @@ export function Timer({ duration, onComplete }: TimerProps) {
   }
 
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-      <div className="text-2xl font-mono w-full text-center sm:w-20">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div className="text-3xl font-mono w-full text-center sm:w-24">
         {timeLeft}s
       </div>
       <div className="flex gap-2 justify-center">
@@ -51,21 +52,28 @@ export function Timer({ duration, onComplete }: TimerProps) {
           size="lg"
           variant="outline"
           onClick={() => setIsRunning(!isRunning)}
-          className="h-12 w-12"
+          className="h-12 px-4 flex items-center gap-2"
         >
           {isRunning ? (
-            <Pause className="h-6 w-6" />
+            <>
+              <Pause className="h-5 w-5" />
+              <span>Pause</span>
+            </>
           ) : (
-            <Play className="h-6 w-6" />
+            <>
+              <Play className="h-5 w-5" />
+              <span>Start</span>
+            </>
           )}
         </Button>
         <Button
           size="lg"
           variant="outline"
           onClick={reset}
-          className="h-12 w-12"
+          className="h-12 px-4 flex items-center gap-2"
         >
-          <RotateCcw className="h-6 w-6" />
+          <RotateCcw className="h-5 w-5" />
+          <span>Reset</span>
         </Button>
       </div>
     </div>
