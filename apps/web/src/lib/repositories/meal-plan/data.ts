@@ -2,9 +2,10 @@ import { type MealPlan } from './schema'
 
 export const initialMealPlan: Omit<MealPlan, keyof { id: string; slug: string; createdAt: Date; updatedAt: Date }> = {
   name: "Joel's Meal Plan",
-  calories: 2400,
+  calories: 2650,
   timeline: [
     { time: "7:00 AM", slot: "A", meal: "Breakfast", calories: 400, protein: 30, carbs: 45, fat: 15, container: "Mason jar" },
+    { time: "9:30 AM", slot: "B", meal: "Post-Workout Smoothie", calories: 250, protein: 30, carbs: 25, fat: 8, container: "Smoothie cup" },
     { time: "11:30 AM", slot: "C", meal: "Lunch", calories: 650, protein: 45, carbs: 75, fat: 20, container: "3-comp glass" },
     { time: "3:00 PM", slot: "D", meal: "Mid-day Meal", calories: 550, protein: 35, carbs: 55, fat: 20, container: "3-comp glass" },
     { time: "7:00 PM", slot: "E", meal: "Dinner", calories: 400, protein: 25, carbs: 35, fat: 13, container: "3-comp glass" },
@@ -18,6 +19,19 @@ export const initialMealPlan: Omit<MealPlan, keyof { id: string; slug: string; c
         "1 scoop protein powder (120 cal, 24g P)",
         "1 tbsp nut butter (98 cal, 8g F)",
         "½ banana (52 cal, 13g C)"
+      ]
+    },
+    postWorkout: {
+      title: "B: Post-Workout Smoothie (250 cal)",
+      items: [
+        "1 scoop protein powder (120 cal, 24g P)",
+        "1 cup mixed berries (60 cal, 15g C)",
+        "½ cucumber (10 cal, 2g C)",
+        "2 cups spinach (10 cal, 1g C)",
+        "6 baby carrots (30 cal, 7g C)",
+        "½ tbsp MCT oil (60 cal, 7g F)",
+        "5g creatine",
+        "Ice"
       ]
     },
     lunch: {
