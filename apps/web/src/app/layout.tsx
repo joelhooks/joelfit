@@ -1,11 +1,16 @@
 import * as React from 'react'
 import { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import { ThemeProvider } from '@/components/theme-provider'
+import { GeistSans } from "geist/font/sans"
+import { GeistMono } from "geist/font/mono"
+import { ThemeProvider } from "next-themes"
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import { cn } from "@/lib/utils"
+import { SiteHeader } from "@/components/site-header"
+import { SessionProvider } from "next-auth/react"
+import { auth } from "@/server/auth"
 import { PageFooter } from '@/components/page-footer'
 import './globals.css'
-
-const inter = Inter({ subsets: ['latin'] })
+import "../styles/cyberpunk.css"
 
 export const metadata: Metadata = {
   title: {
@@ -49,25 +54,38 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const session = await auth()
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
-          <main className="min-h-screen">
-            {children}
-          </main>
-          <PageFooter />
-        </ThemeProvider>
+      <body className={cn(
+        "min-h-screen bg-background font-sans antialiased",
+        GeistSans.variable,
+        GeistMono.variable
+      )}>
+        <SessionProvider session={session}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <NuqsAdapter>
+              <div className="relative flex min-h-screen flex-col">
+                <div className="cyberpunk-scanlines" />
+                <div className="cyberpunk-noise" />
+                <SiteHeader />
+                <div className="flex-1">{children}</div>
+                <PageFooter />
+              </div>
+            </NuqsAdapter>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   )
