@@ -42,28 +42,32 @@ export function Timer({ duration, onComplete }: TimerProps) {
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <div className="text-lg font-mono w-16 text-center">
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+      <div className="text-2xl font-mono w-full text-center sm:w-20">
         {timeLeft}s
       </div>
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => setIsRunning(!isRunning)}
-      >
-        {isRunning ? (
-          <Pause className="h-4 w-4" />
-        ) : (
-          <Play className="h-4 w-4" />
-        )}
-      </Button>
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={reset}
-      >
-        <RotateCcw className="h-4 w-4" />
-      </Button>
+      <div className="flex gap-2 justify-center">
+        <Button
+          size="lg"
+          variant="outline"
+          onClick={() => setIsRunning(!isRunning)}
+          className="h-12 w-12"
+        >
+          {isRunning ? (
+            <Pause className="h-6 w-6" />
+          ) : (
+            <Play className="h-6 w-6" />
+          )}
+        </Button>
+        <Button
+          size="lg"
+          variant="outline"
+          onClick={reset}
+          className="h-12 w-12"
+        >
+          <RotateCcw className="h-6 w-6" />
+        </Button>
+      </div>
     </div>
   )
 } 

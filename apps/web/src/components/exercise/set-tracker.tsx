@@ -31,19 +31,21 @@ export function SetTracker({ totalSets, currentSet }: SetTrackerProps) {
   }
 
   return (
-    <div className="flex gap-2 mt-2">
-      {completedSets.map((completed, i) => (
-        <Checkbox
-          key={i}
-          checked={completed}
-          onCheckedChange={() => toggleSet(i)}
-          className="data-[state=checked]:bg-primary"
-          aria-label={`Set ${i + 1}`}
-        />
-      ))}
-      <span className="text-sm text-muted-foreground ml-2">
+    <div className="space-y-3">
+      <div className="flex flex-wrap gap-3">
+        {completedSets.map((completed, i) => (
+          <Checkbox
+            key={i}
+            checked={completed}
+            onCheckedChange={() => toggleSet(i)}
+            className="h-6 w-6 data-[state=checked]:bg-primary"
+            aria-label={`Set ${i + 1}`}
+          />
+        ))}
+      </div>
+      <div className="text-sm text-muted-foreground">
         {completedSets.filter(Boolean).length}/{totalSets} sets
-      </span>
+      </div>
     </div>
   )
 } 
