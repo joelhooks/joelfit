@@ -5,6 +5,8 @@ but rather a specific reference site that I can also link to etc to collaboratio
 
 Keep that in mind at all times.
 
+Make sure everything gets committed to git before you push to github.
+
 ## Core Principles
 - Ship fast, refactor later when patterns emerge
 - Optimize for readability and maintainability over premature optimization

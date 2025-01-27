@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 
 interface TimerProps {
   duration: number
-  onComplete?: () => void
+  onComplete?: () => boolean // Return true to auto-reset
 }
 
 export function Timer({ duration, onComplete }: TimerProps) {
@@ -21,8 +21,12 @@ export function Timer({ duration, onComplete }: TimerProps) {
         setTimeLeft((prev) => {
           if (prev <= 1) {
             setIsRunning(false)
-            onComplete?.()
-            return 0
+            const shouldReset = onComplete?.() ?? false
+            if (shouldReset) {
+              setTimeLeft(duration)
+              setIsRunning(true)
+            }
+            return shouldReset ? duration : 0
           }
           return prev - 1
         })
@@ -30,7 +34,7 @@ export function Timer({ duration, onComplete }: TimerProps) {
     }
 
     return () => clearInterval(interval)
-  }, [isRunning, timeLeft, onComplete])
+  }, [isRunning, timeLeft, onComplete, duration])
 
   const reset = () => {
     setTimeLeft(duration)

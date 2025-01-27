@@ -5,9 +5,10 @@ import { Checkbox } from '@repo/ui'
 
 interface SetTrackerProps {
   totalSets: number
+  currentSet: number
 }
 
-export function SetTracker({ totalSets }: SetTrackerProps) {
+export function SetTracker({ totalSets, currentSet }: SetTrackerProps) {
   const [completedSets, setCompletedSets] = useState<boolean[]>(
     Array(totalSets).fill(false)
   )
@@ -21,19 +22,15 @@ export function SetTracker({ totalSets }: SetTrackerProps) {
   }
 
   return (
-    <div className="flex gap-2 mt-2">
-      {completedSets.map((completed, i) => (
-        <Checkbox
+    <div className="flex gap-1">
+      {Array.from({ length: totalSets }).map((_, i) => (
+        <div
           key={i}
-          checked={completed}
-          onCheckedChange={() => toggleSet(i)}
-          className="data-[state=checked]:bg-primary"
-          aria-label={`Set ${i + 1}`}
+          className={`w-2 h-2 rounded-full ${
+            i <= currentSet ? 'bg-primary' : 'bg-muted'
+          }`}
         />
       ))}
-      <span className="text-sm text-muted-foreground ml-2">
-        {completedSets.filter(Boolean).length}/{totalSets} sets
-      </span>
     </div>
   )
 } 

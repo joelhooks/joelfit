@@ -11,6 +11,7 @@ type ExerciseProps = ExerciseType
 export function Exercise({ title, sets, frequency, execution, keyPoints }: ExerciseProps) {
   const [isOpen, setIsOpen] = useState(true)
   const [currentSet, setCurrentSet] = useState(0)
+  const [currentRep, setCurrentRep] = useState(0)
   
   const setsDisplay = (() => {
     if (sets.type === 'standard') {
@@ -32,7 +33,21 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
 
   const showTimer = sets.type === 'standard' ? sets.hold : sets.type === 'duration'
   const timerDuration = sets.type === 'standard' ? sets.hold : sets.type === 'duration' ? sets.duration : undefined
+  const maxReps = sets.type === 'standard' ? sets.reps : 1
   
+  const handleTimerComplete = () => {
+    if (currentRep < maxReps - 1) {
+      setCurrentRep(currentRep + 1)
+      return true // Return true to auto-reset timer
+    } else {
+      setCurrentRep(0)
+      if (currentSet < sets.count - 1) {
+        setCurrentSet(currentSet + 1)
+      }
+      return false // Don't auto-reset, we're done with the set
+    }
+  }
+
   return (
     <div className="border rounded-lg p-3 bg-card text-card-foreground">
       <button 
@@ -59,15 +74,18 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
           </div>
 
           <div className="flex justify-between items-center">
-            <SetTracker totalSets={sets.count} />
+            <div className="flex flex-col gap-1">
+              <SetTracker totalSets={sets.count} currentSet={currentSet} />
+              {sets.type === 'standard' && sets.reps > 1 && (
+                <div className="text-xs text-muted-foreground">
+                  Rep {currentRep + 1} of {sets.reps}
+                </div>
+              )}
+            </div>
             {showTimer && timerDuration && (
               <Timer 
                 duration={timerDuration} 
-                onComplete={() => {
-                  if (currentSet < sets.count) {
-                    setCurrentSet(currentSet + 1)
-                  }
-                }}
+                onComplete={handleTimerComplete}
               />
             )}
           </div>
