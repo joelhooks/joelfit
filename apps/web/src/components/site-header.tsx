@@ -81,7 +81,7 @@ export function SiteHeader() {
             </Link>
           ) : (
             <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-2">
+              <DropdownMenuTrigger className="flex items-center gap-2 min-w-[32px] justify-center">
                 <Avatar className="h-8 w-8">
                   <AvatarImage 
                     src={!imageError ? avatarUrl : undefined}
@@ -93,7 +93,7 @@ export function SiteHeader() {
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" sideOffset={8}>
                 <DropdownMenuLabel>
                   {session.user.email}
                 </DropdownMenuLabel>
