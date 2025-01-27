@@ -64,7 +64,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn(
-        "min-h-screen bg-background font-sans antialiased",
+        "min-h-screen bg-background font-sans antialiased overflow-clip",
         GeistSans.variable,
         GeistMono.variable
       )}>
@@ -76,7 +76,7 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <NuqsAdapter>
-              <div className="relative flex min-h-screen flex-col">
+              <div className="relative flex min-h-screen flex-col overflow-x-hidden">
                 <div className="cyberpunk-scanlines" />
                 <div className="cyberpunk-noise" />
                 <SiteHeader />

@@ -81,17 +81,23 @@ export function SiteHeader() {
             </Link>
           ) : (
             <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-2 min-w-[32px] justify-center">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage 
-                    src={!imageError ? avatarUrl : undefined}
-                    onError={() => setImageError(true)}
-                    alt={session.user.name || session.user.email || 'User avatar'} 
-                  />
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    {session.user.name?.[0] || session.user.email?.[0] || '?'}
-                  </AvatarFallback>
-                </Avatar>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-8 w-8 p-0"
+                >
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage 
+                      src={!imageError ? avatarUrl : undefined}
+                      onError={() => setImageError(true)}
+                      alt={session.user.name || session.user.email || 'User avatar'} 
+                    />
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      {session.user.name?.[0] || session.user.email?.[0] || '?'}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" sideOffset={8}>
                 <DropdownMenuLabel>
