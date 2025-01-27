@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint --max-warnings 0",
     "check-types": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "build:css": "tailwindcss -i ./app/globals.css -o ./app/output.css",
     "test": "vitest run",
     "test:ui": "vitest --ui",
