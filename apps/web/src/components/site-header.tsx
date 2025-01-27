@@ -99,8 +99,13 @@ export function SiteHeader() {
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" sideOffset={8}>
-                <DropdownMenuLabel>
+              <DropdownMenuContent 
+                align="end" 
+                sideOffset={8}
+                className="w-[200px] fixed"
+                style={{ position: 'fixed' }}
+              >
+                <DropdownMenuLabel className="truncate">
                   {session.user.email}
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
