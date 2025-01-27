@@ -23,11 +23,10 @@ export function Timer({ duration, onComplete }: TimerProps) {
             setIsRunning(false)
             const shouldReset = onComplete?.() ?? false
             if (shouldReset) {
-              setTimeLeft(duration)
               setIsRunning(true)
-              return duration
             }
-            return 0
+            setTimeLeft(duration) // Always reset to original duration
+            return duration
           }
           return prev - 1
         })
