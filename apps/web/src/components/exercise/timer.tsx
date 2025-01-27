@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Play, Pause, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 interface TimerProps {
   duration: number
@@ -12,6 +13,7 @@ interface TimerProps {
 export function Timer({ duration, onComplete }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration)
   const [isRunning, setIsRunning] = useState(false)
+  const [isResetting, setIsResetting] = useState(false)
 
   useEffect(() => {
     let interval: NodeJS.Timeout
@@ -25,7 +27,9 @@ export function Timer({ duration, onComplete }: TimerProps) {
             if (shouldReset) {
               setIsRunning(true)
             }
-            setTimeLeft(duration) // Always reset to original duration
+            setIsResetting(true)
+            setTimeout(() => setIsResetting(false), 300)
+            setTimeLeft(duration)
             return duration
           }
           return prev - 1
@@ -39,11 +43,18 @@ export function Timer({ duration, onComplete }: TimerProps) {
   const reset = () => {
     setTimeLeft(duration)
     setIsRunning(false)
+    setIsResetting(true)
+    setTimeout(() => setIsResetting(false), 300)
   }
 
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-      <div className="text-3xl font-mono w-full text-center sm:w-24">
+      <div 
+        className={cn(
+          "text-3xl font-mono w-full text-center sm:w-24 transition-all duration-300",
+          isResetting && "scale-110 text-primary"
+        )}
+      >
         {timeLeft}s
       </div>
       <div className="flex gap-2 justify-center">
@@ -51,7 +62,7 @@ export function Timer({ duration, onComplete }: TimerProps) {
           size="lg"
           variant="outline"
           onClick={() => setIsRunning(!isRunning)}
-          className="h-12 px-4 flex items-center gap-2"
+          className="h-12 px-4 flex items-center gap-2 transition-transform active:scale-95"
         >
           {isRunning ? (
             <>
@@ -69,7 +80,7 @@ export function Timer({ duration, onComplete }: TimerProps) {
           size="lg"
           variant="outline"
           onClick={reset}
-          className="h-12 px-4 flex items-center gap-2"
+          className="h-12 px-4 flex items-center gap-2 transition-transform active:scale-95"
         >
           <RotateCcw className="h-5 w-5" />
           <span>Reset</span>
