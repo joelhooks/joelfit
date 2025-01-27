@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ChevronDown, Activity, Clock, CheckCircle2, RotateCcw, CheckCircle } from 'lucide-react'
+import { ChevronDown, Activity, Clock, CheckCircle2, RotateCcw } from 'lucide-react'
 import { SetTracker } from '@/components/exercise/set-tracker'
 import { Timer } from '@/components/exercise/timer'
 import { Button } from '@/components/ui/button'
@@ -118,7 +118,8 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
             <div className="space-y-2">
               <SetTracker 
                 totalSets={sets.count} 
-                currentSet={showTimer ? currentSet : undefined} 
+                currentSet={showTimer ? currentSet : undefined}
+                onComplete={completeExercise}
               />
               {sets.type === 'standard' && sets.reps > 1 && !isComplete && (
                 <div className="text-sm text-muted-foreground">
@@ -126,25 +127,12 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-3">
-              {showTimer && timerDuration && !isComplete && (
-                <Timer 
-                  duration={timerDuration} 
-                  onComplete={handleTimerComplete}
-                />
-              )}
-              {!isComplete && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={completeExercise}
-                  className="flex items-center gap-2 whitespace-nowrap"
-                >
-                  <CheckCircle className="h-4 w-4" />
-                  <span>Complete Exercise</span>
-                </Button>
-              )}
-            </div>
+            {showTimer && timerDuration && !isComplete && (
+              <Timer 
+                duration={timerDuration} 
+                onComplete={handleTimerComplete}
+              />
+            )}
           </div>
 
           <div className="space-y-2">

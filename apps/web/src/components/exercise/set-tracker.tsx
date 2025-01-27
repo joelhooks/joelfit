@@ -6,9 +6,10 @@ import { Checkbox } from '@repo/ui'
 interface SetTrackerProps {
   totalSets: number
   currentSet?: number // Optional for non-timed exercises
+  onComplete?: () => void // Callback when all sets are complete
 }
 
-export function SetTracker({ totalSets, currentSet }: SetTrackerProps) {
+export function SetTracker({ totalSets, currentSet, onComplete }: SetTrackerProps) {
   const [completedSets, setCompletedSets] = useState<boolean[]>(
     Array(totalSets).fill(false)
   )
@@ -19,6 +20,13 @@ export function SetTracker({ totalSets, currentSet }: SetTrackerProps) {
       setCompletedSets(prev => prev.map((_, i) => i < currentSet))
     }
   }, [currentSet])
+
+  // Check for completion
+  useEffect(() => {
+    if (completedSets.every(Boolean) && onComplete) {
+      onComplete()
+    }
+  }, [completedSets, onComplete])
 
   const toggleSet = (index: number) => {
     if (typeof currentSet === 'undefined') { // Only allow manual toggling for non-timed exercises
