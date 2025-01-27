@@ -85,7 +85,7 @@ export function SiteHeader() {
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-8 w-8 p-0"
+                  className="relative flex h-8 w-8 items-center justify-center p-0"
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage 
@@ -102,8 +102,7 @@ export function SiteHeader() {
               <DropdownMenuContent 
                 align="end" 
                 sideOffset={8}
-                className="w-[200px] fixed"
-                style={{ position: 'fixed' }}
+                className="w-[200px]"
               >
                 <DropdownMenuLabel className="truncate">
                   {session.user.email}
