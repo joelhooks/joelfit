@@ -16,7 +16,7 @@ export function SetTracker({ totalSets, currentSet }: SetTrackerProps) {
   // Update completed sets when currentSet changes (for timed exercises)
   useEffect(() => {
     if (typeof currentSet === 'number') {
-      setCompletedSets(prev => prev.map((_, i) => i <= currentSet))
+      setCompletedSets(prev => prev.map((_, i) => i < currentSet))
     }
   }, [currentSet])
 
