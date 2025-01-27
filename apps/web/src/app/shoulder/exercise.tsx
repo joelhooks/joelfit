@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ChevronDown, Activity, Clock, CheckCircle2, RotateCcw } from 'lucide-react'
 import { SetTracker } from '@/components/exercise/set-tracker'
 import { Timer } from '@/components/exercise/timer'
@@ -48,6 +48,7 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
         return true // Start next set
       } else {
         setIsComplete(true)
+        setIsOpen(false) // Auto-close on completion
         return false // Don't auto-reset, we're done
       }
     }
@@ -57,6 +58,7 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
     setCurrentSet(0)
     setCurrentRep(0)
     setIsComplete(false)
+    setIsOpen(true) // Re-open when starting again
   }
 
   return (
@@ -65,10 +67,34 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
         className="flex w-full justify-between items-center"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <h3 className="text-lg font-medium">{title}</h3>
-        <ChevronDown 
-          className={`w-5 h-5 text-muted-foreground transition-transform ${isOpen ? 'rotate-180' : ''}`}
-        />
+        <div className="flex items-center gap-3">
+          <h3 className="text-lg font-medium">{title}</h3>
+          {isComplete && (
+            <div className="flex items-center gap-2 text-primary">
+              <CheckCircle2 className="h-5 w-5" />
+              <span className="text-sm font-medium">Complete</span>
+            </div>
+          )}
+        </div>
+        <div className="flex items-center gap-3">
+          {isComplete && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation()
+                resetExercise()
+              }}
+              className="flex items-center gap-2"
+            >
+              <RotateCcw className="h-4 w-4" />
+              <span>Start Again</span>
+            </Button>
+          )}
+          <ChevronDown 
+            className={`w-5 h-5 text-muted-foreground transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          />
+        </div>
       </button>
       
       {isOpen && (
@@ -96,28 +122,12 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
                 </div>
               )}
             </div>
-            {isComplete ? (
-              <div className="flex flex-col items-center gap-3 sm:flex-row">
-                <div className="flex items-center gap-2 text-primary">
-                  <CheckCircle2 className="h-5 w-5" />
-                  <span className="font-medium">Exercise Complete!</span>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={resetExercise}
-                  className="flex items-center gap-2"
-                >
-                  <RotateCcw className="h-4 w-4" />
-                  <span>Start Again</span>
-                </Button>
-              </div>
-            ) : showTimer && timerDuration ? (
+            {showTimer && timerDuration && !isComplete && (
               <Timer 
                 duration={timerDuration} 
                 onComplete={handleTimerComplete}
               />
-            ) : null}
+            )}
           </div>
 
           <div className="space-y-2">
