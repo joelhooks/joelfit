@@ -81,6 +81,8 @@ export const weeklyPrepSchema = z.object({
   sauces: z.array(z.string())
 })
 
+// Marking as deprecated since we're moving to MealPlan relationship
+/** @deprecated Use mealPlanId instead */
 export const nutritionProfileSchema = z.object({
   targets: nutritionTargetsSchema,
   meals: z.array(mealSchema),
@@ -94,7 +96,9 @@ export const profileSchema = baseSchema.extend({
   targets: targetsSchema,
   strengthAreas: z.array(strengthAreaSchema),
   actionPlan: z.array(actionCategorySchema),
-  nutritionProfile: nutritionProfileSchema
+  mealPlanId: z.string(),
+  /** @deprecated Use mealPlanId instead */
+  nutritionProfile: nutritionProfileSchema.optional()
 })
 
 export type ActivityLevel = z.infer<typeof activityLevelSchema>

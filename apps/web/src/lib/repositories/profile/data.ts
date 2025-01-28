@@ -1,7 +1,11 @@
 import { type Profile } from './schema'
 
-export const initialProfile: Omit<Profile, keyof { id: string; slug: string; createdAt: Date; updatedAt: Date }> = {
+export const initialProfile: Profile = {
+  id: 'joel-hooks',
+  slug: 'joel-hooks',
   name: 'Joel Hooks',
+  createdAt: new Date('2024-01-01'),
+  updatedAt: new Date('2024-01-01'),
   metrics: {
     height: '6\'3" (75 inches)',
     weight: '251 lbs',
@@ -96,11 +100,13 @@ export const initialProfile: Omit<Profile, keyof { id: string; slug: string; cre
       ]
     }
   ],
+  mealPlanId: 'joel-hooks',
+  /** @deprecated Use mealPlanId instead */
   nutritionProfile: {
     targets: {
-      calories: '2250-2500',
-      protein: '200-220g (35-40%)',
-      carbs: '225-250g (40-45%)',
+      calories: '2650',
+      protein: '180-200g (35-40%)',
+      carbs: '250-275g (40-45%)',
       fat: '65-75g (25-30%)'
     },
     meals: [
@@ -111,7 +117,16 @@ export const initialProfile: Omit<Profile, keyof { id: string; slug: string; cre
         protein: 30,
         carbs: 45,
         fat: 15,
-        container: '16oz mason jar'
+        container: 'Mason jar'
+      },
+      {
+        name: 'Post-Workout Smoothie (B)',
+        time: '9:30 AM',
+        calories: 250,
+        protein: 30,
+        carbs: 25,
+        fat: 8,
+        container: 'Smoothie cup'
       },
       {
         name: 'Lunch (C)',
@@ -120,7 +135,7 @@ export const initialProfile: Omit<Profile, keyof { id: string; slug: string; cre
         protein: 45,
         carbs: 75,
         fat: 20,
-        container: '34oz 3-compartment'
+        container: '3-comp glass'
       },
       {
         name: 'Mid-day Meal (D)',
@@ -129,7 +144,7 @@ export const initialProfile: Omit<Profile, keyof { id: string; slug: string; cre
         protein: 35,
         carbs: 55,
         fat: 20,
-        container: '34oz 3-compartment'
+        container: '3-comp glass'
       },
       {
         name: 'Dinner (E)',
@@ -138,7 +153,7 @@ export const initialProfile: Omit<Profile, keyof { id: string; slug: string; cre
         protein: 25,
         carbs: 35,
         fat: 13,
-        container: '34oz 3-compartment'
+        container: '3-comp glass'
       },
       {
         name: 'Night Snack (F)',
@@ -147,7 +162,7 @@ export const initialProfile: Omit<Profile, keyof { id: string; slug: string; cre
         protein: 15,
         carbs: 20,
         fat: 7,
-        container: '8oz container'
+        container: 'Small glass'
       }
     ],
     portions: {

@@ -29,6 +29,7 @@ export const metadata: Metadata = {
 
 export default async function JoelProfilePage() {
   const repo = new ProfileRepository()
+
   const profile = await repo.findBySlug('joel-hooks')
 
   return (

@@ -1,13 +1,17 @@
 import { BaseRepository, SlugGenerationError } from '../base'
 import { Profile, profileSchema } from './schema'
 import { initialProfile } from './data'
+import { MealPlanRepository } from '../meal-plan/repository'
+import { MealPlan } from '../meal-plan/schema'
 
 export class ProfileRepository extends BaseRepository<Profile, typeof profileSchema> {
   private initialized = false
-  protected items: Profile[] = []
+  protected items: Profile[] = [initialProfile]
+  private mealPlanRepository: MealPlanRepository
 
-  constructor() {
+  constructor(mealPlanRepository?: MealPlanRepository) {
     super(profileSchema, 'profile')
+    this.mealPlanRepository = mealPlanRepository ?? new MealPlanRepository()
   }
 
   private async ensureInitialized() {
@@ -55,5 +59,23 @@ export class ProfileRepository extends BaseRepository<Profile, typeof profileSch
   async reset(): Promise<void> {
     this.items = []
     this.initialized = false
+  }
+
+  async findByIdWithMealPlan(id: string): Promise<Profile & { mealPlan: MealPlan }> {
+    const profile = await this.findById(id)
+    const mealPlan = await this.mealPlanRepository.findById(profile.mealPlanId)
+    return { ...profile, mealPlan }
+  }
+
+  async findBySlugWithMealPlan(slug: string): Promise<Profile & { mealPlan: MealPlan }> {
+    const profile = await this.findBySlug(slug)
+    const mealPlan = await this.mealPlanRepository.findById(profile.mealPlanId)
+    return { ...profile, mealPlan }
+  }
+
+  async updateMealPlan(profileId: string, mealPlanId: string): Promise<Profile> {
+    const profile = await this.findById(profileId)
+    const updatedProfile = await this.update(profileId, { ...profile, mealPlanId })
+    return updatedProfile
   }
 } 
