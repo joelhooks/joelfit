@@ -5,13 +5,39 @@ import { Card, CardContent, CardHeader, H3, Text } from '@repo/ui'
 import { SectionHeader } from '@/components/ui/section-header'
 import { MetricCard } from '@/components/ui/metric-card'
 import { Apple, Calendar, ListChecks } from 'lucide-react'
+import { MealPlan } from '@/lib/repositories/meal-plan/schema'
 
 interface NutritionProfileProps {
-  data: Profile
+  data: Profile & { mealPlan?: MealPlan }
 }
 
 export function NutritionProfile({ data }: NutritionProfileProps) {
-  const { nutritionProfile } = data
+  const { nutritionProfile, mealPlan } = data
+
+  if (!nutritionProfile && !mealPlan) {
+    return (
+      <div className="p-4 text-center">
+        <Text>No nutrition data available</Text>
+      </div>
+    )
+  }
+
+  // Use mealPlan if available, fallback to deprecated nutritionProfile
+  const calories = mealPlan?.calories.toString() ?? nutritionProfile?.targets.calories ?? '0'
+  const meals = (mealPlan?.timeline ?? (nutritionProfile?.meals ? nutritionProfile.meals.map(m => {
+    const [meal = '', slot = ''] = m.name.split(' ')
+    return {
+      ...m,
+      slot: slot.replace(/[()]/g, ''),
+      meal
+    }
+  }) : [])) as Array<{ slot: string; meal: string; time: string; calories: number; protein: number; carbs: number; fat: number; container: string }>
+  const weeklyPrep = mealPlan?.weeklyPrep ?? nutritionProfile?.weeklyPrep ?? {
+    proteins: [],
+    carbs: [],
+    vegetables: [],
+    sauces: []
+  }
 
   return (
     <div className="space-y-12">
@@ -26,7 +52,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             value={
               <div className="flex flex-col space-y-2">
                 <Text className="text-3xl lg:text-4xl font-bold tracking-tight">
-                  {nutritionProfile.targets.calories}
+                  {calories}
                 </Text>
               </div>
             }
@@ -84,11 +110,11 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
       <section>
         <SectionHeader title="Meal Schedule" icon={Calendar} />
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {nutritionProfile.meals.map((meal) => (
-            <Card key={meal.name} className="h-full">
+          {meals?.map((meal) => (
+            <Card key={meal.slot} className="h-full">
               <CardHeader>
                 <H3>
-                  {meal.name}
+                  {meal.meal}
                   <Text variant="meta" className="ml-2 font-normal">
                     {meal.time}
                   </Text>
@@ -131,7 +157,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             </CardHeader>
             <CardContent>
               <ul className="list-inside list-disc space-y-2">
-                {nutritionProfile.weeklyPrep.proteins.map((item) => (
+                {weeklyPrep?.proteins.map((item) => (
                   <li key={item}>
                     <Text variant="meta" className="inline">{item}</Text>
                   </li>
@@ -145,7 +171,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             </CardHeader>
             <CardContent>
               <ul className="list-inside list-disc space-y-2">
-                {nutritionProfile.weeklyPrep.carbs.map((item) => (
+                {weeklyPrep?.carbs.map((item) => (
                   <li key={item}>
                     <Text variant="meta" className="inline">{item}</Text>
                   </li>
@@ -159,7 +185,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             </CardHeader>
             <CardContent>
               <ul className="list-inside list-disc space-y-2">
-                {nutritionProfile.weeklyPrep.vegetables.map((item) => (
+                {weeklyPrep?.vegetables.map((item) => (
                   <li key={item}>
                     <Text variant="meta" className="inline">{item}</Text>
                   </li>
@@ -173,7 +199,7 @@ export function NutritionProfile({ data }: NutritionProfileProps) {
             </CardHeader>
             <CardContent>
               <ul className="list-inside list-disc space-y-2">
-                {nutritionProfile.weeklyPrep.sauces.map((item) => (
+                {weeklyPrep?.sauces.map((item) => (
                   <li key={item}>
                     <Text variant="meta" className="inline">{item}</Text>
                   </li>
