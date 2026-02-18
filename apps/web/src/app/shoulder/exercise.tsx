@@ -147,17 +147,32 @@ export function Exercise({ title, sets, frequency, execution, keyPoints, videoUr
                 Key point: {keyPoints}
               </p>
             )}
-            {videoUrl && (
-              <a 
-                href={videoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline pt-2"
-              >
-                <Play className="w-3.5 h-3.5" />
-                Watch video
-              </a>
-            )}
+            {videoUrl && (() => {
+              const videoId = videoUrl.match(/(?:v=|\/)([\w-]{11})/)?.[1]
+              return videoId ? (
+                <div className="pt-3">
+                  <div className="relative w-full overflow-hidden rounded-md" style={{ paddingBottom: '56.25%' }}>
+                    <iframe
+                      className="absolute inset-0 w-full h-full"
+                      src={`https://www.youtube.com/embed/${videoId}`}
+                      title={title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                </div>
+              ) : (
+                <a 
+                  href={videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline pt-2"
+                >
+                  <Play className="w-3.5 h-3.5" />
+                  Watch video
+                </a>
+              )
+            })()}
           </div>
         </div>
       )}
