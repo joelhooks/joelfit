@@ -6,11 +6,8 @@ import { ThemeProvider } from "next-themes"
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { cn } from "@/lib/utils"
 import { SiteHeader } from "@/components/site-header"
-import { SessionProvider } from "next-auth/react"
-import { auth } from "@/server/auth"
 import { PageFooter } from '@/components/page-footer'
 import './globals.css'
-import "../styles/cyberpunk.css"
 
 export const metadata: Metadata = {
   title: {
@@ -21,10 +18,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'JoelFit',
     description: 'Personal fitness and nutrition tracking',
-    url: 'https://www.joelfit.app',
+    url: 'https://joel.fit',
     siteName: 'JoelFit',
     images: [{
-      url: `https://www.joelfit.app/api/og?title=${encodeURIComponent('JoelFit')}&description=${encodeURIComponent('Personal fitness and nutrition tracking')}`,
+      url: `https://joel.fit/api/og?title=${encodeURIComponent('JoelFit')}&description=${encodeURIComponent('Personal fitness and nutrition tracking')}`,
       width: 1200,
       height: 630,
       alt: 'JoelFit'
@@ -47,20 +44,18 @@ export const metadata: Metadata = {
     title: 'JoelFit',
     card: 'summary_large_image',
     description: 'Personal fitness and nutrition tracking',
-    images: [`https://www.joelfit.app/api/og?title=${encodeURIComponent('JoelFit')}&description=${encodeURIComponent('Personal fitness and nutrition tracking')}`],
+    images: [`https://joel.fit/api/og?title=${encodeURIComponent('JoelFit')}&description=${encodeURIComponent('Personal fitness and nutrition tracking')}`],
   },
   icons: {
     shortcut: '/favicon.ico',
   },
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const session = await auth()
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn(
@@ -68,24 +63,20 @@ export default async function RootLayout({
         GeistSans.variable,
         GeistMono.variable
       )}>
-        <SessionProvider session={session}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <NuqsAdapter>
-              <div className="relative flex min-h-screen flex-col overflow-x-hidden">
-                <div className="cyberpunk-scanlines" />
-                <div className="cyberpunk-noise" />
-                <SiteHeader />
-                <div className="flex-1">{children}</div>
-                <PageFooter />
-              </div>
-            </NuqsAdapter>
-          </ThemeProvider>
-        </SessionProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <NuqsAdapter>
+            <div className="relative flex min-h-screen flex-col overflow-x-hidden">
+              <SiteHeader />
+              <div className="flex-1">{children}</div>
+              <PageFooter />
+            </div>
+          </NuqsAdapter>
+        </ThemeProvider>
       </body>
     </html>
   )

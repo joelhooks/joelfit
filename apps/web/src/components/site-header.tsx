@@ -2,23 +2,12 @@
 
 import * as React from 'react'
 import Link from "next/link"
-import Image from "next/image"
 import { usePathname } from 'next/navigation'
 import { Dumbbell, Menu } from "lucide-react"
 import { navigationMenuTriggerStyle } from "@repo/ui"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "./theme-toggle"
-import { useSession, signOut } from 'next-auth/react'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  Avatar,
-  AvatarImage,
-  AvatarFallback,
   Sheet,
   SheetTrigger,
   SheetContent,
@@ -27,19 +16,7 @@ import {
 
 export function SiteHeader() {
   const pathname = usePathname()
-  const { data: session, status } = useSession()
-  const isLoadingAuth = status === 'loading'
-  const [imageError, setImageError] = React.useState(false)
   const [isOpen, setIsOpen] = React.useState(false)
-
-  // Format Google avatar URL to use a larger size
-  const avatarUrl = React.useMemo(() => {
-    if (!session?.user?.image) return undefined
-    if (session.user.image.includes('googleusercontent.com')) {
-      return session.user.image.replace('s96-c', 's192-c')
-    }
-    return session.user.image
-  }, [session?.user?.image])
 
   const navItems = [
     { href: '/shoulder', label: 'Shoulder' },
@@ -70,57 +47,6 @@ export function SiteHeader() {
         </div>
         <div className="flex items-center gap-4">
           <ThemeToggle />
-          {isLoadingAuth ? (
-            <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
-          ) : !session?.user ? (
-            <Link 
-              href="/api/auth/signin"
-              className={navigationMenuTriggerStyle()}
-            >
-              Sign In
-            </Link>
-          ) : (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="relative flex h-8 w-8 items-center justify-center p-0"
-                >
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage 
-                      src={!imageError ? avatarUrl : undefined}
-                      onError={() => setImageError(true)}
-                      alt={session.user.name || session.user.email || 'User avatar'} 
-                    />
-                    <AvatarFallback className="bg-primary text-primary-foreground">
-                      {session.user.name?.[0] || session.user.email?.[0] || '?'}
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                align="end" 
-                sideOffset={8}
-                className="w-[200px]"
-              >
-                <DropdownMenuLabel className="truncate">
-                  {session.user.email}
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/profile">Profile</Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => signOut()}
-                  className="text-destructive focus:text-destructive"
-                >
-                  Sign Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button 

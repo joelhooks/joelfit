@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, UtensilsCrossed, Container, Clock, BookOpen, CalendarDays, User, ShoppingBag, Scale } from 'lucide-react'
+import { ArrowRight, UtensilsCrossed, Container, Clock, BookOpen, CalendarDays, ShoppingBag, Scale } from 'lucide-react'
 import { PageHeader } from '@/components/page-header'
 
 export const metadata: Metadata = {
@@ -60,12 +60,6 @@ const features = [
     description: "Proteins, starches, and sauce system",
     icon: BookOpen,
     href: "/eat/recipes"
-  },
-  {
-    title: "Profile & Targets",
-    description: "Personal nutrition profile and targets",
-    icon: User,
-    href: "/profile/joel"
   },
   {
     title: "Progress & QC",

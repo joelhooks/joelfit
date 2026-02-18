@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, UtensilsCrossed, Dumbbell, Activity } from 'lucide-react'
+import { ArrowRight, UtensilsCrossed, Dumbbell } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import Balancer from 'react-wrap-balancer'
 
@@ -10,77 +10,52 @@ interface Section {
   description: string
   icon: LucideIcon
   href: string
-  status?: string
-  features?: {
+  features: {
     title: string
     description: string
-    href?: string
+    href: string
   }[]
 }
 
 const sections: Section[] = [
   {
-    title: "Meal Prep System",
-    description: "High-protein meal prep framework with 1-2-3 rotation for optimal variety.",
+    title: "Shoulder Program",
+    description: "A progressive shoulder routine built around mobility, stability, and strength.",
+    icon: Dumbbell,
+    href: "/shoulder",
+    features: [
+      {
+        title: "Daily Routine",
+        description: "Follow the rehab workflow with set tracking and timers.",
+        href: "/shoulder"
+      }
+    ]
+  },
+  {
+    title: "Eat",
+    description: "Meal prep framework, recipes, shopping, preparation, and weekly tracking.",
     icon: UtensilsCrossed,
     href: "/eat",
     features: [
       {
         title: "Framework",
-        description: "3 proteins × 3 starches × 2 veggies",
+        description: "The 1-2-3 rotation that drives the system.",
         href: "/eat/framework"
       },
       {
         title: "Meal Plan",
-        description: "5 meals, 2250-2500 cal, 200g+ protein",
+        description: "Daily structure and portions for the week.",
         href: "/eat/meal-plan"
       },
       {
-        title: "Shopping List",
-        description: "Weekly ingredients & pantry staples",
+        title: "Recipes",
+        description: "Proteins, vegetables, and sauces you can batch prep.",
+        href: "/eat/recipes"
+      },
+      {
+        title: "Shopping",
+        description: "Weekly list organized for efficient shopping.",
         href: "/eat/shopping"
-      },
-      {
-        title: "Prep Guide",
-        description: "2-3 hour Sunday workflow",
-        href: "/eat/preparation"
-      }
-    ]
-  },
-  {
-    title: "Shoulder Rehab",
-    description: "Progressive rehab routine focusing on mobility, stability, and strength.",
-    icon: Dumbbell,
-    href: "/shoulder",
-    features: [
-      {
-        title: "Form-First",
-        description: "Quality over quantity approach",
-        href: "/shoulder"
-      },
-      {
-        title: "Progressive Load",
-        description: "Gradual strength development",
-        href: "/shoulder"
-      }
-    ]
-  },
-  {
-    title: "Personal Metrics",
-    description: "Current DEXA analysis, strength metrics, and optimization strategies.",
-    icon: Activity,
-    href: "/profile/joel",
-    status: "Updated Jan 2024",
-    features: [
-      {
-        title: "Body Composition",
-        description: "24% body fat, targeting android fat reduction",
-        href: "/profile/joel#personal-stats"
-      },
-      {
-        title: "Action Plan",
-        description: "Fat loss protocol & training structure",
-        href: "/profile/joel#action-plan"
       }
     ]
   }
@@ -90,87 +65,56 @@ export function HomeContent() {
   return (
     <main className="container py-6">
       <div className="max-w-4xl">
-        <h1 className="cyberpunk-title mb-4">
+        <h1 className="mb-4 text-4xl font-semibold tracking-tight sm:text-5xl">
           <Balancer>JoelFit</Balancer>
         </h1>
-        <p className="cyberpunk-text text-lg text-muted-foreground mb-12 max-w-2xl">
-          <Balancer>Personal health & fitness frameworks, built for consistency and results.</Balancer>
+        <p className="mb-10 max-w-2xl text-lg text-muted-foreground">
+          <Balancer>Shoulder training and nutrition systems designed for consistency.</Balancer>
         </p>
 
         <div className="space-y-8">
           {sections.map((section) => (
             <div key={section.title} className="space-y-4">
-              <Link 
+              <Link
                 href={section.href}
-                className="cyberpunk-card block p-6"
+                className="group block rounded-lg border bg-card p-6 transition-colors hover:bg-muted/50"
               >
-                <div className="cyberpunk-card-gradient" />
-                
-                <div className="flex items-start justify-between relative">
+                <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4">
-                    <section.icon className="h-6 w-6 mt-1 flex-shrink-0 text-primary" />
+                    <section.icon className="mt-1 h-6 w-6 flex-shrink-0 text-primary" />
                     <div>
-                      <div className="flex items-center gap-3">
-                        <h2 className="cyberpunk-subtitle">
-                          <Balancer>{section.title}</Balancer>
-                        </h2>
-                        {section.status && (
-                          <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
-                            {section.status}
-                          </span>
-                        )}
-                      </div>
-                      <p className="cyberpunk-text text-muted-foreground mt-1">
+                      <h2 className="text-2xl font-semibold tracking-tight">
+                        <Balancer>{section.title}</Balancer>
+                      </h2>
+                      <p className="mt-1 text-muted-foreground">
                         <Balancer>{section.description}</Balancer>
                       </p>
                     </div>
                   </div>
-                  <ArrowRight className="h-5 w-5 mt-1 text-muted-foreground flex-shrink-0 group-hover:text-primary transition-all group-hover:translate-x-1" />
+                  <ArrowRight className="mt-1 h-5 w-5 flex-shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1" />
                 </div>
               </Link>
 
-              {section.features && (
-                <div className="grid gap-4 sm:grid-cols-2 pl-4 sm:pl-10">
-                  {section.features.map((feature) => (
-                    feature.href ? (
-                      <Link
-                        key={feature.title}
-                        href={feature.href}
-                        className="cyberpunk-feature p-4"
-                      >
-                        <div className="cyberpunk-feature-gradient" />
-                        <div className="relative">
-                          <h3 className="cyberpunk-text font-medium mb-1">
-                            <Balancer>{feature.title}</Balancer>
-                          </h3>
-                          <p className="text-sm text-muted-foreground">
-                            <Balancer>{feature.description}</Balancer>
-                          </p>
-                        </div>
-                      </Link>
-                    ) : (
-                      <div 
-                        key={feature.title} 
-                        className="cyberpunk-feature p-4"
-                      >
-                        <div className="cyberpunk-feature-gradient" />
-                        <div className="relative">
-                          <h3 className="cyberpunk-text font-medium mb-1">
-                            <Balancer>{feature.title}</Balancer>
-                          </h3>
-                          <p className="text-sm text-muted-foreground">
-                            <Balancer>{feature.description}</Balancer>
-                          </p>
-                        </div>
-                      </div>
-                    )
-                  ))}
-                </div>
-              )}
+              <div className="grid gap-4 pl-4 sm:grid-cols-2 sm:pl-10">
+                {section.features.map((feature) => (
+                  <Link
+                    key={feature.title}
+                    href={feature.href}
+                    className="rounded-lg border bg-card p-4 transition-colors hover:bg-muted/50"
+                  >
+                    <h3 className="mb-1 font-medium">
+                      <Balancer>{feature.title}</Balancer>
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      <Balancer>{feature.description}</Balancer>
+                    </p>
+                  </Link>
+                ))}
+              </div>
             </div>
           ))}
         </div>
       </div>
     </main>
   )
-} 
+}
