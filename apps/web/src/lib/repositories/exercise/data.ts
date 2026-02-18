@@ -290,6 +290,130 @@ export const initialExercises: NewExercise[] = [
     targetArea: ["shoulder_lateral"],
     equipment: ["dumbbells"]
   },
+  // Before Bed — nerve glides & mobilizations for arms falling asleep
+  {
+    title: "Neck Scalene Massage",
+    sets: {
+      type: 'standard',
+      count: 1,
+      reps: 1,
+      hold: 60
+    },
+    frequency: {
+      times: 1,
+      period: 'day'
+    },
+    execution: [
+      "Tilt head away from the side you're working",
+      "Find the scalene muscles along the side of your neck",
+      "Use fingertips to apply gentle pressure and massage",
+      "Work anterior, middle, and posterior scalenes",
+      "Breathe deeply and don't press too hard"
+    ],
+    keyPoints: "Scalenes can compress the brachial plexus and cause arm numbness — keep pressure gentle",
+    videoUrl: "https://www.youtube.com/watch?v=4X_vIYwxgRY",
+    category: "before_bed",
+    targetArea: ["neck"],
+    equipment: []
+  },
+  {
+    title: "First Rib Mobilization with Strap",
+    sets: {
+      type: 'standard',
+      count: 2,
+      reps: 10
+    },
+    frequency: {
+      times: 1,
+      period: 'day'
+    },
+    execution: [
+      "Loop a strap or towel over the top of your shoulder near the neck",
+      "Hold the strap with the opposite hand pulling downward",
+      "Side-bend your head away from the strap",
+      "The strap pushes the first rib down as you move",
+      "Perform gentle repetitions — not forceful"
+    ],
+    keyPoints: "An elevated first rib can compress nerves and blood vessels causing arm tingling",
+    videoUrl: "https://www.youtube.com/watch?v=mCe4Z4U16-M",
+    category: "before_bed",
+    targetArea: ["first_rib", "neck"],
+    equipment: ["strap"]
+  },
+  {
+    title: "Median Nerve Glide",
+    sets: {
+      type: 'standard',
+      count: 2,
+      reps: 15
+    },
+    frequency: {
+      times: 1,
+      period: 'day'
+    },
+    execution: [
+      "Extend arm out to the side at shoulder height",
+      "Extend wrist back (fingers pointing up)",
+      "Gently tilt head away from the extended arm",
+      "Return to neutral and repeat",
+      "Smooth, controlled movements — no bouncing"
+    ],
+    keyPoints: "Sliding technique — gently glide the nerve, don't stretch it aggressively",
+    videoUrl: "https://www.youtube.com/watch?v=UnkSHg0L4yM",
+    category: "before_bed",
+    targetArea: ["nerve"],
+    equipment: []
+  },
+  {
+    title: "Brachial Plexus Nerve Glide",
+    sets: {
+      type: 'standard',
+      count: 2,
+      reps: 15
+    },
+    frequency: {
+      times: 1,
+      period: 'day'
+    },
+    execution: [
+      "Stand or sit with good posture",
+      "Depress shoulder on the working side",
+      "Extend arm out, slightly behind you",
+      "Extend wrist and fingers",
+      "Tilt head away from the working arm",
+      "Return to start and repeat with control"
+    ],
+    keyPoints: "Targets the full brachial plexus (C5-T1) — stop if you get sharp pain or increased numbness",
+    videoUrl: "https://www.youtube.com/watch?v=gSEDZDHS-mo",
+    category: "before_bed",
+    targetArea: ["nerve", "neck"],
+    equipment: []
+  },
+  {
+    title: "Brachial Plexus Glide (Alternate)",
+    sets: {
+      type: 'standard',
+      count: 2,
+      reps: 10
+    },
+    frequency: {
+      times: 1,
+      period: 'day'
+    },
+    execution: [
+      "Start with arm relaxed at your side",
+      "Slowly abduct arm to shoulder height",
+      "Extend elbow, wrist, and fingers",
+      "Tilt head away to increase the glide",
+      "Return to neutral slowly",
+      "Alternate sides"
+    ],
+    keyPoints: "Second variation — use whichever version your PT prefers for your presentation",
+    videoUrl: "https://www.youtube.com/watch?v=kye0fac1IPg",
+    category: "before_bed",
+    targetArea: ["nerve"],
+    equipment: []
+  },
   {
     title: "Lat Pull Downs",
     sets: {

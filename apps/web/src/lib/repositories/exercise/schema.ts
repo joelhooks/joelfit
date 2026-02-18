@@ -5,7 +5,8 @@ export const exerciseCategorySchema = z.enum([
   'warmup',
   'strength',
   'mobility',
-  'endurance'
+  'endurance',
+  'before_bed'
 ])
 
 export const exerciseTargetSchema = z.enum([
@@ -17,7 +18,9 @@ export const exerciseTargetSchema = z.enum([
   'traps',
   'nerve',
   'lats',
-  'shoulder_stability'
+  'shoulder_stability',
+  'neck',
+  'first_rib'
 ])
 
 const exerciseSetBaseSchema = z.object({
@@ -50,6 +53,7 @@ export const exerciseSchema = baseSchema.extend({
   }),
   execution: z.array(z.string()).min(1, 'Must have at least one execution step'),
   keyPoints: z.string().optional(),
+  videoUrl: z.string().url().optional(),
   category: exerciseCategorySchema,
   equipment: z.array(z.string()).default([]),
   targetArea: z.array(exerciseTargetSchema).min(1, 'Must target at least one area')

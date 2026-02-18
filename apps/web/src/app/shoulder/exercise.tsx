@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ChevronDown, Activity, Clock, CheckCircle2, RotateCcw } from 'lucide-react'
+import { ChevronDown, Activity, Clock, CheckCircle2, RotateCcw, Play } from 'lucide-react'
 import { SetTracker } from '@/components/exercise/set-tracker'
 import { Timer } from '@/components/exercise/timer'
 import { Button } from '@/components/ui/button'
@@ -9,7 +9,7 @@ import type { Exercise as ExerciseType } from '@/lib/repositories/exercise/schem
 
 type ExerciseProps = ExerciseType
 
-export function Exercise({ title, sets, frequency, execution, keyPoints }: ExerciseProps) {
+export function Exercise({ title, sets, frequency, execution, keyPoints, videoUrl }: ExerciseProps) {
   const [isOpen, setIsOpen] = useState(true)
   const [currentSet, setCurrentSet] = useState(0)
   const [currentRep, setCurrentRep] = useState(0)
@@ -146,6 +146,17 @@ export function Exercise({ title, sets, frequency, execution, keyPoints }: Exerc
               <p className="text-sm font-medium text-primary pt-2">
                 Key point: {keyPoints}
               </p>
+            )}
+            {videoUrl && (
+              <a 
+                href={videoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline pt-2"
+              >
+                <Play className="w-3.5 h-3.5" />
+                Watch video
+              </a>
             )}
           </div>
         </div>

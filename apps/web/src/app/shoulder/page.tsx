@@ -43,6 +43,10 @@ export default async function ShoulderRehabProgram() {
     e.category === 'strength'
   )
 
+  const beforeBedExercises = exercises.filter((e: ExerciseType) => 
+    e.category === 'before_bed'
+  )
+
   return (
     <main className="container py-6">
       <div className="max-w-3xl">
@@ -81,6 +85,20 @@ export default async function ShoulderRehabProgram() {
           <Section title="Strength">
             <div className="space-y-4">
               {strengthExercises.map((exercise: ExerciseType) => (
+                <Exercise 
+                  key={exercise.id} 
+                  {...exercise} 
+                />
+              ))}
+            </div>
+          </Section>
+
+          <Section title="Before Bed">
+            <p className="text-sm text-muted-foreground mb-4">
+              Nerve glides and mobilizations for arms falling asleep. Do these nightly before sleep.
+            </p>
+            <div className="space-y-4">
+              {beforeBedExercises.map((exercise: ExerciseType) => (
                 <Exercise 
                   key={exercise.id} 
                   {...exercise} 
