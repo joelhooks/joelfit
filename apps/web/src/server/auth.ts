@@ -16,7 +16,7 @@ declare module 'next-auth' {
 
 export const authOptions: NextAuthConfig = {
 	debug: true,
-	adapter: DrizzleAdapter(db, schema),
+	...(db ? { adapter: DrizzleAdapter(db, schema) } : {}),
 	providers: [Google],
 	callbacks: {
 		session: ({ session, user }) => ({

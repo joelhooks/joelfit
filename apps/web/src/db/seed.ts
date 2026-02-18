@@ -8,6 +8,11 @@ import {
 	roles,
 } from '@/db/schema'
 
+if (!db) {
+  console.log('No database connection — skipping seed')
+  process.exit(0)
+}
+
 const currentContributionTypes = await db.query.contributionTypes.findMany()
 
 const seededContributionTypes = [
